@@ -3,6 +3,7 @@
 Usage: python tasks.py <command>
 """
 
+import os
 import shutil
 import subprocess
 import sys
@@ -15,7 +16,8 @@ VENV_PY = ROOT / ".venv" / ("Scripts/python.exe" if sys.platform == "win32" else
 
 def run(*args: str) -> int:
     print("$", " ".join(args))
-    return subprocess.call(list(args), cwd=ROOT)
+    env = {**os.environ, "PYTHONPATH": str(ROOT / "backend"), "PYTHONUTF8": "1"}
+    return subprocess.call(list(args), cwd=ROOT, env=env)
 
 
 def py(*args: str) -> int:
@@ -63,7 +65,26 @@ def build() -> int:
     return npm("run", "build")
 
 
-COMMANDS = {"setup": setup, "test": test, "lint": lint, "fmt": fmt, "dev": dev, "build": build}
+def coverage() -> int:
+    """Discover CPCB PM2.5 stations on OpenAQ, group into cities, write reports/coverage.json."""
+    return py("-c", "from airgrove.ingest.cli import coverage; coverage()")
+
+
+def hourcheck() -> int:
+    """Fetch 3 days for one Delhi station and check every hour of the day is present."""
+    return py("-c", "from airgrove.ingest.cli import hourcheck; hourcheck()")
+
+
+COMMANDS = {
+    "hourcheck": hourcheck,
+    "coverage": coverage,
+    "setup": setup,
+    "test": test,
+    "lint": lint,
+    "fmt": fmt,
+    "dev": dev,
+    "build": build,
+}
 
 
 def main() -> int:

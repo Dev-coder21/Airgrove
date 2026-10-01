@@ -19,3 +19,28 @@
 - To check by eye: forest/globe/card motion side by side (rAF paused in my headless check);
   `prefers-reduced-motion` (ported flag-for-flag, not tested in a browser).
 - Reference still has hard-coded copy to make data-driven later: model notes, "78%", "Delhi backtest".
+
+## Step 3: OpenAQ discovery + coverage (no full history yet)
+- Works: `backend/airgrove/ingest/openaq.py`: sliding-window limiter (50 req/min), backs off on
+  429 / 5xx / 408 and when `x-ratelimit-remaining` is low, every raw response cached under
+  `data/raw/openaq/` (re-runs cost 0 requests). `ingest/discover.py` + `python tasks.py coverage`
+  writes `reports/coverage.json`, `reports/coverage.md`, `data/stations.json`.
+- Key numbers: 754 PM2.5 locations in India → 640 CPCB → **492 active** (reported within 30 days
+  of the latest reading, 2026-09-29 14:30 UTC) → **257 cities**, **177 forecast-ready**
+  (381 stations). Not ready: 80 (63 under 75% coverage, 44 under 12 months; some both).
+  Coverage run cost 784 requests.
+- History: current sensors start **Feb 2025** for most cities (204 of 257); older 2016–18 sensors
+  are separate and followed by a 7-year gap, so they are ignored. So ~20 months of history.
+- Coverage = observed hours / real hours in the last 12 months, from monthly aggregates
+  (OpenAQ's own `expectedCount` is unreliable, sometimes doubled). City = mean over its stations.
+  Best stations reach ~90%; nothing reaches 100%.
+- **Hour alignment (the old midnight bug):** OpenAQ hourly periods are IST clock hours, so in
+  UTC they start at :30 (00:00 IST = 18:30Z; the period containing 00:00 UTC is 23:30Z–00:30Z,
+  = 05:00 IST). Never floor/round to UTC hours; key rows by period start; fetch windows padded
+  ±2 h and de-duplicated. `python tasks.py hourcheck` (R K Puram, Delhi, 24–26 Sep 2026 IST):
+  71/72 hours, all 24 hours of day present incl. 00:00 IST and 00:00 UTC; one genuine gap
+  (26 Sep 20:00 IST).
+- To check: city grouping is by station name ("Station, City - AGENCY") with a few aliases
+  (Belapur→Navi Mumbai, Vatva→Ahmedabad, spellings). NCR cities (Noida, Gurugram, Ghaziabad,
+  Faridabad) are kept separate from Delhi. Weather (Open-Meteo) is on whole UTC hours: features
+  must be interpolated to the :30 period, decide in step 4.
