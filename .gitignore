@@ -17,4 +17,3 @@ node_modules/
 frontend/dist/
 # tools
 .claude/
-frontend/public/data/
