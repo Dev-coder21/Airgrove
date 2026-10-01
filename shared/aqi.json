@@ -1,0 +1,13 @@
+{
+  "name": "CPCB National AQI, PM2.5 (µg/m³)",
+  "standard_24h_ugm3": 60,
+  "standard_note": "60 µg/m³ is India's 24-hour standard; label it as such when comparing hourly values.",
+  "categories": [
+    {"id": "good",         "name": "Good",         "min": 0,   "max": 30,   "color": "#9cc58a"},
+    {"id": "satisfactory", "name": "Satisfactory", "min": 31,  "max": 60,   "color": "#c6cf86"},
+    {"id": "moderate",     "name": "Moderate",     "min": 61,  "max": 90,   "color": "#d9b66e"},
+    {"id": "poor",         "name": "Poor",         "min": 91,  "max": 120,  "color": "#d0905c"},
+    {"id": "very_poor",    "name": "Very Poor",    "min": 121, "max": 250,  "color": "#b8695a"},
+    {"id": "severe",       "name": "Severe",       "min": 251, "max": null, "color": "#8e5a6e"}
+  ]
+}
