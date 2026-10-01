@@ -3,11 +3,13 @@
 Usage: python tasks.py <command>
 """
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+FRONTEND = ROOT / "frontend"
 VENV_PY = ROOT / ".venv" / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
 
 
@@ -41,7 +43,27 @@ def fmt() -> int:
     return py("-m", "ruff", "check", "--fix", ".") or py("-m", "ruff", "format", ".")
 
 
-COMMANDS = {"setup": setup, "test": test, "lint": lint, "fmt": fmt}
+def npm(*args: str) -> int:
+    exe = shutil.which("npm")
+    if not exe:
+        print("npm not found: install Node.js 18+")
+        return 1
+    if not (FRONTEND / "node_modules").exists():
+        if rc := subprocess.call([exe, "install"], cwd=FRONTEND):
+            return rc
+    return subprocess.call([exe, *args], cwd=FRONTEND)
+
+
+def dev() -> int:
+    """Start the Vite dev server on http://localhost:5173."""
+    return npm("run", "dev")
+
+
+def build() -> int:
+    return npm("run", "build")
+
+
+COMMANDS = {"setup": setup, "test": test, "lint": lint, "fmt": fmt, "dev": dev, "build": build}
 
 
 def main() -> int:

@@ -1,0 +1,205 @@
+<meta charset="utf-8">
+<title>Airgrove</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&display=swap">
+<link rel="stylesheet" href="/src/styles.css">
+<script type="module" src="/src/main.ts"></script>
+
+<div id="intro" aria-hidden="true"><canvas id="introCv"></canvas><span class="intro-skip">Click to skip</span></div>
+<div id="stage" aria-hidden="true">
+  <canvas id="world"></canvas>
+  <div class="smog" id="smog"></div>
+  <div class="veil"></div>
+  <div class="dim" id="dim"></div>
+</div>
+
+<div class="vine" id="vine" aria-hidden="true">
+  <div class="vine-track"></div>
+  <div class="vine-grow" id="vineGrow"></div>
+  <div id="vineMarks"></div>
+  <div class="vine-thumb" id="vineThumb"><span class="vine-label" id="vineLabel">The grove</span></div>
+</div>
+<header class="nav" id="nav">
+  <a class="brand" href="#top">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21c0-7 1-12 7-17-7 1-12 5-12 11 0 2 1 4 2 5" stroke="#a9c29a" stroke-width="1.6" stroke-linecap="round"/><path d="M12 21c0-4-2-7-6-9" stroke="#eef0e4" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Airgrove
+  </a>
+  <nav class="links" aria-label="Sections">
+    <a href="#top">The grove</a>
+    <a href="#india">India</a>
+    <a href="#forecast">Forecast</a>
+    <a href="#model">Model</a>
+  </nav>
+  <div class="city-pick">
+    <button class="ghost sm" id="cityBtn" aria-haspopup="listbox" aria-expanded="false">
+      <span class="dot" id="cityDot"></span><span id="cityName">Delhi</span>
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <ul class="city-list" id="cityList" role="listbox" aria-label="Choose a city" hidden></ul>
+  </div>
+  <a class="metal sm nav-cta" href="#forecast">See the forecast</a>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <div class="eyebrow" id="eyebrow">Delhi · Latest reading · 14 Nov, 14:00 IST</div>
+      <h1 id="headline">The grove is holding its breath.</h1>
+      <p class="lede" id="lede">Long exposure can cause breathing illness. Stay indoors where you can, and wear an N95 mask outside.</p>
+      <div class="actions">
+        <button class="metal" id="playFc">
+          <span id="playFcLbl">Play the next 72 hours</span>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 3.5v9l7-4.5-7-4.5z" fill="currentColor"/></svg>
+        </button>
+        <a class="ghost" href="#india">Explore India</a>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="readings" id="readings">
+        <span>Wind <b>—</b></span><span>Humidity <b>—</b></span><span>Mixing height <b>—</b></span>
+      </div>
+      <div class="pm glass" id="pmPanel">
+        <div class="pm-top"><span>PM2.5</span><span class="chip" id="chip">Very Poor</span></div>
+        <div class="pm-num"><span id="pmNum">—</span><span class="unit">µg/m³</span></div>
+        <div class="pm-sub" id="pmSub">Observed · average of 35 stations</div>
+      </div>
+    </div>
+
+    <div class="river">
+      <div class="river-head">
+        <button class="ghost play" id="riverPlay" aria-label="Play through time">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" id="riverPlayIcon"><path d="M5 3.5v9l7-4.5-7-4.5z" fill="currentColor"/></svg>
+        </button>
+        <span class="lbl">Past 7 days</span>
+        <span class="grow"></span>
+        <span class="tag">Sample data</span>
+        <span class="lbl">Next 72 hours · forecast</span>
+      </div>
+      <div class="river-track" id="track" tabindex="0" role="slider" aria-label="Time" aria-valuemin="0" aria-valuemax="239" aria-valuenow="167">
+        <svg id="riverSvg" aria-hidden="true"></svg>
+        <div class="thumb" id="thumb"><span class="thumb-dot" id="thumbDot"></span><span class="thumb-label" id="thumbLabel">Now</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="india">
+    <div class="sec-head">
+      <div class="eyebrow">India · 20 cities with government sensors</div>
+      <h2>Every light is a city's grove.</h2>
+      <p class="lede">Spin the Earth and zoom in. Each Indian city is a grove with a light pillar as tall as its PM2.5: clean cities glow green, polluted ones go grey under their own haze. Play the smoke week to watch crop fires flare in Punjab and Haryana, then the groves downwind grey one after another.</p>
+    </div>
+    <div class="isum glass" id="isum" aria-live="polite">
+      <div class="is-mix">
+        <div class="is-k">Air across <span id="isN">18</span> cities · <span id="isWhen"></span></div>
+        <div class="is-bar" id="isBar"></div>
+        <div class="is-leg" id="isLeg"></div>
+      </div>
+      <div class="is-stat"><div class="is-k">Cleanest</div><div class="is-v"><span class="num" id="isCleanV">0</span><small id="isCleanN"></small></div></div>
+      <div class="is-stat"><div class="is-k">Most polluted</div><div class="is-v"><span class="num" id="isWorstV">0</span><small id="isWorstN"></small></div></div>
+      <div class="is-stat"><div class="is-k">Over India's daily limit</div><div class="is-v"><span class="num" id="isOverV">0</span><small id="isOverN">of 18 cities</small></div></div>
+      <div class="is-stat"><div class="is-k">Fires, last 48 h</div><div class="is-v"><span class="num" id="isFireV">0</span><small>in Punjab &amp; Haryana</small></div></div>
+    </div>
+    <div class="india-grid">
+      <div class="map-wrap glass">
+        <canvas id="globe" aria-label="3D globe. Indian cities are coloured by PM2.5. Drag to spin, click the globe then scroll to zoom."></canvas>
+        <div class="glabels" id="glabels"></div>
+        <div class="ghint" id="ghint">Drag to spin · click, then scroll to zoom</div>
+        <div class="gctl" role="group" aria-label="Globe controls">
+          <button class="gbtn" id="gIn" aria-label="Zoom in">+</button>
+          <button class="gbtn" id="gOut" aria-label="Zoom out">−</button>
+          <button class="gbtn" id="gHome" aria-label="Back to India">India</button>
+        </div>
+        <div class="gfail" id="gfail" hidden>The 3D globe couldn’t load in this browser. Try a recent Chrome, Edge or Safari with hardware acceleration on.</div>
+        <div class="map-tip" id="mapTip" hidden></div>
+        <div class="map-key"><span><span class="pk"></span>Pillar height = PM2.5</span><span><span class="ember"></span>Crop fire, last 48 h</span></div>
+        <div class="gcap" id="gcap" aria-live="polite"></div>
+      </div>
+      <aside class="rank glass" aria-label="Cities ranked by PM2.5">
+        <h3>All cities · cleanest first</h3>
+        <div class="rk-key"><span class="rk-tick"></span>India's daily limit, 60 µg/m³</div>
+        <div class="rk-axis"><span>0</span><span id="rkMax">300</span></div>
+        <div class="rk-list" id="rkList"></div>
+        <p class="note">Bars show PM2.5 in µg/m³. Click a city to walk into its grove.</p>
+      </aside>
+    </div>
+    <div class="map-controls">
+      <button class="metal" id="playSmoke">
+        <span id="playSmokeLbl">Play the smoke week</span>
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 3.5v9l7-4.5-7-4.5z" fill="currentColor"/></svg>
+      </button>
+      <input type="range" id="mapRange" min="0" max="239" step="1" value="167" aria-label="Time on the map">
+      <span class="map-clock" id="mapClock"></span>
+    </div>
+  </section>
+
+
+  <section class="sec" id="card">
+    <div class="card-grid">
+      <div class="sec-head">
+        <div class="eyebrow" id="cardEyebrow">The air card</div>
+        <h2>Your city's air, on one card.</h2>
+        <p class="lede">The hour you're looking at, the next three days and how sure the forecast is. It follows the time slider and the city you pick. Drag it to see the back.</p>
+        <div class="actions">
+          <button class="metal" id="flipCard"><span>Turn the card</span>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 0 1 8.6-3.5M13 8a5 5 0 0 1-8.6 3.5M11.5 2v2.6H9M4.5 14v-2.6H7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <a class="ghost" href="#forecast">Full forecast</a>
+        </div>
+        <p class="note">On the finished site you can save the card as an image to share.</p>
+      </div>
+      <div class="card-stage" id="cardStage" aria-label="Air card for the selected city. Drag to turn it.">
+        <canvas id="cardCv"></canvas>
+        <div class="card-hint"><b>Drag</b> to turn it &nbsp;·&nbsp; <b>Hover</b> to light it</div>
+      </div>
+    </div>
+  </section>
+  <section class="sec" id="forecast">
+    <div class="sec-head">
+      <div class="eyebrow" id="fcEyebrow">Delhi · Airgrove forecast</div>
+      <h2 id="fcTitle">The next 72 hours in Delhi</h2>
+      <p class="lede">Hourly PM2.5 for the last three days and the forecast ahead. The shaded band is where the real value should fall eight times out of ten.</p>
+    </div>
+    <div class="glass chart-wrap">
+      <svg id="fcSvg" viewBox="0 0 1000 340" role="img" aria-label="PM2.5 history and 72-hour forecast"></svg>
+      <div class="chart-legend">
+        <span><span class="sw"></span>Observed</span>
+        <span><span class="sw dash"></span>Airgrove forecast</span>
+        <span><span class="sw band"></span>80% range</span>
+      </div>
+    </div>
+    <div class="facts" id="facts"></div>
+  </section>
+
+  <section class="sec" id="model">
+    <div class="sec-head">
+      <div class="eyebrow">Delhi backtest · last 12 months, re-trained monthly</div>
+      <h2>How good is the forecast?</h2>
+      <p class="lede">Average error in µg/m³, lower is better. Each forecast was made only with data available at that moment, then compared with three simpler ways to predict the air.</p>
+    </div>
+    <div class="model-grid">
+      <div class="glass table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>1–6 h</th><th>7–24 h</th><th>25–72 h</th></tr></thead>
+          <tbody id="mtable"></tbody>
+        </table>
+      </div>
+      <div class="glass bars"><svg id="barSvg" viewBox="0 0 560 300" role="img" aria-label="Average error by forecast horizon"></svg></div>
+    </div>
+    <div class="notes">
+      <div class="fact glass"><span class="k">Where it loses</span><p>In October and November, "same hour yesterday" beats it 2–3 days ahead (53 vs 60). Its 10 worst days are all smoke spikes it underestimated, like the day after Diwali: 281 observed, 139 forecast.</p></div>
+      <div class="fact glass"><span class="k">Honest uncertainty</span><p>The 80% range held the real value 78% of the time, so the band means what it says.</p></div>
+      <div class="fact glass"><span class="k">About CAMS</span><p>CAMS is the official global forecast, shown here without local bias correction. A corrected version closes much of the gap; both appear in the full report.</p></div>
+    </div>
+  </section>
+
+  <div class="finale" id="finale" aria-hidden="true">
+    <span class="tag2">Breathe easy</span>
+    <span class="big" id="finaleWord">Airgrove</span>
+  </div>
+  <footer>
+    <span>Airgrove · PM2.5 from CPCB stations via OpenAQ, weather from Open-Meteo, fires from NASA FIRMS.</span>
+    <span>This demo runs on sample data shaped like a November week in 2025.</span>
+  </footer>
+</main>
