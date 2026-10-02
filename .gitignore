@@ -1,5 +1,5 @@
 # data & secrets
-data/
+/data/
 .env
 # python
 .venv/
