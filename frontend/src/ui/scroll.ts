@@ -52,7 +52,7 @@ export function tickScrollFx(): void {
 /* ---------------- vine scroll bar ---------------- */
 interface Leaf { f: number; el: HTMLElement; name: string; }
 export function initVine(): { build(): void; tick(now: number, dt: number): void } {
-  const vine = $('vine'), grow = $('vineGrow'), thumb = $('vineThumb'), label = $('vineLabel'), marks = $('vineMarks');
+  const vine = $('vine'), grow = $('vineGrow'), thumb = $('vineThumb'), marks = $('vineMarks');
   const SECS = [['top', 'The grove'], ['india', 'India'], ['card', 'Air card'], ['forecast', 'Forecast'], ['model', 'Model']];
   let leaves: Leaf[] = [], railH = 0, thH = 0, lastY = window.scrollY, vel = 0, idleT = 0, sparkT = 0, resizeT = 0;
   let drag: null | { y0: number; s0: number } = null;
@@ -72,11 +72,6 @@ export function initVine(): { build(): void; tick(now: number, dt: number): void
     thH = Math.max(34, (railH * window.innerHeight) / document.documentElement.scrollHeight);
     thumb.style.height = thH + 'px';
   }
-  function current(p: number): string {
-    let n = leaves.length ? leaves[0].name : '';
-    leaves.forEach((l) => { if (p >= l.f - 0.01) n = l.name; });
-    return n;
-  }
   function spark(y: number): void {
     if (reduce) return;
     const sp = document.createElement('span'); sp.className = 'spark';
@@ -85,46 +80,42 @@ export function initVine(): { build(): void; tick(now: number, dt: number): void
     sp.style.setProperty('--sy', ((Math.random() - 0.2) * 30).toFixed(1) + 'px');
     vine.appendChild(sp); setTimeout(() => sp.remove(), 950);
   }
-  // a normal scrollbar: press anywhere on the rail to grab it (the thumb jumps under the pointer
-  // unless you pressed the thumb), then drag freely; scrolling is instant, never animated or
-  // snapped. A section leaf only jumps to its section on a tap without movement.
-  const jump = (top: number) => window.scrollTo({ top, behavior: 'instant' as ScrollBehavior });
-  let tapLeaf: HTMLElement | null = null, moved = 0;
+  // Behaves like a native scrollbar: press anywhere on the rail to grab it (the thumb jumps under
+  // the pointer unless you pressed the thumb itself), then the page follows the pointer 1:1,
+  // instantly, with no easing, snapping or section jumps. The leaves are decoration only.
+  const jump = (top: number) => window.scrollTo({ top: clamp(top, 0, maxY()), behavior: 'instant' as ScrollBehavior });
   vine.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
     const r = vine.getBoundingClientRect(), ty = thumb.getBoundingClientRect();
-    tapLeaf = (e.target as HTMLElement).closest('.leaf-btn');
-    moved = 0;
-    if (!tapLeaf && (e.clientY < ty.top || e.clientY > ty.bottom)) {
-      jump(clamp((e.clientY - r.top - thH / 2) / (railH - thH), 0, 1) * maxY());
-    }
-    drag = { y0: e.clientY, s0: window.scrollY };
+    let grab = (e.clientY - ty.top) / Math.max(ty.height, 1); // where on the thumb we hold it
+    if (grab < 0 || grab > 1) grab = 0.5;
+    drag = { y0: r.top + grab * thH, s0: 0 };
     vine.classList.add('dragging'); vine.setPointerCapture(e.pointerId); e.preventDefault();
+    follow(e.clientY);
   });
-  vine.addEventListener('pointermove', (e) => {
+  function follow(clientY: number): void {
     if (!drag) return;
-    const dy = e.clientY - drag.y0;
-    moved = Math.max(moved, Math.abs(dy));
-    if (tapLeaf && moved < 5) return;
-    jump(drag.s0 + (dy / (railH - thH)) * maxY());
-  });
-  vine.addEventListener('pointerup', () => {
-    if (tapLeaf && moved < 5) window.scrollTo({ top: +(tapLeaf.dataset.top || 0), behavior: reduce ? 'auto' : 'smooth' });
-    tapLeaf = null;
-  });
+    const f = (clientY - drag.y0) / Math.max(railH - thH, 1); // thumb top as a fraction of its travel
+    jump(clamp(f, 0, 1) * maxY());
+  }
+  vine.addEventListener('pointermove', (e) => follow(e.clientY));
   function endDrag(): void { drag = null; vine.classList.remove('dragging'); }
   vine.addEventListener('pointerup', endDrag); vine.addEventListener('pointercancel', endDrag);
   window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = window.setTimeout(build, 120); });
+  let lastH = 0;
   return {
     build,
     tick(now, dt) {
-      if (!railH) build();
+      // keep the thumb proportional when the page height changes (fonts, data, reveals)
+      const h = document.documentElement.scrollHeight;
+      if (!railH || h !== lastH) { lastH = h; build(); }
       const y = window.scrollY, p = clamp(y / maxY(), 0, 1);
       vel += ((y - lastY) / Math.max(dt, 1 / 120) - vel) * (1 - Math.exp(-dt * 10)); lastY = y;
-      const ty = p * (railH - thH), stretch = reduce ? 1 : 1 + Math.min(0.6, Math.abs(vel) / 3500);
-      thumb.style.transform = 'translate3d(0,' + ty.toFixed(1) + 'px,0) scaleY(' + stretch.toFixed(3) + ')';
+      const ty = p * (railH - thH);
+      thumb.style.transform = 'translate3d(0,' + ty.toFixed(1) + 'px,0)';
       grow.style.height = (ty + thH / 2).toFixed(1) + 'px';
       leaves.forEach((l) => l.el.classList.toggle('on', p >= l.f - 0.005));
-      if (Math.abs(vel) > 40 || drag) { idleT = now; label.textContent = current(p); }
+      if (Math.abs(vel) > 40 || drag) idleT = now;
       vine.classList.toggle('active', now - idleT < 900);
       if (Math.abs(vel) > 500 && now - sparkT > 45) { sparkT = now; spark(ty + (vel > 0 ? 2 : thH - 2)); }
     },
