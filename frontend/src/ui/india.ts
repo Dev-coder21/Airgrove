@@ -8,6 +8,7 @@ import { goToCity, setT, stopPlay } from './controls';
 export function firesLive(): number {
   let n = 0;
   app.D.fires.forEach((f) => {
+    if (f.pbhr === false) return;
     const age = app.T - f.i;
     if (age >= 0 && age <= 48) n++;
   });
@@ -77,7 +78,7 @@ function updateCaption(): void {
   if (!el) return;
   const T = app.T, nF = firesLive(), sm = smokeAt(T), c0 = app.D.cities[0], dl = pmAt(c0, T);
   let t = '';
-  if (dl > 250) t = c0.name + ' turns Severe: ' + Math.round(dl) + ' µg/m³, more than ' + Math.floor(dl / LIMIT) + '× India’s daily limit.';
+  if (dl > 250) t = c0.name + ' turns Severe: ' + Math.round(dl) + ' µg/m³, more than ' + Math.floor(dl / LIMIT) + '× India’s 24-hour standard.';
   else if (sm > 0.7 && nF > 10) t = 'North-west winds carry the smoke toward ' + c0.name + ' and the Gangetic plain.';
   else if (nF > 40) t = 'Crop fires are burning across Punjab and Haryana: ' + nF + ' seen in the last 48 hours.';
   else if (T > app.D.now) t = 'Forecast: the smoke thins as the fires die down.';

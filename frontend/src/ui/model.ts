@@ -2,6 +2,11 @@
 import { $ } from '../core/util';
 import { app } from '../state';
 
+/** Short legend labels so five methods fit the chart width. */
+function legendName(n: string): string {
+  return n.replace(' (last value)', '').replace(', bias-corrected', ' corrected').replace('Same hour yesterday', 'Yesterday');
+}
+
 export function initModel(): void {
   const MODEL = app.D.model;
   const best = [0, 1, 2].map((j) => Math.min(...MODEL.map((m) => m.mae[j])));
@@ -24,10 +29,18 @@ export function initModel(): void {
   });
   let lx = L;
   MODEL.forEach((m) => {
-    s += '<rect x="' + lx + '" y="4" width="10" height="10" rx="2" fill="' + m.color + '"/><text x="' + (lx + 15) + '" y="13" font-size="11" fill="rgba(238,242,232,.7)" font-family="Lexend,sans-serif">' + m.name.replace(' (last value)', '') + '</text>';
-    lx += m.name.length * 5.6 + 34;
+    s += '<rect x="' + lx + '" y="4" width="10" height="10" rx="2" fill="' + m.color + '"/><text x="' + (lx + 15) + '" y="13" font-size="11" fill="rgba(238,242,232,.7)" font-family="Lexend,sans-serif">' + legendName(m.name) + '</text>';
+    lx += legendName(m.name).length * 5.6 + 34;
   });
   $('barSvg').innerHTML = s;
+  // section copy from the backtest
+  const BT = app.D.backtest;
+  const head = document.querySelector('#model .sec-head');
+  if (head) {
+    head.querySelector('.eyebrow')!.textContent = BT.eyebrow;
+    head.querySelector('.lede')!.textContent = BT.lede;
+  }
+  document.querySelectorAll<HTMLElement>('#model .notes .fact p').forEach((p, k) => { if (BT.notes[k]) p.textContent = BT.notes[k]; });
   // data-source notes in the footer
   const spans = document.querySelectorAll('footer > span');
   if (spans[1]) spans[1].textContent = app.D.footer;

@@ -8972,5 +8972,29 @@
    }
   }
  },
- "runtime_minutes": 63.6
+ "runtime_minutes": 63.6,
+ "band_coverage_80_calibrated": {
+  "method": "split-conformal (CQR) per horizon bucket; fold k uses scores from folds before k",
+  "coverage_before": {
+   "overall": 0.755,
+   "1-6 h": 0.75,
+   "7-24 h": 0.759,
+   "25-72 h": 0.755
+  },
+  "coverage_after": {
+   "overall": 0.841,
+   "1-6 h": 0.826,
+   "7-24 h": 0.838,
+   "25-72 h": 0.856,
+   "monsoon (Jun-Sep)": 0.86,
+   "post-monsoon (Oct-Nov)": 0.797,
+   "pre-monsoon (Mar-May)": 0.851,
+   "winter (Dec-Feb)": 0.822
+  },
+  "final_q_all_folds": {
+   "1-6 h": 1.07,
+   "7-24 h": 1.34,
+   "25-72 h": 1.92
+  }
+ }
 }

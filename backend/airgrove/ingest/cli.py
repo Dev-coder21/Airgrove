@@ -86,3 +86,18 @@ def backtest() -> None:
     from ..backtest import run
 
     run(log=lambda m: print(m, flush=True))
+
+
+def final() -> None:
+    from ..calibrate import run as calibrate
+    from ..forecast import run as forecast
+
+    log = lambda m: print(m, flush=True)  # noqa: E731
+    log(f"calibration: {calibrate()['coverage_after']}")
+    forecast(log=log)
+
+
+def export() -> None:
+    from ..export import write
+
+    write(log=lambda m: print(m, flush=True))

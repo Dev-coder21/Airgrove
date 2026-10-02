@@ -112,3 +112,20 @@
   from stitched short-range forecasts, so long-horizon skill is somewhat optimistic for both.
 - To check next: why fires add nothing (FIRMS latency, 600 km/±45° too broad, smoke transport
   > 72 h?); widen the band (conformal calibration per horizon); Delhi-specific features.
+
+## Step 6: calibration, final model, API/export, real-data site, README
+- Conformal band (CQR per horizon bucket, month k calibrated on months < k, no retraining):
+  coverage 75.5% → 84.1% (1-6 h 82.6, 7-24 h 83.8, 25-72 h 85.6; post-monsoon 79.7). Slightly
+  wide in the monsoon. `reports/calibration.json`; final q from all folds (1.1 / 1.3 / 1.9 ug/m3).
+- Final model (`python tasks.py final`): national p10/p50/p90 on all data (3 M rows), models in
+  data/forecast/. "Now" = 2026-09-29 13:30 UTC (19:00 IST). Forecasts for 140 of 177 ready cities
+  (116 at now, 24 from their latest complete hour within 6 h, ending up to 6 h early; the site
+  holds the last value over that tail). 37 lack recent complete history → observed only.
+- API (`python tasks.py api`) and static export (`python tasks.py export`, frontend/public/data:
+  cities, series/<id>, map, fires, model/report, bundle) share one builder. The site loads
+  bundle.json; `?demo` = sample data; `?api=<origin>` = live API.
+- Site copy from data: latest-reading labels ("Latest · 19:00"), rankings (scrolling list), fire
+  counts (Punjab & Haryana box), captions, "× 24-hour standard", model table/bars/notes, card
+  back (scope + calibrated coverage). 60 µg/m³ labelled as the 24-hour standard.
+- To check: visual pass of the real-data site in a browser (animations were not visible in my
+  headless checks); GitHub Pages deploy not set up yet; frontend bundle is 690 kB (three.js).

@@ -92,7 +92,25 @@ def backtest() -> int:
     return py("-c", "from airgrove.ingest.cli import backtest; backtest()")
 
 
+def final() -> int:
+    """Calibrate bands from saved folds, train the final model, forecast the next 72 h."""
+    return py("-c", "from airgrove.ingest.cli import final; final()")
+
+
+def export() -> int:
+    """Write the API payloads as static JSON to frontend/public/data/."""
+    return py("-c", "from airgrove.ingest.cli import export; export()")
+
+
+def api() -> int:
+    """Serve the API on http://localhost:8000."""
+    return py("-m", "uvicorn", "airgrove.api:app", "--port", "8000", "--app-dir", "backend")
+
+
 COMMANDS = {
+    "final": final,
+    "export": export,
+    "api": api,
     "backtest": backtest,
     "download": download,
     "clean": clean,

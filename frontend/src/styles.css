@@ -380,3 +380,6 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none}
   .gcap{max-width:70%}.gsel{width:210px}}
 @media (max-width:640px){.gsel{display:none}.legend{width:calc(100% - 32px)}.lg-c{display:none}.map-key{display:none}}
 @media (prefers-reduced-motion:reduce){.metal,.ghost{animation:none}}
+
+/* real data has ~140 ranked cities: the list scrolls inside the panel */
+.rk-scroll{max-height:560px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(220,235,210,.2) transparent;margin-right:-6px;padding-right:6px}

@@ -61,7 +61,7 @@ export function placeThumb(): void {
   const x = rX(T);
   thumb.style.left = x + 'px';
   thumbDot.style.top = rY(pmAt(app.city, T)) - 9 + 'px';
-  thumbLabel.textContent = T === app.D.now ? 'Now · ' + fHr.format(tms(T)) : fWk.format(tms(T)) + ' ' + fHr.format(tms(T));
+  thumbLabel.textContent = T === app.D.now ? (app.D.source === 'demo' ? 'Now · ' : 'Latest · ') + fHr.format(tms(T)) : fWk.format(tms(T)) + ' ' + fHr.format(tms(T));
   const half = 48;
   thumbLabel.style.left = (x < half ? half - x : x > RV.w - half ? RV.w - half - x : 0) + 'px';
   track.setAttribute('aria-valuenow', String(T));

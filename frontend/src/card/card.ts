@@ -178,14 +178,15 @@ export function initCard(): Card | null {
     const g = back.getContext('2d')!; base(g);
     txt(g, '▶  HOW SURE ARE WE', 120, 170, 26, 400, '#a9c29a', 6); hline(g, 200);
     txt(g, 'Average error', 120, 330, 92, 300, '#ffffff', -2);
-    txt(g, 'µg/m³, lower is better · Delhi backtest, last 12 months', 122, 385, 24, 300, 'rgba(238,242,232,.6)', 1);
+    txt(g, 'µg/m³, lower is better · ' + app.D.backtest.scope + ', last 12 months', 122, 385, 24, 300, 'rgba(238,242,232,.6)', 1);
+    const step = app.D.model.length > 4 ? 24 : 30, barH = app.D.model.length > 4 ? 16 : 20;
     const HZ = ['1–6 h ahead', '7–24 h ahead', '25–72 h ahead'];
     let y = 490;
     HZ.forEach((hn, j) => {
       txt(g, hn.toUpperCase(), 120, y, 22, 400, 'rgba(238,242,232,.6)', 4); y += 26;
       app.D.model.forEach((m) => {
-        const w = (m.mae[j] / 50) * 560; y += 30;
-        g.fillStyle = m.ours ? '#eef0e4' : hexA(m.color, 0.75); g.fillRect(120, y - 18, w, 20);
+        const w = (m.mae[j] / 50) * 560; y += step;
+        g.fillStyle = m.ours ? '#eef0e4' : hexA(m.color, 0.75); g.fillRect(120, y - 18, w, barH);
         txt(g, m.name.replace(' (last value)', ''), 120 + w + 16, y, 20, m.ours ? 400 : 300, m.ours ? '#ffffff' : 'rgba(238,242,232,.65)', 0);
         txt(g, m.mae[j].toFixed(1), CW - 120, y, 22, m.ours ? 400 : 300, m.ours ? '#ffffff' : 'rgba(238,242,232,.65)', 0, 'right');
       });
@@ -193,9 +194,9 @@ export function initCard(): Card | null {
     });
     hline(g, y - 30);
     txt(g, 'The 80% range held the real', 120, y + 36, 40, 300, '#ffffff', 0);
-    txt(g, 'value 78% of the time.', 120, y + 86, 40, 300, '#ffffff', 0);
+    txt(g, 'value ' + Math.round(100 * app.D.backtest.coverage) + '% of the time.', 120, y + 86, 40, 300, '#ffffff', 0);
     txt(g, 'AIRGROVE  ·  MODEL CARD', 120, 1262, 26, 400, '#a9c29a', 6);
-    txt(g, 'Backtest shown for Delhi in this demo', 120, 1298, 20, 300, 'rgba(238,242,232,.45)', 1);
+    txt(g, app.D.source === 'demo' ? 'Backtest shown for Delhi in this demo' : 'Backtest across ' + app.D.backtest.scope + ', Oct 2025 – Sep 2026', 120, 1298, 20, 300, 'rgba(238,242,232,.45)', 1);
     tB.needsUpdate = true;
   }
 
