@@ -182,29 +182,40 @@ Forecast-ready cities, 2025-02-01 00:00 IST to the latest reading. `% hours` = c
 | Virar | Maharashtra | 1 | 1 | 12,207 | 84.6 | 83.5 | 167 | 4 | 57 | 5 |
 | Visakhapatnam | Andhra Pradesh | 1 | 1 | 12,469 | 86.8 | 85.8 | 155 | 0 | 0 | 0 |
 
+# Pusa (Delhi) vs the Delhi median
+
+Each station against the median of Delhi's other stations, hour by hour, cleaned data. Flag = |monthly median difference| > 30% for 3+ consecutive months.
+
+| Station | Hours | Median difference | Months > 30% | Longest run | Correlation | Flag |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Pusa, Delhi - IMD | 11,443 | -16.4% | 1 of 20 | 1 | 0.91 | ok |
+| Pusa, Delhi - DPCC | 12,834 | -8.1% | 0 of 20 | 0 | 0.93 | ok |
+
+For context, 9 of 38 Delhi stations are flagged by the same test: IGI Airport (T3), Delhi - IMD, Jawaharlal Nehru Stadium, Delhi - DPCC, Mandir Marg, New Delhi - DPCC, NSIT Dwarka, Delhi - CPCB, Shadipur, Delhi - CPCB, Sirifort, Delhi - CPCB, Bawana, Delhi - DPCC, Anand Vihar, New Delhi - DPCC, Jahangirpuri, Delhi - DPCC.
+
 # Fire points by month (IST)
 
-VIIRS, 70-85E 24-33N. S-NPP, with NOAA-20 on days S-NPP has no data (column NOAA-20).
+VIIRS, 70-85E 24-33N. NOAA-20 throughout; S-NPP only on NOAA-20 gap days (column S-NPP).
 
-| Month | Fire points | Sum FRP (MW) | Punjab/Haryana box (<=77.5E, >=29N) | NOAA-20 |
+| Month | Fire points | Sum FRP (MW) | Punjab/Haryana box (<=77.5E, >=29N) | S-NPP |
 | --- | ---: | ---: | ---: | ---: |
-| 2025-02 | 11,662 | 59,377 | 4,653 | 0 |
-| 2025-03 | 18,709 | 106,014 | 2,620 | 0 |
-| 2025-04 | 58,149 | 389,349 | 6,559 | 0 |
-| 2025-05 | 47,069 | 294,134 | 33,119 | 0 |
-| 2025-06 | 5,220 | 28,602 | 3,837 | 0 |
-| 2025-07 | 973 | 4,617 | 853 | 123 |
-| 2025-08 | 428 | 1,645 | 262 | 0 |
-| 2025-09 | 1,110 | 4,205 | 741 | 0 |
-| 2025-10 | 13,872 | 66,033 | 9,737 | 0 |
-| 2025-11 | 29,730 | 138,665 | 10,777 | 0 |
-| 2025-12 | 13,699 | 49,481 | 1,951 | 0 |
-| 2026-01 | 7,266 | 31,303 | 1,772 | 0 |
-| 2026-02 | 10,716 | 51,454 | 3,987 | 0 |
-| 2026-03 | 10,169 | 51,588 | 1,922 | 934 |
-| 2026-04 | 68,548 | 446,348 | 6,633 | 6,225 |
-| 2026-05 | 45,640 | 248,792 | 26,874 | 45,640 |
-| 2026-06 | 7,418 | 34,399 | 5,713 | 419 |
-| 2026-07 | 1,858 | 8,512 | 1,606 | 212 |
-| 2026-08 | 583 | 2,372 | 452 | 7 |
-| 2026-09 | 1,020 | 3,018 | 602 | 0 |
+| 2025-02 | 12,390 | 62,042 | 4,714 | 0 |
+| 2025-03 | 19,979 | 108,300 | 2,741 | 0 |
+| 2025-04 | 56,474 | 373,642 | 6,515 | 0 |
+| 2025-05 | 48,376 | 292,499 | 32,903 | 0 |
+| 2025-06 | 5,913 | 32,181 | 4,423 | 259 |
+| 2025-07 | 930 | 5,762 | 761 | 0 |
+| 2025-08 | 410 | 1,490 | 252 | 0 |
+| 2025-09 | 1,085 | 3,875 | 686 | 0 |
+| 2025-10 | 13,497 | 62,137 | 9,373 | 0 |
+| 2025-11 | 33,258 | 151,612 | 11,752 | 0 |
+| 2025-12 | 14,222 | 52,746 | 2,167 | 0 |
+| 2026-01 | 7,870 | 32,261 | 1,940 | 0 |
+| 2026-02 | 12,653 | 65,401 | 4,265 | 572 |
+| 2026-03 | 9,685 | 47,721 | 2,119 | 0 |
+| 2026-04 | 68,950 | 431,825 | 6,508 | 0 |
+| 2026-05 | 45,640 | 248,792 | 26,874 | 0 |
+| 2026-06 | 7,998 | 37,641 | 6,119 | 0 |
+| 2026-07 | 2,182 | 9,919 | 1,913 | 0 |
+| 2026-08 | 655 | 2,637 | 460 | 0 |
+| 2026-09 | 1,026 | 2,940 | 560 | 0 |

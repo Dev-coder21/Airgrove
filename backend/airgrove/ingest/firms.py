@@ -67,39 +67,53 @@ def _days(a: date, b: date) -> list[date]:
     return [a + timedelta(days=i) for i in range((b - a).days + 1)]
 
 
+PARTIAL_GAP_RATIO = 0.3  # a NOAA-20 day with < 30% of S-NPP's detections (S-NPP >= 50) is a gap
+PARTIAL_GAP_MIN = 50
+
+
 def download_fires(start: date, end: date, log=print) -> pd.DataFrame:
-    """S-NPP for every day; on days S-NPP has no detections at all over the box (a satellite
-    data gap, e.g. 29 Apr - 2 Jun 2026), NOAA-20 for that day instead. Never both on one day."""
+    """One consistent source: NOAA-20 VIIRS everywhere (it has data on every day of the period);
+    S-NPP only on NOAA-20's own gap days: days with no NOAA-20 data, or with < 30% of S-NPP's
+    detections (missing granules). Never both satellites on the same day, so nothing is counted
+    twice. `source` records the product of each detection."""
     key = _key()
     http = CachedGet("firms", per_min=60)
     av = availability(http, key)
-    df = pd.concat(_fetch(http, key, "SNPP", start, end, av["VIIRS_SNPP_SP"][1]), ignore_index=True)
-    have = set(pd.to_datetime(df["acq_date"]).dt.date)
-    gaps = [d for d in _days(start, end) if d not in have]
-    # group gap days into runs and fetch NOAA-20 for them
-    runs: list[list[date]] = []
-    for d in gaps:
-        if runs and (d - runs[-1][-1]).days == 1:
-            runs[-1].append(d)
-        else:
-            runs.append([d])
-    extra = []
-    for r in runs:
-        extra += _fetch(http, key, "NOAA20", r[0], r[-1], av["VIIRS_NOAA20_SP"][1])
-    if extra:
-        x = pd.concat(extra, ignore_index=True)
-        x = x[pd.to_datetime(x["acq_date"]).dt.date.isin(set(gaps))]
-        df = pd.concat([df, x], ignore_index=True)
+    n20 = pd.concat(
+        _fetch(http, key, "NOAA20", start, end, av["VIIRS_NOAA20_SP"][1]), ignore_index=True
+    )
+    snpp = pd.concat(
+        _fetch(http, key, "SNPP", start, end, av["VIIRS_SNPP_SP"][1]), ignore_index=True
+    )
+    for df in (n20, snpp):
+        df["day"] = pd.to_datetime(df["acq_date"]).dt.date
+    cn, cs = n20.groupby("day").size(), snpp.groupby("day").size()
+    gaps = []
+    for d in _days(start, end):
+        n, s = int(cn.get(d, 0)), int(cs.get(d, 0))
+        if n == 0 and s > 0:
+            gaps.append((d, "no NOAA-20 data", n, s))
+        elif s >= PARTIAL_GAP_MIN and n < PARTIAL_GAP_RATIO * s:
+            gaps.append((d, "NOAA-20 partial", n, s))
+    gap_days = {g[0] for g in gaps}
+    df = pd.concat(
+        [n20[~n20["day"].isin(gap_days)], snpp[snpp["day"].isin(gap_days)]], ignore_index=True
+    )
     log(
-        f"  FIRMS: {len(gaps)} S-NPP gap days filled from NOAA-20 "
-        f"({', '.join(f'{r[0]}..{r[-1]}' for r in runs if len(r) > 2)}); "
-        f"requests {http.requests_made}, cache {http.cache_hits}"
+        f"  FIRMS: NOAA-20 primary; S-NPP on {len(gaps)} gap days: "
+        + "; ".join(f"{d} ({why}: {n} vs {s})" for d, why, n, s in gaps)
+        + f" | requests {http.requests_made}, cache {http.cache_hits}"
     )
     t = df["acq_time"].astype(int).astype(str).str.zfill(4)
     df["ts_utc"] = pd.to_datetime(df["acq_date"] + " " + t.str[:2] + ":" + t.str[2:], utc=True)
     df = df.rename(columns={"latitude": "lat", "longitude": "lon"})
     keep = ["ts_utc", "lat", "lon", "frp", "confidence", "daynight", "source"]
-    df = df[keep].drop_duplicates(["ts_utc", "lat", "lon"]).sort_values("ts_utc")
+    df = (
+        df[keep]
+        .astype({"confidence": str})
+        .drop_duplicates(["ts_utc", "lat", "lon"])
+        .sort_values("ts_utc")
+    )
     OUT.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUT / "fires.parquet", index=False)
     return df

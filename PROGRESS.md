@@ -51,7 +51,10 @@
 - Two-sensor stations (292): the second PM2.5 sensor is an older instrument whose data ends by
   Oct 2022; the current sensor starts Feb 2025. Never overlap; we use only the current sensor
   (one sensor per station, rows unique on (sensor, hour)). Pusa IMD and Pusa DPCC share
-  coordinates but are different instruments (r = 0.36, MAE 25 ug/m3), so both are kept.
+  coordinates but are different instruments (clean data: r = 0.88, median |diff| 15 ug/m3), so
+  both are kept. Neither disagrees persistently with the Delhi median (r 0.91 / 0.93; IMD reads
+  16% low, DPCC 8% low); the check is in `reports/cleaning.md` for all 38 Delhi stations
+  (9 flagged: > 30% off for 3+ consecutive months, e.g. Jahangirpuri +31%, NSIT Dwarka r = 0.53).
 - OpenAQ: 489/492 stations (3 observed-only stations fail server-side every time; logged,
   retried on the next run), 4.59 M station-hours, ~7,800 requests.
 - Weather: Open-Meteo historical-forecast, all 257 cities (full period for the 177 ready ones,
@@ -60,8 +63,12 @@
 - CAMS: available **2022-08-04 → today+5 d**; downloaded for the 177 cities. Only a stitched
   short-lead series exists (`pm2_5_previous_day1..3` are empty), so the CAMS baseline is
   optimistic at 25-72 h. Say so in the backtest.
-- Fires: VIIRS S-NPP 2025-01-29 → 2026-09-29, 354,917 points; S-NPP has no data on 47 days
-  (mainly 28 Apr - 2 Jun 2026), filled day-by-day from NOAA-20 (never both on one day).
+- Fires (revised, step 4b): **NOAA-20 VIIRS is the single source**: it has data on all 606
+  days 2025-01-29 → 2026-09-29 (median daily count = S-NPP's). S-NPP fills only NOAA-20's own
+  gaps: no zero days, 2 partial days (2025-06-21: 45 vs 259; 2026-02-09: 166 vs 572). Never two
+  satellites on one day, so no de-duplication needed; `source` column per detection.
+  364,294 points. Monthly before/after in `reports/fires_before_after.csv` (+3% overall).
+  (S-NPP itself is missing 47 days, incl. 28 Apr - 2 Jun 2026.)
 - Cleaning (177 cities): median 84.5% of hours have a city value (range 33-91%); 3,711 stuck
   runs (70,037 station-hours) removed; 371 out-of-range values; 31,846 single-hour gaps filled.
 - **Midnight:** 00:00 IST has ~9% fewer station-hours than other hours. Traced to the source:

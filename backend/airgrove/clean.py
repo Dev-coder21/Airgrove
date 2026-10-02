@@ -165,12 +165,14 @@ def write_report() -> str:
     f = con.execute(
         """SELECT strftime(ts_utc, '%Y-%m') AS month, count(*) AS n, round(sum(frp)) AS frp,
                   sum(CASE WHEN lon <= 77.5 AND lat >= 29 THEN 1 ELSE 0 END) AS punjab_haryana,
-                  sum(CASE WHEN source LIKE '%NOAA20%' THEN 1 ELSE 0 END) AS noaa20
+                  sum(CASE WHEN source LIKE '%SNPP%' THEN 1 ELSE 0 END) AS snpp
            FROM fires
            WHERE ts_utc >= TIMESTAMPTZ '2025-02-01 00:00:00+05:30'
              AND ts_utc < (SELECT max(ts_utc) FROM pm25_city) + INTERVAL 1 HOUR
            GROUP BY 1 ORDER BY 1"""
     ).df()
+    delhi = station_vs_city(con, "Delhi")
+    pusa = delhi[delhi.station.str.startswith("Pusa")]
     con.close()
     out = [
         "# Cleaning summary",
@@ -191,18 +193,79 @@ def write_report() -> str:
         )
     out += [
         "",
+        "# Pusa (Delhi) vs the Delhi median",
+        "",
+        "Each station against the median of Delhi's other stations, hour by hour, cleaned data. "
+        f"Flag = |monthly median difference| > {BIAS_FLAG:.0%} for {PERSIST_MONTHS}+ consecutive months.",
+        "",
+        "| Station | Hours | Median difference | Months > 30% | Longest run | Correlation | Flag |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for r in pusa.itertuples():
+        out.append(
+            f"| {r.station} | {r.hours:,} | {r.median_rel_diff_pct:+.1f}% | "
+            f"{r.months_over_30pct} of {r.months} | {r.longest_run_months} | {r.corr} | "
+            f"{'**PERSISTENT DISAGREEMENT**' if r.flag else 'ok'} |"
+        )
+    flagged = delhi[delhi.flag]
+    out.append(
+        f"\nFor context, {len(flagged)} of {len(delhi)} Delhi stations are flagged by the same test"
+        + (": " + ", ".join(flagged.station) if len(flagged) else "")
+        + "."
+    )
+    out += [
+        "",
         "# Fire points by month (IST)",
         "",
-        "VIIRS, 70-85E 24-33N. S-NPP, with NOAA-20 on days S-NPP has no data (column NOAA-20).",
+        "VIIRS, 70-85E 24-33N. NOAA-20 throughout; S-NPP only on NOAA-20 gap days (column S-NPP).",
         "",
-        "| Month | Fire points | Sum FRP (MW) | Punjab/Haryana box (<=77.5E, >=29N) | NOAA-20 |",
+        "| Month | Fire points | Sum FRP (MW) | Punjab/Haryana box (<=77.5E, >=29N) | S-NPP |",
         "| --- | ---: | ---: | ---: | ---: |",
     ]
     for r in f.itertuples():
         out.append(
-            f"| {r.month} | {r.n:,} | {int(r.frp):,} | {int(r.punjab_haryana):,} | {int(r.noaa20):,} |"
+            f"| {r.month} | {r.n:,} | {int(r.frp):,} | {int(r.punjab_haryana):,} | {int(r.snpp):,} |"
         )
     text = "\n".join(out) + "\n"
     (ROOT / "reports" / "cleaning.md").write_text(text, encoding="utf-8")
     s.to_json(ROOT / "reports" / "cleaning.json", orient="records", indent=1)
     return text
+
+
+BIAS_FLAG = 0.30  # |monthly median relative difference| above this = disagreeing month
+PERSIST_MONTHS = 3  # this many consecutive disagreeing months = persistent
+
+
+def station_vs_city(con: duckdb.DuckDBPyConnection, city: str) -> pd.DataFrame:
+    """Each station against the median of the city's *other* stations, hour by hour (clean data).
+
+    rel = (station - others' median) / others' median, summarised per IST month. A station is
+    flagged when |monthly median rel| > 30% for 3+ consecutive months.
+    """
+    df = con.execute(
+        """SELECT s.name, p.sensor_id, p.ts_utc, p.value FROM pm25_station p
+           JOIN stations s USING (sensor_id) WHERE s.city = ? AND p.ok""",
+        [city],
+    ).df()
+    wide = df.pivot_table(index="ts_utc", columns="name", values="value")
+    rows = []
+    for name in wide.columns:
+        others = wide.drop(columns=name).median(axis=1)
+        rel = ((wide[name] - others) / others).where(others > 5).dropna()
+        m = rel.groupby(rel.index.tz_convert("Asia/Kolkata").strftime("%Y-%m")).median()
+        bad = (m.abs() > BIAS_FLAG).astype(int)
+        longest = int(bad.groupby((bad == 0).cumsum()).sum().max()) if len(bad) else 0
+        pair = pd.concat([wide[name], others], axis=1).dropna()
+        rows.append(
+            {
+                "station": name,
+                "hours": int(rel.size),
+                "median_rel_diff_pct": round(100 * rel.median(), 1),
+                "months_over_30pct": int(bad.sum()),
+                "months": int(bad.size),
+                "longest_run_months": longest,
+                "corr": round(pair.iloc[:, 0].corr(pair.iloc[:, 1]), 2) if len(pair) > 24 else None,
+                "flag": longest >= PERSIST_MONTHS,
+            }
+        )
+    return pd.DataFrame(rows).sort_values("median_rel_diff_pct")
