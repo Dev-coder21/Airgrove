@@ -75,15 +75,24 @@ export function tickPlay(dt: number): void {
 }
 
 /* ---------- city list ---------- */
-function renderCityList(list: HTMLElement): void {
+/** Options below the search box; `query` filters by name (case- and accent-insensitive). */
+function renderCityList(list: HTMLElement, query = ''): void {
   let html = '';
   const R = ready();
-  const sorted = [app.D.cities[0]].concat(R.filter((c) => c !== app.D.cities[0]).sort((a, b) => (a.name < b.name ? -1 : 1)));
+  const norm = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const q = norm(query.trim());
+  let sorted = [app.D.cities[0]].concat(R.filter((c) => c !== app.D.cities[0]).sort((a, b) => (a.name < b.name ? -1 : 1)));
+  if (q) {
+    sorted = sorted.filter((c) => norm(c.name).includes(q))
+      .sort((a, b) => Number(!norm(a.name).startsWith(q)) - Number(!norm(b.name).startsWith(q)));
+  }
+  if (!sorted.length) html = '<li class="city-none">No city with a forecast matches “' + query.replace(/[<&]/g, '') + '”</li>';
   sorted.forEach((c) => {
     const pm = pmAt(c, app.T);
-    html += '<li><button role="option" data-id="' + c.id + '" aria-selected="' + (c === app.city) + '"><span class="dot" style="background:' + CATS[catIdx(pm)].c + '"></span>' + c.name + '<span class="v">' + Math.round(pm) + '</span></button></li>';
+    html += '<li class="opt"><button role="option" data-id="' + c.id + '" aria-selected="' + (c === app.city) + '"><span class="dot" style="background:' + CATS[catIdx(pm)].c + '"></span>' + c.name + '<span class="v">' + Math.round(pm) + '</span></button></li>';
   });
-  list.innerHTML = html;
+  list.querySelectorAll('li:not(.city-search-li)').forEach((li) => li.remove());
+  list.insertAdjacentHTML('beforeend', html);
 }
 
 let dimEl: HTMLElement, nav: HTMLElement;
@@ -102,13 +111,31 @@ export function initControls(): void {
 
   const cityList = $('cityList'), cityBtn = $('cityBtn');
   $('cityName').textContent = app.city.name;
+  // search box at the top of the list (stays put while the options below re-render)
+  const searchLi = document.createElement('li');
+  searchLi.className = 'city-search-li';
+  searchLi.innerHTML = '<input class="city-search" type="search" placeholder="Search a city" aria-label="Search a city" autocomplete="off" spellcheck="false">';
+  cityList.prepend(searchLi);
+  const search = searchLi.querySelector('input') as HTMLInputElement;
+  search.addEventListener('input', () => renderCityList(cityList, search.value));
+  search.addEventListener('keydown', (e) => {
+    const first = cityList.querySelector<HTMLElement>('li.opt button');
+    if (e.key === 'Enter' && first) { e.preventDefault(); first.click(); }
+    else if (e.key === 'ArrowDown' && first) { e.preventDefault(); first.focus(); }
+    else if (e.key === 'Escape') { openList(false); cityBtn.focus(); }
+    e.stopPropagation();
+  });
   function openList(open: boolean): void {
     cityList.hidden = !open;
     cityBtn.setAttribute('aria-expanded', String(open));
     if (open) {
+      search.value = '';
       renderCityList(cityList);
       const b = cityList.querySelector<HTMLElement>('[aria-selected="true"]');
-      if (b) b.focus();
+      if (b) b.scrollIntoView({ block: 'nearest' });
+      // focus the search on devices with a keyboard; on touch, don't pop the keyboard open
+      if (window.matchMedia('(pointer: fine)').matches) search.focus({ preventScroll: true });
+      else if (b) b.focus({ preventScroll: true });
     }
   }
   cityBtn.addEventListener('click', (e) => { e.stopPropagation(); openList(cityList.hidden); });
@@ -120,10 +147,10 @@ export function initControls(): void {
     cityBtn.focus();
   });
   cityList.addEventListener('keydown', (e) => {
-    const items = [].slice.call(cityList.querySelectorAll('button')) as HTMLElement[],
+    const items = [].slice.call(cityList.querySelectorAll('li.opt button')) as HTMLElement[],
       k = items.indexOf(document.activeElement as HTMLElement);
     if (e.key === 'ArrowDown') { (items[k + 1] || items[0]).focus(); e.preventDefault(); }
-    else if (e.key === 'ArrowUp') { (items[k - 1] || items[items.length - 1]).focus(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { (k <= 0 ? search : items[k - 1]).focus(); e.preventDefault(); }
     else if (e.key === 'Escape') { openList(false); cityBtn.focus(); }
   });
   document.addEventListener('click', (e) => {
