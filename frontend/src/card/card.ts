@@ -5,14 +5,14 @@
 import * as THREE from 'three';
 import { CATS, catIdx } from '../core/aqi';
 import { fDay, fHr, fWk, fYr, tms } from '../core/time';
-import { $, clamp, hexA, reduce } from '../core/util';
+import { $, clamp, hexA, reduce, pixelRatio } from '../core/util';
 import { app, pmAt, ready, type Card } from '../state';
 
 export function initCard(): Card | null {
   const stage = $('cardStage'), cv = $('cardCv') as HTMLCanvasElement;
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return null; }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(pixelRatio());
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, 1, 0.1, 20); cam.position.set(0, 0, 3.35);
   const CW = 1024, CH = 1400;
   function mk(): HTMLCanvasElement { const c = document.createElement('canvas'); c.width = CW; c.height = CH; return c; }

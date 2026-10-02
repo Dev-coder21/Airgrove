@@ -1,5 +1,5 @@
 /** Opening: the "Airgrove" wordmark lit by a growing root network, a flower opens in the "o". */
-import { $, clamp, reduce, rng } from '../core/util';
+import { $, clamp, reduce, rng, pixelRatio } from '../core/util';
 import { app } from '../state';
 
 interface Target { x: number; y: number; li: number; taken: boolean; lit: number; }
@@ -16,7 +16,7 @@ export function initIntro(): { tick(now: number): void } | null {
   const TEXT = 'Airgrove';
   app.INTRO_END = performance.now() + 4200;
   function setup(): void {
-    dpr = Math.min(window.devicePixelRatio || 1, 2); W = window.innerWidth; H = window.innerHeight;
+    dpr = pixelRatio(); W = window.innerWidth; H = window.innerHeight;
     cv.width = W * dpr; cv.height = H * dpr;
     const fs = Math.round(clamp(W * 0.15, 58, 168));
     font = '300 ' + fs + 'px Lexend, ui-sans-serif, system-ui, sans-serif';

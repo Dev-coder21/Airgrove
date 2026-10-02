@@ -1,5 +1,14 @@
 export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/**
+ * Pixel ratio for WebGL/canvas. Desktop keeps the reference's cap of 2; phones and touch
+ * screens are capped at 1.5, which is visually indistinguishable there and much faster.
+ */
+export function pixelRatio(): number {
+  const small = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 640;
+  return Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+}
+
 export function $<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }

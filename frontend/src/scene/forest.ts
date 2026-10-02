@@ -4,7 +4,7 @@
  */
 import * as THREE from 'three';
 import { hIST } from '../core/time';
-import { $, clamp, reduce } from '../core/util';
+import { $, clamp, reduce, pixelRatio } from '../core/util';
 import { app } from '../state';
 
 type Group = THREE.Group & { userData: Record<string, any> };
@@ -18,7 +18,7 @@ export function initForest(): { tick(dt: number): void } | null {
     return null;
   }
   const V3 = THREE.Vector3, SPEED = reduce ? 0.2 : 1;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(pixelRatio());
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;

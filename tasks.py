@@ -107,7 +107,16 @@ def api() -> int:
     return py("-m", "uvicorn", "airgrove.api:app", "--port", "8000", "--app-dir", "backend")
 
 
+def preview() -> int:
+    """Production build (what GitHub Pages will serve) on http://localhost:4173, also reachable
+    from a phone on the same Wi-Fi at http://<this PC's IP>:4173."""
+    return npm("run", "build") or npm(
+        "run", "preview", "--", "--port", "4173", "--strictPort", "--host"
+    )
+
+
 COMMANDS = {
+    "preview": preview,
     "final": final,
     "export": export,
     "api": api,

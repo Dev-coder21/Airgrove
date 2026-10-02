@@ -22,7 +22,13 @@ import { drawRiver, initRiver } from './ui/river';
 import { initScrollFx, initVine, tickScrollFx } from './ui/scroll';
 
 async function boot(): Promise<void> {
+  // the opening wordmark needs no data: start it while the data file loads
+  const intro = initIntro();
+  let booted = false;
+  const pre = (now: number) => { if (booted) return; if (intro) intro.tick(now); requestAnimationFrame(pre); };
+  requestAnimationFrame(pre);
   const D = await loadData();
+  booted = true;
   app.D = D;
   app.city = D.cities[0];
   app.T = D.now;
@@ -37,7 +43,6 @@ async function boot(): Promise<void> {
   const forest = initForest();
   initChromeButtons();
   initHeadings();
-  const intro = initIntro();
   app.PW = initHeadline();
   app.CARD = initCard();
   const vine = initVine();

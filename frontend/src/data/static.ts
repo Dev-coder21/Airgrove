@@ -77,9 +77,9 @@ export async function staticData(url: string): Promise<AirData> {
   const fires: Fire[] = b.fires.map((f) => ({ lat: f.lat, lon: f.lon, i: f.i, frp: f.frp, pbhr: f.pbhr, ph: hash(`${f.lat},${f.lon},${f.i}`) * 6.28 }));
   return {
     source: 'static',
-    tag: `Latest reading ${fmt.format(nowMs)} IST`,
+    tag: `Latest ${fmt.format(nowMs)}`,
     footer: `Latest reading ${fmt.format(nowMs)} IST (CPCB data reaches OpenAQ about 1.5 days late). Forecast and backtest by Airgrove; ${b.model.scope}.`,
-    cardSource: b.source_note,
+    cardSource: 'CPCB stations via OpenAQ · real data',
     hours: HRS, now: NOW, nowMs, cities, fires, smoke: Float32Array.from(b.smoke),
     model: b.model.rows.map((m) => ({ name: m.name, mae: m.mae, color: m.color, ours: m.ours })),
     backtest: {

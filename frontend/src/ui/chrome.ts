@@ -1,5 +1,5 @@
 /** Liquid-chrome WebGL2 buttons (.metal and .ghost): facets, spectral ring, pointer scratches, halo. */
-import { reduce } from '../core/util';
+import { reduce, pixelRatio } from '../core/util';
 import { app } from '../state';
 
 const VS = '#version 300 es\nin vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
@@ -93,7 +93,7 @@ function make(btn: HTMLElement): void {
   const st = { w: 0, h: 0, dpr: 1, hover: 0, ht: 0, press: 0, pt: 0, ptr: [0, 0], trail: [] as number[][], vis: true, t0: performance.now() },
     TR = new Float32Array(72);
   function size(): void {
-    st.dpr = Math.min(window.devicePixelRatio || 1, 2); st.w = btn.offsetWidth; st.h = btn.offsetHeight;
+    st.dpr = pixelRatio(); st.w = btn.offsetWidth; st.h = btn.offsetHeight;
     cv.width = Math.round((st.w + 2 * M) * st.dpr); cv.height = Math.round((st.h + 2 * M) * st.dpr);
   }
   size();

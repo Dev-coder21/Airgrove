@@ -1,5 +1,5 @@
 /** Hero headline as a particle wordmark that re-forms when the AQI category changes. */
-import { clamp, reduce, rng } from '../core/util';
+import { clamp, reduce, rng, pixelRatio } from '../core/util';
 import { app, type Particles } from '../state';
 import { headlineEl } from './hero';
 
@@ -18,7 +18,7 @@ export function initHeadline(): Particles | null {
     h1.innerHTML = t.split(' ').map((w) => '<span class="w">' + w + '</span>').join(' ');
     h1.setAttribute('aria-label', t);
     const cs = getComputedStyle(h1), fsz = parseFloat(cs.fontSize), font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, hr = h1.getBoundingClientRect();
-    dpr = Math.min(window.devicePixelRatio || 1, 2); W = Math.ceil(hr.width + PAD * 2); H = Math.ceil(hr.height + PAD * 2);
+    dpr = pixelRatio(); W = Math.ceil(hr.width + PAD * 2); H = Math.ceil(hr.height + PAD * 2);
     cv.width = W * dpr; cv.height = H * dpr;
     const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const c = oc.getContext('2d')!;
     c.font = font; c.textBaseline = 'alphabetic'; c.fillStyle = '#fff';

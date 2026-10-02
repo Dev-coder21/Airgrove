@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { feature } from 'topojson-client';
 import { CATS, catIdx, qOf } from '../core/aqi';
-import { $, clamp, lerp, reduce, rng } from '../core/util';
+import { $, clamp, lerp, reduce, rng, pixelRatio } from '../core/util';
 import type { CitySeries } from '../data';
 import { app, pmAt, smokeAt } from '../state';
 import { setCity } from '../ui/controls';
@@ -17,6 +17,7 @@ interface CityMark {
   cap: THREE.Sprite; halo: THREE.Sprite; grove: THREE.Sprite; lab: HTMLElement; dot: HTMLElement; val: HTMLElement;
   grow: number; delay: number; lastPm: number; kick: number; sx: number; sy: number; face: number;
   pri: number; show: boolean; lx: number; ly: number;
+  ci: number; shown: boolean | null; tf: string; sel: boolean | null;
 }
 
 export function initGlobe(): { refresh(): void; tick(now: number, dt: number): void } | null {
@@ -28,7 +29,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
   }
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return fail(); }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(pixelRatio());
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, 1, 0.05, 60);
   const G = new THREE.Group(); G.rotation.order = 'XYZ'; scene.add(G);
   const D2R = Math.PI / 180, Yax = new THREE.Vector3(0, 1, 0);
@@ -144,8 +145,11 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     const grove = new THREE.Sprite(new THREE.SpriteMaterial({ map: groveTex, color: '#cfe6b4', transparent: true, depthWrite: false }));
     grove.position.copy(n.clone().multiplyScalar(1.008)); G.add(grove);
     const lab = document.createElement('div'); lab.className = 'glabel'; lab.innerHTML = '<i></i><span>' + c.name + '</span><b></b>'; $('glabels').appendChild(lab);
-    return { c, n, pil, cap, halo, grove, lab, dot: lab.querySelector('i')!, val: lab.querySelector('b')!, grow: 0, delay: i * 45, lastPm: -1, kick: 0, sx: 0, sy: 0, face: 0, pri: 0, show: false, lx: 0, ly: 0 };
+    return { c, n, pil, cap, halo, grove, lab, dot: lab.querySelector('i')!, val: lab.querySelector('b')!, grow: 0, delay: i * 45, lastPm: -1, kick: 0, sx: 0, sy: 0, face: 0, pri: 0, show: false, lx: 0, ly: 0, ci: -1, shown: null, tf: '', sel: null };
   });
+  // halos and grove sprites were sized for ~20 cities; with many more they merge into one glow,
+  // so they shrink with the city count (unchanged for <= 25 cities, e.g. the demo)
+  const DENS = clamp(Math.sqrt(25 / Math.max(CM.length, 1)), 0.45, 1);
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.018, 0.022, 40), new THREE.MeshBasicMaterial({ color: '#fff', transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false }));
   G.add(ring);
   // fires and smoke streaks
@@ -234,10 +238,16 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
   $('gIn').addEventListener('click', () => { st.fly = null; st.tDist = clamp(st.tDist * 0.78, 1.28, 4.4); });
   $('gOut').addEventListener('click', () => { st.fly = null; st.tDist = clamp(st.tDist / 0.78, 1.28, 4.4); });
   $('gHome').addEventListener('click', () => { flyTo(HOME.lat, HOME.lon, HOME.dist, 1400); });
+  // reused vectors and a per-frame canvas size: this runs for every city every frame, and
+  // reading clientWidth between DOM writes would force a layout each time
+  const sw = new THREE.Vector3(), sn = new THREE.Vector3(), sc = new THREE.Vector3();
+  let cvW = cv.clientWidth, cvH = cv.clientHeight;
   function screenOf(m: CityMark, out: { x: number; y: number; face: number }): typeof out {
-    const w = m.n.clone().multiplyScalar(1.01).applyMatrix4(G.matrixWorld), nW = m.n.clone().applyQuaternion(G.quaternion);
-    const toCam = cam.position.clone().sub(w).normalize(), face = nW.dot(toCam), p = w.project(cam);
-    out.x = (p.x * 0.5 + 0.5) * cv.clientWidth; out.y = (-p.y * 0.5 + 0.5) * cv.clientHeight; out.face = face;
+    sw.copy(m.n).multiplyScalar(1.01).applyMatrix4(G.matrixWorld);
+    sn.copy(m.n).applyQuaternion(G.quaternion);
+    out.face = sn.dot(sc.copy(cam.position).sub(sw).normalize());
+    sw.project(cam);
+    out.x = (sw.x * 0.5 + 0.5) * cvW; out.y = (-sw.y * 0.5 + 0.5) * cvH;
     return out;
   }
   function pick(x: number, y: number): CityMark | null {
@@ -271,6 +281,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
   function size(): void {
     const w = wrap.clientWidth, h = wrap.clientHeight;
     renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+    cvW = cv.clientWidth; cvH = cv.clientHeight;
   }
   window.addEventListener('resize', size); size();
   if ('IntersectionObserver' in window) {
@@ -301,11 +312,12 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
         const c = m.c, pm = pmAt(c, T), ci = catIdx(pm), qq = qOf(pm), col = CATS[ci].c;
         const gT = clamp((now - st.growT0 - m.delay) / 1100, 0, 1); m.grow += (easeIO(gT) - m.grow) * 0.25;
         const hgt = (0.02 + (Math.min(pm, 420) / 420) * 0.26) * m.grow * (1 + m.kick * 0.25);
-        m.pil.scale.set(1, Math.max(hgt, 0.0001), 1); m.pil.material.color.set(col); m.pil.material.opacity = 0.85 * m.grow;
-        m.cap.position.copy(m.n).multiplyScalar(1.003 + hgt); m.cap.material.color.set(col); m.cap.scale.setScalar(0.02 * zoomK * (0.6 + 0.4 * m.grow)); m.cap.material.opacity = m.grow;
+        if (ci !== m.ci) { m.ci = ci; m.pil.material.color.set(col); m.cap.material.color.set(col); m.halo.material.color.set(col); }
+        m.pil.scale.set(1, Math.max(hgt, 0.0001), 1); m.pil.material.opacity = 0.85 * m.grow;
+        m.cap.position.copy(m.n).multiplyScalar(1.003 + hgt); m.cap.scale.setScalar(0.02 * zoomK * (0.6 + 0.4 * m.grow)); m.cap.material.opacity = m.grow;
         const pulse = 1 + 0.08 * Math.sin(tt * 2 + c.lat);
-        m.halo.material.color.set(col); m.halo.scale.setScalar((0.04 + Math.sqrt(pm) * 0.0045) * zoomK * pulse); m.halo.material.opacity = 0.55 * m.grow;
-        tmpC.copy(CLEAN).lerp(GREY, qq); m.grove.material.color.copy(tmpC); m.grove.material.opacity = (qq < 0.5 ? 1 : 0.7) * m.grow; m.grove.scale.setScalar(0.028 * zoomK * (1 - qq * 0.35));
+        m.halo.scale.setScalar((0.04 + Math.sqrt(pm) * 0.0045) * zoomK * pulse * DENS); m.halo.material.opacity = 0.55 * m.grow;
+        tmpC.copy(CLEAN).lerp(GREY, qq); m.grove.material.color.copy(tmpC); m.grove.material.opacity = (qq < 0.5 ? 1 : 0.7) * m.grow; m.grove.scale.setScalar(0.028 * zoomK * (1 - qq * 0.35) * DENS);
         if (Math.round(pm) !== m.lastPm) {
           if (m.lastPm >= 0 && Math.abs(pm - m.lastPm) > 3) m.kick = 1;
           m.lastPm = Math.round(pm); m.val.textContent = String(m.lastPm); m.dot.style.background = col;
@@ -324,9 +336,14 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
         if (!hit || m.c === city) { placed.push({ x, y, w, h }); m.show = true; m.lx = x; m.ly = y; }
       });
       CM.forEach((m) => {
-        m.lab.style.opacity = m.show ? '1' : '0';
-        if (m.show) m.lab.style.transform = 'translate(' + m.lx.toFixed(1) + 'px,' + m.ly.toFixed(1) + 'px)';
-        m.lab.classList.toggle('sel', m.c === city);
+        // touch the DOM only when something changed (hundreds of labels with real data)
+        if (m.show !== m.shown) { m.shown = m.show; m.lab.style.opacity = m.show ? '1' : '0'; }
+        if (m.show) {
+          const tf = 'translate(' + m.lx.toFixed(1) + 'px,' + m.ly.toFixed(1) + 'px)';
+          if (tf !== m.tf) { m.tf = tf; m.lab.style.transform = tf; }
+        }
+        const isSel = m.c === city;
+        if (isSel !== m.sel) { m.sel = isSel; m.lab.classList.toggle('sel', isSel); }
       });
       const selM = CM.filter((m) => m.c === city)[0];
       if (selM) {
