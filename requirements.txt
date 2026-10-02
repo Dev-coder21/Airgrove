@@ -11,3 +11,4 @@ shap>=0.46
 matplotlib>=3.9
 pytest>=8.3
 ruff>=0.6
+pytz>=2024.1

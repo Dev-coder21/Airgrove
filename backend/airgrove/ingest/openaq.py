@@ -1,4 +1,5 @@
-"""OpenAQ v3 client: rate-limited (<= 50 req/min), every raw response cached on disk.
+"""OpenAQ v3 client: rate-limited (<= 50 req/min and <= 1,900 req/hour), every raw response
+cached on disk (gzipped JSON, written atomically so stopping mid-write never leaves a bad file).
 
 Cached responses are never re-fetched. The cache key is the path plus sorted query params, so
 re-running any job only costs requests for what is missing. Responses that are still "live"
@@ -7,6 +8,7 @@ re-running any job only costs requests for what is missing. Responses that are s
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
@@ -53,7 +55,23 @@ def cache_path(path: str, params: dict[str, Any] | None) -> Path:
     key = json.dumps({"path": path, "params": params or {}}, sort_keys=True, default=str)
     h = hashlib.sha1(key.encode()).hexdigest()
     folder = path.strip("/").split("/")[0] or "root"
-    return CACHE_DIR / folder / h[:2] / f"{h}.json"
+    return CACHE_DIR / folder / h[:2] / f"{h}.json.gz"
+
+
+def read_cache(cp: Path) -> dict | None:
+    if cp.exists():
+        return json.loads(gzip.decompress(cp.read_bytes()))
+    legacy = cp.with_suffix("")  # plain .json from the first coverage run
+    if legacy.exists():
+        return json.loads(legacy.read_text(encoding="utf-8"))
+    return None
+
+
+def write_cache(cp: Path, data: dict) -> None:
+    cp.parent.mkdir(parents=True, exist_ok=True)
+    tmp = cp.with_name(cp.name + ".tmp")
+    tmp.write_bytes(gzip.compress(json.dumps(data).encode(), compresslevel=6))
+    os.replace(tmp, cp)
 
 
 class OpenAQ:
@@ -64,17 +82,19 @@ class OpenAQ:
             raise RuntimeError("OPENAQ_API_KEY is not set in .env")
         self.client = httpx.Client(base_url=BASE_URL, headers={"X-API-Key": key}, timeout=90)
         self.limiter = RateLimiter(max_per_min, 60.0)
+        self.hourly = RateLimiter(1900, 3600.0)  # API cap is 2,000/hour
         self.requests_made = 0
         self.cache_hits = 0
 
     def get(self, path: str, params: dict[str, Any] | None = None, cache: bool = True) -> dict:
         cp = cache_path(path, params)
-        if cache and cp.exists():
+        if cache and (hit := read_cache(cp)) is not None:
             self.cache_hits += 1
-            return json.loads(cp.read_text(encoding="utf-8"))
+            return hit
         backoff = 5.0
         timeouts = 0
         for _attempt in range(6):
+            self.hourly.wait()
             self.limiter.wait()
             try:
                 r = self.client.get(path, params=params)
@@ -105,8 +125,7 @@ class OpenAQ:
             if int(r.headers.get("x-ratelimit-remaining", 60)) <= 2:
                 time.sleep(float(r.headers.get("x-ratelimit-reset", 60)))
             if cache:
-                cp.parent.mkdir(parents=True, exist_ok=True)
-                cp.write_text(json.dumps(data), encoding="utf-8")
+                write_cache(cp, data)
             return data
         raise RuntimeError(f"OpenAQ request failed after retries: {path} {params}")
 

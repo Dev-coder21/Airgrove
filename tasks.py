@@ -75,7 +75,21 @@ def hourcheck() -> int:
     return py("-c", "from airgrove.ingest.cli import hourcheck; hourcheck()")
 
 
+def download() -> int:
+    """OpenAQ history + weather + CAMS + fires (resumable; cached requests are free)."""
+    return py(
+        "-c",
+        "from airgrove.ingest.cli import download_openaq, download_rest; download_openaq(); download_rest()",
+    )
+
+
+def clean() -> int:
+    return py("-c", "from airgrove.ingest.cli import clean; clean()")
+
+
 COMMANDS = {
+    "download": download,
+    "clean": clean,
     "hourcheck": hourcheck,
     "coverage": coverage,
     "setup": setup,

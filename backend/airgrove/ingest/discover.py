@@ -299,7 +299,9 @@ def discover(oa: OpenAQ, log=print) -> dict:
                 "lat": round(sum(s["lat"] for s in sts) / len(sts), 4),
                 "lon": round(sum(s["lon"] for s in sts) / len(sts), 4),
                 "stations": len(sts),
-                "history_start": start.astimezone(IST).strftime("%Y-%m-%d") if start else None,  # IST date
+                "history_start": start.astimezone(IST).strftime("%Y-%m-%d")
+                if start
+                else None,  # IST date
                 "history_start_capped": bool(
                     start and start <= _ts(HISTORY_FROM) + timedelta(days=1)
                 ),

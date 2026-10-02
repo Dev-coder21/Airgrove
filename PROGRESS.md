@@ -44,3 +44,31 @@
   (Belapur→Navi Mumbai, Vatva→Ahmedabad, spellings). NCR cities (Noida, Gurugram, Ghaziabad,
   Faridabad) are kept separate from Delhi. Weather (Open-Meteo) is on whole UTC hours: features
   must be interpolated to the :30 period, decide in step 4.
+
+## Step 4: full download + cleaning
+- Commands: `python tasks.py download` (resumable, cached, safe to stop), `python tasks.py clean`
+  (builds `data/airgrove.duckdb`, writes `reports/cleaning.md` / `.json`).
+- Two-sensor stations (292): the second PM2.5 sensor is an older instrument whose data ends by
+  Oct 2022; the current sensor starts Feb 2025. Never overlap; we use only the current sensor
+  (one sensor per station, rows unique on (sensor, hour)). Pusa IMD and Pusa DPCC share
+  coordinates but are different instruments (r = 0.36, MAE 25 ug/m3), so both are kept.
+- OpenAQ: 489/492 stations (3 observed-only stations fail server-side every time; logged,
+  retried on the next run), 4.59 M station-hours, ~7,800 requests.
+- Weather: Open-Meteo historical-forecast, all 257 cities (full period for the 177 ready ones,
+  15 days for the rest), mapped onto :30 periods (period mean of the interpolated curve; wind via
+  u/v; precipitation split over the two hours).
+- CAMS: available **2022-08-04 → today+5 d**; downloaded for the 177 cities. Only a stitched
+  short-lead series exists (`pm2_5_previous_day1..3` are empty), so the CAMS baseline is
+  optimistic at 25-72 h. Say so in the backtest.
+- Fires: VIIRS S-NPP 2025-01-29 → 2026-09-29, 354,917 points; S-NPP has no data on 47 days
+  (mainly 28 Apr - 2 Jun 2026), filled day-by-day from NOAA-20 (never both on one day).
+- Cleaning (177 cities): median 84.5% of hours have a city value (range 33-91%); 3,711 stuck
+  runs (70,037 station-hours) removed; 371 out-of-range values; 31,846 single-hour gaps filled.
+- **Midnight:** 00:00 IST has ~9% fewer station-hours than other hours. Traced to the source:
+  on 65 nights the raw 15-min CPCB data itself stops ~23:45 IST and resumes ~01:30 IST across
+  165-360 stations (checked IGI Airport T3, 17-18 Dec 2025). Not our windows (they don't fall on
+  month edges). City-level single-hour fill repairs most of them.
+- No city exceeds ~91% because of national outages (1,187 hours with zero stations: data starts
+  18 Feb 2025; big gaps in Jan 2026).
+- To check: the 75%-of-stations rule is strict for small cities (Rourkela 3/3 needed → 33%);
+  some 1-station Haryana cities sit at ~50% over the full period. Consider in step 5.

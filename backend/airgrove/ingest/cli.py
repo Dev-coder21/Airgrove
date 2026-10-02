@@ -51,3 +51,32 @@ def hourcheck(sensor_id: int = 12234787, day0_ist: str = "2026-09-24", days: int
             print(
                 f"  00:00 UTC {(h + timedelta(hours=1)).astimezone(UTC):%d %b} (period {h.astimezone(UTC):%H:%MZ}-{(h + timedelta(hours=1)).astimezone(UTC):%H:%MZ}): {'present' if h in starts else 'MISSING'}"
             )
+
+
+def download_openaq() -> None:
+    from .openaq_history import download
+
+    oa = OpenAQ()
+    download(oa, log=lambda m: print(m, flush=True))
+    print(f"done: requests {oa.requests_made}, cache hits {oa.cache_hits}", flush=True)
+
+
+def download_rest() -> None:
+    """Weather, CAMS and fires (independent of OpenAQ, can run alongside it)."""
+    from .firms import download_fires, period
+    from .openmeteo import download_cams, download_weather
+
+    log = lambda m: print(m, flush=True)  # noqa: E731
+    f = download_fires(*period(), log=log)
+    log(f"fires: {len(f)} detections {f.ts_utc.min()} -> {f.ts_utc.max()}")
+    c = download_cams(log=log)
+    log(f"CAMS: {len(c)} rows, {c.cams_pm25.notna().mean():.1%} non-null")
+    w = download_weather(log=log)
+    log(f"weather: {len(w)} rows")
+
+
+def clean() -> None:
+    from ..clean import build, write_report
+
+    build(log=lambda m: print(m, flush=True))
+    print(write_report().split("# Fire points")[1])
