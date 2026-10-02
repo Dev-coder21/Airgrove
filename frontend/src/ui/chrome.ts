@@ -1,4 +1,6 @@
-/** Liquid-chrome WebGL2 buttons (.metal and .ghost): facets, spectral ring, pointer scratches, halo. */
+/** Liquid-chrome WebGL2 buttons (.metal and .ghost): metallic reflections, facets, pointer scratches,
+ * soft halo and sparkles. No spectral/rainbow colouring; the halo fades out before the canvas edge so
+ * no rectangle shows around the button. */
 import { reduce, pixelRatio } from '../core/util';
 import { app } from '../state';
 
@@ -28,18 +30,12 @@ const FS = [
   ' vec2 facet=(mo-.5)*.07*t*t;',
   ' vec3 n=normalize(vec3(g*slope*1.7+facet+vec2(0.,.22*t),.55+t*.6));',
   ' float px=(uPtr.x/uRes.x-.5)*uHover;vec3 v=vec3(0.,0.,-1.);',
-  ' float k=.06+.06*uHover;',
-  ' vec3 col;col.r=env(reflect(v,normalize(n+vec3(g*k,0.))),px).r;col.g=env(reflect(v,n),px).g;col.b=env(reflect(v,normalize(n-vec3(g*k,0.))),px).b;',
+  ' vec3 col=env(reflect(v,n),px);',
   ' col+=vec3(.05)*(1.-sqrt(md))*t*t;',
-  // spectral ring
-  ' float ang=atan(p.y,p.x);',
-  ' vec3 rainbow=.5+.5*cos(6.2831*(ang/6.2831+uTime*.06+vec3(0.,.33,.67)));',
-  ' float ring=exp(-((t-.40)/.12)*((t-.40)/.12));',
-  ' col=mix(col,col*.55+rainbow*.7,ring*(.30+.40*uHover+.3*uPress));',
   ' col+=vec3(1.)*exp(-(d/(1.2*uDpr))*(d/(1.2*uDpr)))*.35;',
   // ghost: dark glass interior inside a chrome rim
   ' float rim=smoothstep(-bwG-1.2*uDpr,-bwG+.6*uDpr,d);',
-  ' vec3 glass=vec3(.05,.11,.075)+vec3(.05)*(1.-sqrt(md))+vec3(.10,.12,.10)*smoothstep(.2,1.,p.y/b.y)+rainbow*.05*uHover;',
+  ' vec3 glass=vec3(.05,.11,.075)+vec3(.05)*(1.-sqrt(md))+vec3(.10,.12,.10)*smoothstep(.2,1.,p.y/b.y);',
   ' float alphaIn=mix(1.,mix(.55,1.,rim),uGhost);col=mix(col,mix(glass,col,rim),uGhost);',
   // pointer-drawn scratches
   ' float sc=0.;',
@@ -47,12 +43,12 @@ const FS = [
   '  vec2 pa=fc-A.xy;vec2 ba=B.xy-A.xy;float h=clamp(dot(pa,ba)/max(dot(ba,ba),1e-3),0.,1.);float dist=length(pa-ba*h);',
   '  float w=.85*uDpr;sc+=exp(-dist*dist/(w*w))*(1.-max(A.z,B.z));}',
   ' sc=min(sc,1.)*step(d,0.);',
-  ' col+=(vec3(1.)+rainbow*.5)*sc*mix(.9,.7,uGhost);alphaIn=max(alphaIn,sc);',
+  ' col+=vec3(1.)*sc*mix(.9,.7,uGhost);alphaIn=max(alphaIn,sc);',
   ' col*=1.-uPress*.1;',
   ' float inside=clamp(.5-d,0.,1.);',
   // halo + floating particles
   ' float halo=exp(-max(d,0.)/(14.*uDpr))*(.08+.16*uHover)*(1.-inside);',
-  ' vec3 glowC=mix(vec3(.85,.95,.82),rainbow,.3);',
+  ' vec3 glowC=vec3(.85,.95,.82);',
   ' float spark=0.;float cs=13.*uDpr;vec2 gc=floor(fc/cs);',
   ' for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){vec2 cc=gc+vec2(float(i),float(j));vec2 h2=hash2(cc);if(h2.y<.5)continue;float ph=h2.x*6.283;',
   '  vec2 pos=(cc+.5+.38*vec2(sin(uTime*.7+ph),cos(uTime*.55+ph*1.3)))*cs;',
@@ -60,6 +56,9 @@ const FS = [
   '  float dd=length(fc-pos);float tw=.5+.5*sin(uTime*2.6+ph*5.);',
   '  spark+=exp(-dd*dd/(1.2*uDpr*uDpr))*tw*near;}',
   ' spark*=(.45+.75*uHover);',
+  // fade everything outside the button to zero well before the canvas edge (no visible box)
+  ' float edge=min(min(fc.x,uRes.x-fc.x),min(fc.y,uRes.y-fc.y));float em=smoothstep(2.*uDpr,20.*uDpr,edge);',
+  ' halo*=em;spark*=em;',
   ' vec3 outC=glowC*halo+vec3(1.,.97,.88)*spark;',
   ' float outA=clamp(halo+spark,0.,1.)*(1.-inside);',
   ' float A=inside*alphaIn;o=vec4(col*A+outC*(1.-inside),clamp(A+outA,0.,1.));',
