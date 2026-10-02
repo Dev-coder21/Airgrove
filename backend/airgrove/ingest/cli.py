@@ -80,3 +80,9 @@ def clean() -> None:
 
     build(log=lambda m: print(m, flush=True))
     print(write_report().split("# Fire points")[1])
+
+
+def backtest() -> None:
+    from ..backtest import run
+
+    run(log=lambda m: print(m, flush=True))

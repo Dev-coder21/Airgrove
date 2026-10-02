@@ -79,3 +79,36 @@
   18 Feb 2025; big gaps in Jan 2026).
 - To check: the 75%-of-stations rule is strict for small cities (Rourkela 3/3 needed → 33%);
   some 1-station Haryana cities sit at ~50% over the full period. Consider in step 5.
+
+## Step 5: QC rules, features, model, backtest
+- Station-month QC (user choice): a station flagged for persistent disagreement (> 30% off the
+  others' median for 3+ consecutive months) loses the months where it is > 30% off AND the
+  daily-mean correlation with that median is < 0.7. 503 station-months / 302k station-hours
+  excluded; list in `reports/cleaning.md`. Delhi: NSIT Dwarka 8, Shadipur 6, Mandir Marg 3,
+  Anand Vihar 2, Bawana 2, IGI T3 1. (Hourly r < 0.7 is normal in ~half of all station-months,
+  so it could not be the test.)
+- City-hour valid if >= min(50% of stations, 2) report. % hours now: Delhi 92.0, Mumbai 91.6,
+  Chennai 90.6, Indore 88.1, Gurugram 58.2, Rourkela 42.8 (median of 177 cities 86.4).
+- City value = mean of station values / each station's typical ratio to the city mean
+  (ratios from training hours only, per fold). n_stations reporting is a feature.
+- `features.py` (dense city x hour grid), `backtest.py`; `python tasks.py backtest` (~65 min,
+  resumable per fold in data/backtest_folds/, writes reports/backtest.json).
+- Backtest: 12 monthly folds Oct 2025 - Sep 2026, 4.86 M scored rows (177 cities, origins every
+  3 h, 21 horizons). Only 31-71% of origins have complete input history (skipped, not filled).
+- **MAE (ug/m3), Airgrove / persistence / same hour yesterday / CAMS raw / CAMS bias-corr:**
+  1-6 h 10.8 / 13.5 / 15.1 / 25.6 / 20.2; 7-24 h 13.6 / 18.5 / 15.1 / 25.7 / 20.3;
+  25-72 h 15.6 / 21.0 / 18.3 / 26.0 / 20.6. AQI category hit rate 0.73 / 0.67 / 0.63 at the
+  three buckets (persistence 0.69 / 0.60 / 0.56).
+- Where it loses: 1 h ahead persistence wins (6.7 vs 7.4); post-monsoon 7-24 h same hour
+  yesterday ties/wins (19.4 vs 19.5); Delhi 7-24 h only 29.9 vs 30.5; 4 small cities
+  (Byrnihat, Hapur, Kannur, Satna) lose overall to the best simple baseline. Bias -4 ug/m3.
+- 80% band holds 74.7% (post-monsoon 70%): slightly too narrow.
+- Fire ablation: **fire features don't help** (Oct-Dec north India 25-72 h: 27.40 with vs 27.39
+  without). National vs per-city: national better in Mumbai/Hyderabad/Ahmedabad/Chennai;
+  per-city slightly better in Delhi at 7-72 h (29.5 vs 29.9, 34.7 vs 35.5).
+- Leakage checks passed (future-perturbation of PM and fires leaves features unchanged; training
+  targets end before each test month; ratios/medians/CAMS fit from training only). Caveats in the
+  report: CAMS archive = latest run per hour (not true 1-3 day leads); weather at target comes
+  from stitched short-range forecasts, so long-horizon skill is somewhat optimistic for both.
+- To check next: why fires add nothing (FIRMS latency, 600 km/±45° too broad, smoke transport
+  > 72 h?); widen the band (conformal calibration per horizon); Delhi-specific features.

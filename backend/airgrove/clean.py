@@ -3,8 +3,15 @@
 Rules (CLAUDE.md):
 1. drop values < 0 or > 1,000 ug/m3;
 2. stuck sensors: the same value for 6+ consecutive hours -> the whole run is flagged and dropped;
-3. a city-hour exists only if >= 75% of the city's stations report (after 1-2); value = mean;
-4. fill single-hour gaps only (linear), nothing longer.
+3. station-month QC: stations > 30% off the median of the city's other stations for 3+
+   consecutive months are flagged; a flagged station's months that are > 30% off AND have a
+   daily-mean correlation < 0.7 with that median are excluded (hourly r < 0.7 is normal in
+   about half of all station-months, so it does not discriminate);
+4. a city-hour exists if at least min(50% of the city's stations, 2) report (1-station cities:
+   that station); `n_stations` (reporting) is kept as a model feature;
+5. the stored city value is the plain station mean; `city_series()` rebuilds it with each
+   station's typical ratio to the city mean removed (ratios estimated on training data per fold);
+6. single-hour gaps are filled for display only (`filled` flag); the model skips them.
 Hours are OpenAQ periods labelled by start in UTC (:30, = IST clock hours).
 """
 
@@ -22,7 +29,10 @@ from .ingest.openaq import ROOT
 DB = ROOT / "data" / "airgrove.duckdb"
 INTERIM = ROOT / "data" / "interim"
 STUCK_HOURS = 6
-MIN_STATION_SHARE = 0.75
+MIN_STATION_SHARE = 0.5
+MIN_STATIONS_CAP = 2
+QC_BIAS = 0.30
+QC_CORR = 0.7
 START = pd.Timestamp("2025-01-31T18:30Z")  # 2025-02-01 00:00 IST
 
 
@@ -51,6 +61,79 @@ def flag_station(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def need_stations(n: int) -> int:
+    """min(50% of the stations, 2), at least 1."""
+    return max(1, min(math.ceil(MIN_STATION_SHARE * n), MIN_STATIONS_CAP))
+
+
+def _daily_corr(h: pd.DataFrame) -> float:
+    """Correlation of daily (IST) means of station vs others' median; NaN if < 10 days."""
+    d = h.groupby(h.index.tz_convert("Asia/Kolkata").date)[["x", "m"]].mean()
+    return float(d.x.corr(d.m)) if len(d) >= 10 else float("nan")
+
+
+def station_month_qc(good: pd.DataFrame) -> pd.DataFrame:
+    """Per station and IST month: median relative difference and correlation vs the median of the
+    city's other stations. Needs >= 2 other stations; returns one row per station-month."""
+    out = []
+    for cid, g in good.groupby("city_id"):
+        wide = g.pivot_table(index="ts_utc", columns="sensor_id", values="value")
+        if wide.shape[1] < 3:
+            continue
+        month = wide.index.tz_convert("Asia/Kolkata").strftime("%Y-%m")
+        for sid in wide.columns:
+            others = wide.drop(columns=sid).median(axis=1)
+            d = pd.DataFrame({"x": wide[sid], "m": others, "month": month}).dropna()
+            d = d[d.m > 5]
+            for mo, h in d.groupby("month"):
+                if len(h) < 48:
+                    continue
+                out.append(
+                    {
+                        "city_id": cid,
+                        "sensor_id": sid,
+                        "month": mo,
+                        "hours": len(h),
+                        "rel_diff": float(((h.x - h.m) / h.m).median()),
+                        "corr": float(h.x.corr(h.m)),
+                        "daily_corr": _daily_corr(h),
+                    }
+                )
+    qc = pd.DataFrame(out).sort_values(["sensor_id", "month"])
+    off = qc.rel_diff.abs() > QC_BIAS
+    # station flag = 3+ consecutive months > 30% off (the persistent-disagreement test)
+    run = off.groupby([qc.sensor_id, (~off).cumsum()]).transform("sum").where(off, 0)
+    flagged = run.groupby(qc.sensor_id).transform("max") >= PERSIST_MONTHS
+    qc["station_flagged"] = flagged
+    # exclude: flagged station, > 30% off that month, and daily-mean r < 0.7 that month
+    qc["exclude"] = flagged & off & (qc["daily_corr"] < QC_CORR)
+    return qc
+
+
+def station_ratios(good: pd.DataFrame, before: pd.Timestamp | None = None) -> pd.Series:
+    """Each station's typical ratio to its city's station mean (median over hours with >= 2
+    stations), estimated only on hours before `before`. 1-station cities get 1.0."""
+    g = good if before is None else good[good.ts_utc < before]
+    m = g.groupby(["city_id", "ts_utc"])["value"].transform("mean")
+    n = g.groupby(["city_id", "ts_utc"])["value"].transform("size")
+    r = (g["value"] / m).where((n >= 2) & (m > 5))
+    return r.groupby(g["sensor_id"]).median().fillna(1.0).clip(0.33, 3.0)
+
+
+def city_series(
+    good: pd.DataFrame, n_stations: pd.Series, ratios: pd.Series | None = None
+) -> pd.DataFrame:
+    """City-hour mean of (value / station ratio) where enough stations report. No gap filling."""
+    g = good[["city_id", "sensor_id", "ts_utc", "value"]]
+    if ratios is not None:
+        g = g.assign(value=g["value"] / g["sensor_id"].map(ratios).fillna(1.0))
+    agg = (
+        g.groupby(["city_id", "ts_utc"])["value"].agg(pm25="mean", n_stations="size").reset_index()
+    )
+    need = agg["city_id"].map(n_stations).map(need_stations)
+    return agg[agg["n_stations"] >= need].reset_index(drop=True)
+
+
 def build(log=print) -> dict:
     st, cities = load_stations()
     files = sorted((INTERIM / "openaq").glob("*.parquet"))
@@ -60,6 +143,16 @@ def build(log=print) -> dict:
     log(f"raw station-hours: {len(raw):,} from {raw.sensor_id.nunique()} sensors")
 
     flagged = pd.concat([flag_station(g) for _, g in raw.groupby("sensor_id")], ignore_index=True)
+    qc = station_month_qc(flagged[flagged["ok"]])
+    bad = qc.loc[qc.exclude, ["sensor_id", "month"]]
+    flagged["month"] = flagged["ts_utc"].dt.tz_convert("Asia/Kolkata").dt.strftime("%Y-%m")
+    flagged = flagged.merge(bad.assign(qc_excluded=True), on=["sensor_id", "month"], how="left")
+    flagged["qc_excluded"] = flagged["qc_excluded"].fillna(False).astype(bool)
+    flagged["ok"] = flagged["ok"] & ~flagged["qc_excluded"]
+    log(
+        f"station-month QC: {int(qc.exclude.sum())} station-months excluded "
+        f"({int(flagged.qc_excluded.sum()):,} station-hours)"
+    )
     good = flagged[flagged["ok"]]
 
     end = flagged["ts_utc"].max()
@@ -71,7 +164,7 @@ def build(log=print) -> dict:
     for c in cities.itertuples():
         g = good[good.city_id == c.id]
         f = flagged[flagged.city_id == c.id]
-        need = math.ceil(MIN_STATION_SHARE * n_st.get(c.id, 0))
+        need = need_stations(int(n_st.get(c.id, 0)))
         per_hour = g.groupby("ts_utc")["value"].agg(["mean", "size"])
         start = START if c.forecast_ready else (per_hour.index.min() if len(per_hour) else end)
         idx = grid[grid >= start]
@@ -139,6 +232,8 @@ def build(log=print) -> dict:
     con.execute("CREATE TABLE pm25_station AS SELECT * FROM fl")
     con.register("cy", city)
     con.execute("CREATE TABLE pm25_city AS SELECT * FROM cy")
+    con.register("qc", qc.merge(st[["sensor_id", "name"]], on="sensor_id"))
+    con.execute("CREATE TABLE station_month_qc AS SELECT * FROM qc")
     con.register("su", summ)
     con.execute("CREATE TABLE clean_summary AS SELECT * FROM su")
     for name, df in (("weather", weather), ("cams", cams), ("fires", fires)):
@@ -170,6 +265,11 @@ def write_report() -> str:
            WHERE ts_utc >= TIMESTAMPTZ '2025-02-01 00:00:00+05:30'
              AND ts_utc < (SELECT max(ts_utc) FROM pm25_city) + INTERVAL 1 HOUR
            GROUP BY 1 ORDER BY 1"""
+    ).df()
+    excl = con.execute(
+        """SELECT s.city, q.name, q.month, q.hours, q.rel_diff, q.daily_corr
+           FROM station_month_qc q JOIN stations s USING (sensor_id)
+           WHERE q.exclude ORDER BY s.city, q.name, q.month"""
     ).df()
     delhi = station_vs_city(con, "Delhi")
     pusa = delhi[delhi.station.str.startswith("Pusa")]
@@ -213,6 +313,24 @@ def write_report() -> str:
         + (": " + ", ".join(flagged.station) if len(flagged) else "")
         + "."
     )
+    out += [
+        "",
+        "# Station-months excluded",
+        "",
+        "A station is flagged when it is > 30% off the median of its city's other stations for 3+ "
+        "consecutive months. A flagged station's month is excluded when it is > 30% off that month "
+        "AND the correlation of daily means with the others' median is < 0.7. "
+        f"Total: {len(excl)} station-months, {excl.name.nunique() if len(excl) else 0} stations, "
+        f"{int(excl.hours.sum()) if len(excl) else 0:,} station-hours.",
+        "",
+        "| City | Station | Months excluded | Detail (month: difference, daily r) |",
+        "| --- | --- | ---: | --- |",
+    ]
+    for (city, name), g in excl.groupby(["city", "name"], sort=True):
+        detail = ", ".join(
+            f"{r.month}: {100 * r.rel_diff:+.0f}%, r {r.daily_corr:.2f}" for r in g.itertuples()
+        )
+        out.append(f"| {city} | {name} | {len(g)} | {detail} |")
     out += [
         "",
         "# Fire points by month (IST)",

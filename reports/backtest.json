@@ -1,0 +1,8976 @@
+{
+ "generated_utc": "2026-10-02T06:32:47+00:00",
+ "setup": {
+  "test_months": [
+   "2025-10",
+   "2025-11",
+   "2025-12",
+   "2026-01",
+   "2026-02",
+   "2026-03",
+   "2026-04",
+   "2026-05",
+   "2026-06",
+   "2026-07",
+   "2026-08",
+   "2026-09"
+  ],
+  "retrain": "monthly, expanding window",
+  "origins": "every 3 h in test, every 6 h in training",
+  "horizons": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   8,
+   10,
+   12,
+   15,
+   18,
+   21,
+   24,
+   30,
+   36,
+   42,
+   48,
+   54,
+   60,
+   66,
+   72
+  ],
+  "target": "PM2.5(t+h) - latest reading; p10/p50/p90 quantile LightGBM",
+  "features": [
+   "horizon",
+   "pm_now",
+   "pm_lag1",
+   "pm_lag2",
+   "pm_lag3",
+   "pm_lag6",
+   "pm_lag12",
+   "pm_lag24",
+   "pm_lag48",
+   "pm_lag168",
+   "pm_mean6",
+   "pm_std6",
+   "pm_mean24",
+   "pm_std24",
+   "pm_mean72",
+   "pm_std72",
+   "n_stations",
+   "hour",
+   "weekday",
+   "diwali",
+   "holi",
+   "new_year",
+   "w_wind_u",
+   "w_wind_v",
+   "w_temperature_2m",
+   "w_relative_humidity_2m",
+   "w_precipitation",
+   "w_boundary_layer_height",
+   "lat",
+   "lon",
+   "city_median",
+   "fire_n_24h",
+   "fire_frp_24h",
+   "fire_n_48h",
+   "fire_frp_48h",
+   "fire_n_72h",
+   "fire_frp_72h",
+   "city"
+  ],
+  "cities": 177,
+  "skipped_rows": "origins with any missing PM2.5 input (latest, lags 1-168 h, rolling 6/24/72 h at >= 75%) or missing target are skipped, not filled; rows also need same-hour-yesterday and CAMS so every method is scored on the same rows",
+  "notes": [
+   "CAMS (Open-Meteo archive) holds the latest run for each hour, i.e. a short-lead analysis-like series, not true 1-3 day lead forecasts. Both CAMS baselines are therefore optimistic at 25-72 h.",
+   "Bias-corrected CAMS: per-city linear fit obs = a + b*CAMS on training hours only, refitted each month.",
+   "Weather features at the target hour come from Open-Meteo's historical-forecast archive (stitched short-range forecasts). In live use the model will see 1-3 day forecasts, which are less accurate, so long-horizon skill here is somewhat optimistic for the model too.",
+   "City value = mean of station values after dividing by each station's typical ratio to the city mean, estimated on training hours only (per fold).",
+   "History starts Feb 2025: the test year contains one winter, and the first folds (Oct-Nov 2025) were trained without any winter data."
+  ]
+ },
+ "leakage_checks": {
+  "pm_features_ignore_future": true,
+  "fire_features_ignore_future": true,
+  "perturbed_after": "2025-11-30 16:30:00+00:00",
+  "train_targets_before_test_month": true,
+  "statistics_from_training_only": [
+   "station ratios",
+   "city medians",
+   "CAMS bias fit",
+   "models"
+  ]
+ },
+ "folds": [
+  {
+   "month": "2025-10",
+   "train_rows": 1668494,
+   "test_rows": 498487,
+   "train_target_max": "2025-09-30 17:30:00+00:00",
+   "test_start": "2025-09-30 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 58.8,
+   "seconds": 267
+  },
+  {
+   "month": "2025-11",
+   "train_rows": 1903404,
+   "test_rows": 481632,
+   "train_target_max": "2025-10-31 17:30:00+00:00",
+   "test_start": "2025-10-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 58.0,
+   "seconds": 240
+  },
+  {
+   "month": "2025-12",
+   "train_rows": 2125835,
+   "test_rows": 624471,
+   "train_target_max": "2025-11-30 17:30:00+00:00",
+   "test_start": "2025-11-30 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 71.4,
+   "seconds": 247
+  },
+  {
+   "month": "2026-01",
+   "train_rows": 2420160,
+   "test_rows": 253571,
+   "train_target_max": "2025-12-31 17:30:00+00:00",
+   "test_start": "2025-12-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 31.4,
+   "seconds": 247
+  },
+  {
+   "month": "2026-02",
+   "train_rows": 2536515,
+   "test_rows": 236206,
+   "train_target_max": "2026-01-31 17:30:00+00:00",
+   "test_start": "2026-01-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 33.7,
+   "seconds": 270
+  },
+  {
+   "month": "2026-03",
+   "train_rows": 2637123,
+   "test_rows": 476266,
+   "train_target_max": "2026-02-28 17:30:00+00:00",
+   "test_start": "2026-02-28 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 56.1,
+   "seconds": 273
+  },
+  {
+   "month": "2026-04",
+   "train_rows": 2854197,
+   "test_rows": 349375,
+   "train_target_max": "2026-03-31 17:30:00+00:00",
+   "test_start": "2026-03-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 44.1,
+   "seconds": 303
+  },
+  {
+   "month": "2026-05",
+   "train_rows": 2993270,
+   "test_rows": 373484,
+   "train_target_max": "2026-04-30 17:30:00+00:00",
+   "test_start": "2026-04-30 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 45.3,
+   "seconds": 312
+  },
+  {
+   "month": "2026-06",
+   "train_rows": 3000000,
+   "test_rows": 305518,
+   "train_target_max": "2026-05-31 17:30:00+00:00",
+   "test_start": "2026-05-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 39.8,
+   "seconds": 397
+  },
+  {
+   "month": "2026-07",
+   "train_rows": 3000000,
+   "test_rows": 463224,
+   "train_target_max": "2026-06-30 15:30:00+00:00",
+   "test_start": "2026-06-30 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 53.8,
+   "seconds": 397
+  },
+  {
+   "month": "2026-08",
+   "train_rows": 3000000,
+   "test_rows": 353906,
+   "train_target_max": "2026-07-31 17:30:00+00:00",
+   "test_start": "2026-07-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 43.8,
+   "seconds": 396
+  },
+  {
+   "month": "2026-09",
+   "train_rows": 3000000,
+   "test_rows": 440495,
+   "train_target_max": "2026-08-30 06:30:00+00:00",
+   "test_start": "2026-08-31 18:30:00+00:00",
+   "origins_with_complete_inputs_pct": 57.0,
+   "seconds": 404
+  }
+ ],
+ "overall": {
+  "airgrove": {
+   "mae": 13.51,
+   "rmse": 27.72,
+   "bias": -4.08,
+   "aqi_hit_rate": 0.674
+  },
+  "persistence": {
+   "mae": 17.95,
+   "rmse": 34.98,
+   "bias": -0.09,
+   "aqi_hit_rate": 0.61
+  },
+  "same_hour_yesterday": {
+   "mae": 16.28,
+   "rmse": 32.38,
+   "bias": -0.12,
+   "aqi_hit_rate": 0.632
+  },
+  "cams_raw": {
+   "mae": 25.75,
+   "rmse": 43.27,
+   "bias": 0.92,
+   "aqi_hit_rate": 0.474
+  },
+  "cams_bias_corrected": {
+   "mae": 20.39,
+   "rmse": 35.75,
+   "bias": -1.35,
+   "aqi_hit_rate": 0.513
+  },
+  "n": 4856635
+ },
+ "by_horizon": {
+  "1-6 h": {
+   "airgrove": {
+    "mae": 10.75,
+    "rmse": 23.42,
+    "bias": -2.49,
+    "aqi_hit_rate": 0.734
+   },
+   "persistence": {
+    "mae": 13.49,
+    "rmse": 28.73,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.693
+   },
+   "same_hour_yesterday": {
+    "mae": 15.08,
+    "rmse": 30.76,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.654
+   },
+   "cams_raw": {
+    "mae": 25.55,
+    "rmse": 42.72,
+    "bias": 0.68,
+    "aqi_hit_rate": 0.474
+   },
+   "cams_bias_corrected": {
+    "mae": 20.18,
+    "rmse": 35.22,
+    "bias": -1.42,
+    "aqi_hit_rate": 0.515
+   },
+   "n": 1427387
+  },
+  "7-24 h": {
+   "airgrove": {
+    "mae": 13.62,
+    "rmse": 27.75,
+    "bias": -3.97,
+    "aqi_hit_rate": 0.67
+   },
+   "persistence": {
+    "mae": 18.53,
+    "rmse": 35.51,
+    "bias": 0.06,
+    "aqi_hit_rate": 0.597
+   },
+   "same_hour_yesterday": {
+    "mae": 15.14,
+    "rmse": 30.91,
+    "bias": -0.04,
+    "aqi_hit_rate": 0.654
+   },
+   "cams_raw": {
+    "mae": 25.71,
+    "rmse": 43.16,
+    "bias": 1.14,
+    "aqi_hit_rate": 0.474
+   },
+   "cams_bias_corrected": {
+    "mae": 20.3,
+    "rmse": 35.53,
+    "bias": -1.12,
+    "aqi_hit_rate": 0.514
+   },
+   "n": 1631823
+  },
+  "25-72 h": {
+   "airgrove": {
+    "mae": 15.59,
+    "rmse": 30.68,
+    "bias": -5.44,
+    "aqi_hit_rate": 0.63
+   },
+   "persistence": {
+    "mae": 20.96,
+    "rmse": 38.81,
+    "bias": -0.12,
+    "aqi_hit_rate": 0.555
+   },
+   "same_hour_yesterday": {
+    "mae": 18.26,
+    "rmse": 34.84,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.594
+   },
+   "cams_raw": {
+    "mae": 25.96,
+    "rmse": 43.79,
+    "bias": 0.91,
+    "aqi_hit_rate": 0.472
+   },
+   "cams_bias_corrected": {
+    "mae": 20.63,
+    "rmse": 36.36,
+    "bias": -1.52,
+    "aqi_hit_rate": 0.511
+   },
+   "n": 1797425
+  }
+ },
+ "by_horizon_hour": {
+  "1": {
+   "airgrove": {
+    "mae": 7.36,
+    "rmse": 17.26,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.811
+   },
+   "persistence": {
+    "mae": 6.74,
+    "rmse": 17.25,
+    "bias": -0.26,
+    "aqi_hit_rate": 0.83
+   },
+   "n": 245917
+  },
+  "2": {
+   "airgrove": {
+    "mae": 9.55,
+    "rmse": 21.07,
+    "bias": -0.74,
+    "aqi_hit_rate": 0.758
+   },
+   "persistence": {
+    "mae": 10.66,
+    "rmse": 24.32,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.743
+   },
+   "n": 241862
+  },
+  "3": {
+   "airgrove": {
+    "mae": 10.87,
+    "rmse": 23.74,
+    "bias": -2.65,
+    "aqi_hit_rate": 0.731
+   },
+   "persistence": {
+    "mae": 13.46,
+    "rmse": 28.55,
+    "bias": -0.43,
+    "aqi_hit_rate": 0.689
+   },
+   "n": 233689
+  },
+  "4": {
+   "airgrove": {
+    "mae": 11.79,
+    "rmse": 25.17,
+    "bias": -3.45,
+    "aqi_hit_rate": 0.71
+   },
+   "persistence": {
+    "mae": 15.49,
+    "rmse": 31.23,
+    "bias": -0.46,
+    "aqi_hit_rate": 0.651
+   },
+   "n": 238907
+  },
+  "5": {
+   "airgrove": {
+    "mae": 12.32,
+    "rmse": 25.49,
+    "bias": -4.0,
+    "aqi_hit_rate": 0.699
+   },
+   "persistence": {
+    "mae": 16.99,
+    "rmse": 33.07,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.625
+   },
+   "n": 236182
+  },
+  "6": {
+   "airgrove": {
+    "mae": 12.79,
+    "rmse": 26.8,
+    "bias": -3.92,
+    "aqi_hit_rate": 0.689
+   },
+   "persistence": {
+    "mae": 18.01,
+    "rmse": 34.84,
+    "bias": 0.25,
+    "aqi_hit_rate": 0.609
+   },
+   "n": 230830
+  },
+  "8": {
+   "airgrove": {
+    "mae": 13.11,
+    "rmse": 26.62,
+    "bias": -2.99,
+    "aqi_hit_rate": 0.679
+   },
+   "persistence": {
+    "mae": 19.1,
+    "rmse": 36.07,
+    "bias": 0.48,
+    "aqi_hit_rate": 0.587
+   },
+   "n": 234721
+  },
+  "10": {
+   "airgrove": {
+    "mae": 13.35,
+    "rmse": 27.1,
+    "bias": -3.57,
+    "aqi_hit_rate": 0.676
+   },
+   "persistence": {
+    "mae": 18.97,
+    "rmse": 35.83,
+    "bias": -0.0,
+    "aqi_hit_rate": 0.586
+   },
+   "n": 234951
+  },
+  "12": {
+   "airgrove": {
+    "mae": 13.42,
+    "rmse": 27.62,
+    "bias": -4.0,
+    "aqi_hit_rate": 0.675
+   },
+   "persistence": {
+    "mae": 19.03,
+    "rmse": 36.1,
+    "bias": -0.14,
+    "aqi_hit_rate": 0.586
+   },
+   "n": 236842
+  },
+  "15": {
+   "airgrove": {
+    "mae": 13.89,
+    "rmse": 28.49,
+    "bias": -4.41,
+    "aqi_hit_rate": 0.666
+   },
+   "persistence": {
+    "mae": 20.04,
+    "rmse": 37.65,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.573
+   },
+   "n": 224816
+  },
+  "18": {
+   "airgrove": {
+    "mae": 14.05,
+    "rmse": 28.65,
+    "bias": -4.47,
+    "aqi_hit_rate": 0.662
+   },
+   "persistence": {
+    "mae": 19.9,
+    "rmse": 37.63,
+    "bias": 0.11,
+    "aqi_hit_rate": 0.578
+   },
+   "n": 233625
+  },
+  "21": {
+   "airgrove": {
+    "mae": 13.79,
+    "rmse": 28.04,
+    "bias": -4.19,
+    "aqi_hit_rate": 0.665
+   },
+   "persistence": {
+    "mae": 17.58,
+    "rmse": 34.2,
+    "bias": 0.65,
+    "aqi_hit_rate": 0.612
+   },
+   "n": 233116
+  },
+  "24": {
+   "airgrove": {
+    "mae": 13.74,
+    "rmse": 27.73,
+    "bias": -4.19,
+    "aqi_hit_rate": 0.666
+   },
+   "persistence": {
+    "mae": 15.1,
+    "rmse": 30.67,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.655
+   },
+   "n": 233752
+  },
+  "30": {
+   "airgrove": {
+    "mae": 14.96,
+    "rmse": 29.95,
+    "bias": -5.01,
+    "aqi_hit_rate": 0.643
+   },
+   "persistence": {
+    "mae": 21.09,
+    "rmse": 39.21,
+    "bias": 0.24,
+    "aqi_hit_rate": 0.557
+   },
+   "n": 221392
+  },
+  "36": {
+   "airgrove": {
+    "mae": 15.23,
+    "rmse": 30.31,
+    "bias": -5.09,
+    "aqi_hit_rate": 0.638
+   },
+   "persistence": {
+    "mae": 21.17,
+    "rmse": 39.13,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.551
+   },
+   "n": 230029
+  },
+  "42": {
+   "airgrove": {
+    "mae": 15.49,
+    "rmse": 30.63,
+    "bias": -5.5,
+    "aqi_hit_rate": 0.633
+   },
+   "persistence": {
+    "mae": 21.76,
+    "rmse": 39.97,
+    "bias": -0.15,
+    "aqi_hit_rate": 0.546
+   },
+   "n": 227713
+  },
+  "48": {
+   "airgrove": {
+    "mae": 15.11,
+    "rmse": 29.62,
+    "bias": -5.15,
+    "aqi_hit_rate": 0.639
+   },
+   "persistence": {
+    "mae": 17.5,
+    "rmse": 33.59,
+    "bias": -0.34,
+    "aqi_hit_rate": 0.607
+   },
+   "n": 228255
+  },
+  "54": {
+   "airgrove": {
+    "mae": 16.02,
+    "rmse": 31.71,
+    "bias": -5.84,
+    "aqi_hit_rate": 0.622
+   },
+   "persistence": {
+    "mae": 22.54,
+    "rmse": 41.27,
+    "bias": 0.07,
+    "aqi_hit_rate": 0.533
+   },
+   "n": 216427
+  },
+  "60": {
+   "airgrove": {
+    "mae": 16.05,
+    "rmse": 31.6,
+    "bias": -5.65,
+    "aqi_hit_rate": 0.623
+   },
+   "persistence": {
+    "mae": 22.3,
+    "rmse": 40.76,
+    "bias": -0.31,
+    "aqi_hit_rate": 0.534
+   },
+   "n": 224982
+  },
+  "66": {
+   "airgrove": {
+    "mae": 16.18,
+    "rmse": 31.34,
+    "bias": -5.84,
+    "aqi_hit_rate": 0.618
+   },
+   "persistence": {
+    "mae": 22.71,
+    "rmse": 40.96,
+    "bias": 0.04,
+    "aqi_hit_rate": 0.528
+   },
+   "n": 223947
+  },
+  "72": {
+   "airgrove": {
+    "mae": 15.74,
+    "rmse": 30.27,
+    "bias": -5.46,
+    "aqi_hit_rate": 0.623
+   },
+   "persistence": {
+    "mae": 18.7,
+    "rmse": 34.97,
+    "bias": -0.17,
+    "aqi_hit_rate": 0.584
+   },
+   "n": 224680
+  }
+ },
+ "by_season": {
+  "monsoon (Jun-Sep)": {
+   "1-6 h": {
+    "airgrove": {
+     "mae": 6.34,
+     "rmse": 14.72,
+     "bias": -1.4,
+     "aqi_hit_rate": 0.835
+    },
+    "persistence": {
+     "mae": 7.37,
+     "rmse": 17.09,
+     "bias": -0.21,
+     "aqi_hit_rate": 0.815
+    },
+    "same_hour_yesterday": {
+     "mae": 9.7,
+     "rmse": 20.61,
+     "bias": -0.34,
+     "aqi_hit_rate": 0.763
+    },
+    "cams_raw": {
+     "mae": 18.67,
+     "rmse": 35.83,
+     "bias": 6.52,
+     "aqi_hit_rate": 0.602
+    },
+    "cams_bias_corrected": {
+     "mae": 15.07,
+     "rmse": 23.38,
+     "bias": 10.01,
+     "aqi_hit_rate": 0.571
+    },
+    "n": 463563
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 8.05,
+     "rmse": 17.3,
+     "bias": -1.96,
+     "aqi_hit_rate": 0.795
+    },
+    "persistence": {
+     "mae": 10.42,
+     "rmse": 21.76,
+     "bias": -0.11,
+     "aqi_hit_rate": 0.749
+    },
+    "same_hour_yesterday": {
+     "mae": 9.81,
+     "rmse": 20.88,
+     "bias": -0.26,
+     "aqi_hit_rate": 0.764
+    },
+    "cams_raw": {
+     "mae": 18.97,
+     "rmse": 36.46,
+     "bias": 6.84,
+     "aqi_hit_rate": 0.601
+    },
+    "cams_bias_corrected": {
+     "mae": 15.31,
+     "rmse": 24.01,
+     "bias": 10.2,
+     "aqi_hit_rate": 0.568
+    },
+    "n": 533745
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 8.95,
+     "rmse": 17.78,
+     "bias": -1.97,
+     "aqi_hit_rate": 0.774
+    },
+    "persistence": {
+     "mae": 12.01,
+     "rmse": 23.36,
+     "bias": 0.07,
+     "aqi_hit_rate": 0.713
+    },
+    "same_hour_yesterday": {
+     "mae": 11.58,
+     "rmse": 22.65,
+     "bias": -0.05,
+     "aqi_hit_rate": 0.723
+    },
+    "cams_raw": {
+     "mae": 18.94,
+     "rmse": 36.49,
+     "bias": 7.0,
+     "aqi_hit_rate": 0.604
+    },
+    "cams_bias_corrected": {
+     "mae": 15.31,
+     "rmse": 23.65,
+     "bias": 10.35,
+     "aqi_hit_rate": 0.571
+    },
+    "n": 582850
+   }
+  },
+  "post-monsoon (Oct-Nov)": {
+   "1-6 h": {
+    "airgrove": {
+     "mae": 14.58,
+     "rmse": 31.21,
+     "bias": -6.29,
+     "aqi_hit_rate": 0.674
+    },
+    "persistence": {
+     "mae": 17.47,
+     "rmse": 35.96,
+     "bias": -0.03,
+     "aqi_hit_rate": 0.638
+    },
+    "same_hour_yesterday": {
+     "mae": 19.07,
+     "rmse": 39.2,
+     "bias": -0.38,
+     "aqi_hit_rate": 0.6
+    },
+    "cams_raw": {
+     "mae": 28.1,
+     "rmse": 46.46,
+     "bias": -8.82,
+     "aqi_hit_rate": 0.439
+    },
+    "cams_bias_corrected": {
+     "mae": 26.24,
+     "rmse": 48.4,
+     "bias": -17.02,
+     "aqi_hit_rate": 0.482
+    },
+    "n": 284478
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 19.48,
+     "rmse": 39.07,
+     "bias": -10.73,
+     "aqi_hit_rate": 0.581
+    },
+    "persistence": {
+     "mae": 24.67,
+     "rmse": 46.08,
+     "bias": -0.43,
+     "aqi_hit_rate": 0.521
+    },
+    "same_hour_yesterday": {
+     "mae": 19.43,
+     "rmse": 40.11,
+     "bias": -0.73,
+     "aqi_hit_rate": 0.597
+    },
+    "cams_raw": {
+     "mae": 28.42,
+     "rmse": 47.16,
+     "bias": -8.7,
+     "aqi_hit_rate": 0.435
+    },
+    "cams_bias_corrected": {
+     "mae": 26.53,
+     "rmse": 49.06,
+     "bias": -17.24,
+     "aqi_hit_rate": 0.479
+    },
+    "n": 323020
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 23.26,
+     "rmse": 44.01,
+     "bias": -14.99,
+     "aqi_hit_rate": 0.514
+    },
+    "persistence": {
+     "mae": 28.52,
+     "rmse": 50.77,
+     "bias": -1.78,
+     "aqi_hit_rate": 0.461
+    },
+    "same_hour_yesterday": {
+     "mae": 24.44,
+     "rmse": 45.31,
+     "bias": -2.31,
+     "aqi_hit_rate": 0.508
+    },
+    "cams_raw": {
+     "mae": 29.07,
+     "rmse": 48.6,
+     "bias": -9.1,
+     "aqi_hit_rate": 0.427
+    },
+    "cams_bias_corrected": {
+     "mae": 27.45,
+     "rmse": 51.03,
+     "bias": -18.19,
+     "aqi_hit_rate": 0.468
+    },
+    "n": 348544
+   }
+  },
+  "pre-monsoon (Mar-May)": {
+   "1-6 h": {
+    "airgrove": {
+     "mae": 9.34,
+     "rmse": 20.51,
+     "bias": -1.07,
+     "aqi_hit_rate": 0.739
+    },
+    "persistence": {
+     "mae": 12.18,
+     "rmse": 26.13,
+     "bias": -0.26,
+     "aqi_hit_rate": 0.688
+    },
+    "same_hour_yesterday": {
+     "mae": 14.07,
+     "rmse": 28.35,
+     "bias": 0.38,
+     "aqi_hit_rate": 0.641
+    },
+    "cams_raw": {
+     "mae": 23.14,
+     "rmse": 38.53,
+     "bias": 2.14,
+     "aqi_hit_rate": 0.465
+    },
+    "cams_bias_corrected": {
+     "mae": 17.17,
+     "rmse": 28.76,
+     "bias": 3.8,
+     "aqi_hit_rate": 0.531
+    },
+    "n": 348149
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 11.57,
+     "rmse": 22.96,
+     "bias": -1.26,
+     "aqi_hit_rate": 0.678
+    },
+    "persistence": {
+     "mae": 16.63,
+     "rmse": 31.38,
+     "bias": 0.19,
+     "aqi_hit_rate": 0.588
+    },
+    "same_hour_yesterday": {
+     "mae": 14.03,
+     "rmse": 28.11,
+     "bias": 0.45,
+     "aqi_hit_rate": 0.642
+    },
+    "cams_raw": {
+     "mae": 23.25,
+     "rmse": 39.02,
+     "bias": 2.65,
+     "aqi_hit_rate": 0.467
+    },
+    "cams_bias_corrected": {
+     "mae": 17.27,
+     "rmse": 29.06,
+     "bias": 4.19,
+     "aqi_hit_rate": 0.53
+    },
+    "n": 400771
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 12.95,
+     "rmse": 24.8,
+     "bias": -1.46,
+     "aqi_hit_rate": 0.639
+    },
+    "persistence": {
+     "mae": 18.49,
+     "rmse": 33.64,
+     "bias": 0.37,
+     "aqi_hit_rate": 0.547
+    },
+    "same_hour_yesterday": {
+     "mae": 16.32,
+     "rmse": 31.01,
+     "bias": 0.42,
+     "aqi_hit_rate": 0.59
+    },
+    "cams_raw": {
+     "mae": 23.39,
+     "rmse": 39.56,
+     "bias": 2.32,
+     "aqi_hit_rate": 0.464
+    },
+    "cams_bias_corrected": {
+     "mae": 17.31,
+     "rmse": 29.35,
+     "bias": 3.8,
+     "aqi_hit_rate": 0.529
+    },
+    "n": 453105
+   }
+  },
+  "winter (Dec-Feb)": {
+   "1-6 h": {
+    "airgrove": {
+     "mae": 15.1,
+     "rmse": 27.97,
+     "bias": -2.25,
+     "aqi_hit_rate": 0.638
+    },
+    "persistence": {
+     "mae": 20.0,
+     "rmse": 36.33,
+     "bias": -0.41,
+     "aqi_hit_rate": 0.572
+    },
+    "same_hour_yesterday": {
+     "mae": 20.26,
+     "rmse": 36.29,
+     "bias": 0.27,
+     "aqi_hit_rate": 0.561
+    },
+    "cams_raw": {
+     "mae": 35.51,
+     "rmse": 51.52,
+     "bias": -0.86,
+     "aqi_hit_rate": 0.336
+    },
+    "cams_bias_corrected": {
+     "mae": 25.28,
+     "rmse": 41.21,
+     "bias": -9.5,
+     "aqi_hit_rate": 0.45
+    },
+    "n": 331197
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 18.69,
+     "rmse": 32.39,
+     "bias": -3.91,
+     "aqi_hit_rate": 0.56
+    },
+    "persistence": {
+     "mae": 26.83,
+     "rmse": 44.0,
+     "bias": 0.59,
+     "aqi_hit_rate": 0.455
+    },
+    "same_hour_yesterday": {
+     "mae": 20.23,
+     "rmse": 36.18,
+     "bias": 0.36,
+     "aqi_hit_rate": 0.559
+    },
+    "cams_raw": {
+     "mae": 35.62,
+     "rmse": 51.73,
+     "bias": -0.14,
+     "aqi_hit_rate": 0.336
+    },
+    "cams_bias_corrected": {
+     "mae": 25.3,
+     "rmse": 41.23,
+     "bias": -9.04,
+     "aqi_hit_rate": 0.448
+    },
+    "n": 374287
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 21.4,
+     "rmse": 36.62,
+     "bias": -6.63,
+     "aqi_hit_rate": 0.515
+    },
+    "persistence": {
+     "mae": 29.92,
+     "rmse": 48.66,
+     "bias": 0.45,
+     "aqi_hit_rate": 0.419
+    },
+    "same_hour_yesterday": {
+     "mae": 24.61,
+     "rmse": 42.08,
+     "bias": 0.36,
+     "aqi_hit_rate": 0.488
+    },
+    "cams_raw": {
+     "mae": 36.06,
+     "rmse": 52.52,
+     "bias": -0.81,
+     "aqi_hit_rate": 0.333
+    },
+    "cams_bias_corrected": {
+     "mae": 26.01,
+     "rmse": 42.69,
+     "bias": -10.03,
+     "aqi_hit_rate": 0.443
+    },
+    "n": 412926
+   }
+  }
+ },
+ "by_city_top15": {
+  "Delhi": {
+   "stations": 38,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 20.5,
+     "rmse": 34.86,
+     "bias": -4.79,
+     "aqi_hit_rate": 0.67
+    },
+    "persistence": {
+     "mae": 22.4,
+     "rmse": 38.34,
+     "bias": -0.37,
+     "aqi_hit_rate": 0.628
+    },
+    "same_hour_yesterday": {
+     "mae": 29.46,
+     "rmse": 46.28,
+     "bias": 0.46,
+     "aqi_hit_rate": 0.526
+    },
+    "cams_raw": {
+     "mae": 52.6,
+     "rmse": 77.06,
+     "bias": -16.86,
+     "aqi_hit_rate": 0.305
+    },
+    "cams_bias_corrected": {
+     "mae": 59.24,
+     "rmse": 83.7,
+     "bias": -7.93,
+     "aqi_hit_rate": 0.254
+    },
+    "n": 11500
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 29.92,
+     "rmse": 50.69,
+     "bias": -10.47,
+     "aqi_hit_rate": 0.535
+    },
+    "persistence": {
+     "mae": 38.53,
+     "rmse": 59.58,
+     "bias": -0.35,
+     "aqi_hit_rate": 0.439
+    },
+    "same_hour_yesterday": {
+     "mae": 30.47,
+     "rmse": 48.08,
+     "bias": -0.05,
+     "aqi_hit_rate": 0.512
+    },
+    "cams_raw": {
+     "mae": 52.97,
+     "rmse": 77.53,
+     "bias": -16.16,
+     "aqi_hit_rate": 0.296
+    },
+    "cams_bias_corrected": {
+     "mae": 59.62,
+     "rmse": 84.23,
+     "bias": -7.36,
+     "aqi_hit_rate": 0.253
+    },
+    "n": 13243
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 35.47,
+     "rmse": 60.44,
+     "bias": -13.93,
+     "aqi_hit_rate": 0.485
+    },
+    "persistence": {
+     "mae": 44.88,
+     "rmse": 70.52,
+     "bias": -1.31,
+     "aqi_hit_rate": 0.402
+    },
+    "same_hour_yesterday": {
+     "mae": 38.06,
+     "rmse": 61.62,
+     "bias": -1.3,
+     "aqi_hit_rate": 0.447
+    },
+    "cams_raw": {
+     "mae": 54.2,
+     "rmse": 79.72,
+     "bias": -17.84,
+     "aqi_hit_rate": 0.294
+    },
+    "cams_bias_corrected": {
+     "mae": 60.9,
+     "rmse": 86.7,
+     "bias": -9.3,
+     "aqi_hit_rate": 0.247
+    },
+    "n": 14705
+   }
+  },
+  "Mumbai": {
+   "stations": 23,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 5.57,
+     "rmse": 9.57,
+     "bias": -0.98,
+     "aqi_hit_rate": 0.841
+    },
+    "persistence": {
+     "mae": 6.06,
+     "rmse": 10.56,
+     "bias": -0.11,
+     "aqi_hit_rate": 0.833
+    },
+    "same_hour_yesterday": {
+     "mae": 8.54,
+     "rmse": 14.41,
+     "bias": 0.51,
+     "aqi_hit_rate": 0.764
+    },
+    "cams_raw": {
+     "mae": 10.01,
+     "rmse": 15.32,
+     "bias": -2.58,
+     "aqi_hit_rate": 0.717
+    },
+    "cams_bias_corrected": {
+     "mae": 11.83,
+     "rmse": 15.69,
+     "bias": 0.86,
+     "aqi_hit_rate": 0.692
+    },
+    "n": 11343
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 7.62,
+     "rmse": 13.34,
+     "bias": -1.7,
+     "aqi_hit_rate": 0.789
+    },
+    "persistence": {
+     "mae": 8.92,
+     "rmse": 14.51,
+     "bias": -0.1,
+     "aqi_hit_rate": 0.755
+    },
+    "same_hour_yesterday": {
+     "mae": 8.33,
+     "rmse": 14.39,
+     "bias": 0.12,
+     "aqi_hit_rate": 0.774
+    },
+    "cams_raw": {
+     "mae": 10.13,
+     "rmse": 16.39,
+     "bias": -2.81,
+     "aqi_hit_rate": 0.715
+    },
+    "cams_bias_corrected": {
+     "mae": 12.02,
+     "rmse": 16.85,
+     "bias": 0.69,
+     "aqi_hit_rate": 0.693
+    },
+    "n": 13083
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 9.67,
+     "rmse": 16.66,
+     "bias": -2.6,
+     "aqi_hit_rate": 0.746
+    },
+    "persistence": {
+     "mae": 11.02,
+     "rmse": 18.01,
+     "bias": -0.23,
+     "aqi_hit_rate": 0.709
+    },
+    "same_hour_yesterday": {
+     "mae": 10.62,
+     "rmse": 18.18,
+     "bias": -0.06,
+     "aqi_hit_rate": 0.725
+    },
+    "cams_raw": {
+     "mae": 10.21,
+     "rmse": 17.25,
+     "bias": -2.67,
+     "aqi_hit_rate": 0.723
+    },
+    "cams_bias_corrected": {
+     "mae": 12.3,
+     "rmse": 17.78,
+     "bias": 0.68,
+     "aqi_hit_rate": 0.691
+    },
+    "n": 14537
+   }
+  },
+  "Hyderabad": {
+   "stations": 14,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 2.82,
+     "rmse": 4.27,
+     "bias": 0.01,
+     "aqi_hit_rate": 0.913
+    },
+    "persistence": {
+     "mae": 3.07,
+     "rmse": 4.94,
+     "bias": -0.19,
+     "aqi_hit_rate": 0.9
+    },
+    "same_hour_yesterday": {
+     "mae": 4.21,
+     "rmse": 6.44,
+     "bias": -0.09,
+     "aqi_hit_rate": 0.867
+    },
+    "cams_raw": {
+     "mae": 12.03,
+     "rmse": 15.42,
+     "bias": -0.29,
+     "aqi_hit_rate": 0.691
+    },
+    "cams_bias_corrected": {
+     "mae": 5.68,
+     "rmse": 7.27,
+     "bias": 1.49,
+     "aqi_hit_rate": 0.784
+    },
+    "n": 11116
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 3.76,
+     "rmse": 5.57,
+     "bias": -0.06,
+     "aqi_hit_rate": 0.88
+    },
+    "persistence": {
+     "mae": 4.69,
+     "rmse": 6.66,
+     "bias": -0.14,
+     "aqi_hit_rate": 0.837
+    },
+    "same_hour_yesterday": {
+     "mae": 4.17,
+     "rmse": 6.25,
+     "bias": -0.18,
+     "aqi_hit_rate": 0.862
+    },
+    "cams_raw": {
+     "mae": 12.14,
+     "rmse": 15.63,
+     "bias": -0.16,
+     "aqi_hit_rate": 0.69
+    },
+    "cams_bias_corrected": {
+     "mae": 5.75,
+     "rmse": 7.44,
+     "bias": 1.57,
+     "aqi_hit_rate": 0.772
+    },
+    "n": 12822
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 4.34,
+     "rmse": 6.4,
+     "bias": -0.46,
+     "aqi_hit_rate": 0.852
+    },
+    "persistence": {
+     "mae": 5.49,
+     "rmse": 7.83,
+     "bias": -0.26,
+     "aqi_hit_rate": 0.812
+    },
+    "same_hour_yesterday": {
+     "mae": 5.09,
+     "rmse": 7.41,
+     "bias": -0.31,
+     "aqi_hit_rate": 0.835
+    },
+    "cams_raw": {
+     "mae": 12.07,
+     "rmse": 15.49,
+     "bias": -0.36,
+     "aqi_hit_rate": 0.69
+    },
+    "cams_bias_corrected": {
+     "mae": 5.66,
+     "rmse": 7.43,
+     "bias": 1.35,
+     "aqi_hit_rate": 0.769
+    },
+    "n": 14202
+   }
+  },
+  "Ahmedabad": {
+   "stations": 9,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 6.63,
+     "rmse": 10.96,
+     "bias": -0.74,
+     "aqi_hit_rate": 0.777
+    },
+    "persistence": {
+     "mae": 9.57,
+     "rmse": 15.93,
+     "bias": -0.43,
+     "aqi_hit_rate": 0.703
+    },
+    "same_hour_yesterday": {
+     "mae": 11.7,
+     "rmse": 22.45,
+     "bias": 0.57,
+     "aqi_hit_rate": 0.639
+    },
+    "cams_raw": {
+     "mae": 18.45,
+     "rmse": 24.27,
+     "bias": -16.54,
+     "aqi_hit_rate": 0.454
+    },
+    "cams_bias_corrected": {
+     "mae": 13.62,
+     "rmse": 17.96,
+     "bias": 3.2,
+     "aqi_hit_rate": 0.517
+    },
+    "n": 11089
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 9.51,
+     "rmse": 18.99,
+     "bias": -1.62,
+     "aqi_hit_rate": 0.677
+    },
+    "persistence": {
+     "mae": 14.86,
+     "rmse": 24.92,
+     "bias": -0.65,
+     "aqi_hit_rate": 0.537
+    },
+    "same_hour_yesterday": {
+     "mae": 11.63,
+     "rmse": 24.24,
+     "bias": 0.1,
+     "aqi_hit_rate": 0.641
+    },
+    "cams_raw": {
+     "mae": 18.8,
+     "rmse": 27.73,
+     "bias": -16.82,
+     "aqi_hit_rate": 0.461
+    },
+    "cams_bias_corrected": {
+     "mae": 13.99,
+     "rmse": 22.26,
+     "bias": 2.94,
+     "aqi_hit_rate": 0.511
+    },
+    "n": 12800
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 11.43,
+     "rmse": 23.68,
+     "bias": -2.62,
+     "aqi_hit_rate": 0.617
+    },
+    "persistence": {
+     "mae": 17.15,
+     "rmse": 29.77,
+     "bias": -1.16,
+     "aqi_hit_rate": 0.489
+    },
+    "same_hour_yesterday": {
+     "mae": 15.12,
+     "rmse": 29.75,
+     "bias": -0.56,
+     "aqi_hit_rate": 0.557
+    },
+    "cams_raw": {
+     "mae": 19.15,
+     "rmse": 30.24,
+     "bias": -17.07,
+     "aqi_hit_rate": 0.454
+    },
+    "cams_bias_corrected": {
+     "mae": 14.37,
+     "rmse": 25.2,
+     "bias": 2.63,
+     "aqi_hit_rate": 0.508
+    },
+    "n": 14238
+   }
+  },
+  "Chennai": {
+   "stations": 7,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 9.11,
+     "rmse": 20.73,
+     "bias": -3.66,
+     "aqi_hit_rate": 0.774
+    },
+    "persistence": {
+     "mae": 10.88,
+     "rmse": 23.98,
+     "bias": 0.41,
+     "aqi_hit_rate": 0.742
+    },
+    "same_hour_yesterday": {
+     "mae": 14.0,
+     "rmse": 30.23,
+     "bias": 0.2,
+     "aqi_hit_rate": 0.671
+    },
+    "cams_raw": {
+     "mae": 14.17,
+     "rmse": 26.53,
+     "bias": -12.96,
+     "aqi_hit_rate": 0.692
+    },
+    "cams_bias_corrected": {
+     "mae": 13.14,
+     "rmse": 24.06,
+     "bias": -1.81,
+     "aqi_hit_rate": 0.608
+    },
+    "n": 10485
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 11.92,
+     "rmse": 24.93,
+     "bias": -5.8,
+     "aqi_hit_rate": 0.718
+    },
+    "persistence": {
+     "mae": 15.31,
+     "rmse": 30.3,
+     "bias": -0.15,
+     "aqi_hit_rate": 0.656
+    },
+    "same_hour_yesterday": {
+     "mae": 14.28,
+     "rmse": 30.48,
+     "bias": -0.31,
+     "aqi_hit_rate": 0.677
+    },
+    "cams_raw": {
+     "mae": 14.65,
+     "rmse": 27.82,
+     "bias": -13.4,
+     "aqi_hit_rate": 0.693
+    },
+    "cams_bias_corrected": {
+     "mae": 13.55,
+     "rmse": 25.33,
+     "bias": -2.3,
+     "aqi_hit_rate": 0.613
+    },
+    "n": 12029
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 14.63,
+     "rmse": 32.61,
+     "bias": -7.39,
+     "aqi_hit_rate": 0.671
+    },
+    "persistence": {
+     "mae": 18.7,
+     "rmse": 37.93,
+     "bias": -0.57,
+     "aqi_hit_rate": 0.602
+    },
+    "same_hour_yesterday": {
+     "mae": 18.3,
+     "rmse": 38.5,
+     "bias": -0.6,
+     "aqi_hit_rate": 0.61
+    },
+    "cams_raw": {
+     "mae": 15.32,
+     "rmse": 33.31,
+     "bias": -14.02,
+     "aqi_hit_rate": 0.689
+    },
+    "cams_bias_corrected": {
+     "mae": 14.26,
+     "rmse": 31.04,
+     "bias": -3.01,
+     "aqi_hit_rate": 0.604
+    },
+    "n": 13299
+   }
+  },
+  "Kolkata": {
+   "stations": 7,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 6.22,
+     "rmse": 10.83,
+     "bias": -1.13,
+     "aqi_hit_rate": 0.815
+    },
+    "persistence": {
+     "mae": 8.07,
+     "rmse": 15.19,
+     "bias": -0.2,
+     "aqi_hit_rate": 0.77
+    },
+    "same_hour_yesterday": {
+     "mae": 10.28,
+     "rmse": 16.64,
+     "bias": -0.28,
+     "aqi_hit_rate": 0.703
+    },
+    "cams_raw": {
+     "mae": 18.22,
+     "rmse": 28.14,
+     "bias": 12.63,
+     "aqi_hit_rate": 0.577
+    },
+    "cams_bias_corrected": {
+     "mae": 11.35,
+     "rmse": 17.28,
+     "bias": -2.41,
+     "aqi_hit_rate": 0.646
+    },
+    "n": 11110
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 9.51,
+     "rmse": 16.53,
+     "bias": -3.11,
+     "aqi_hit_rate": 0.714
+    },
+    "persistence": {
+     "mae": 13.67,
+     "rmse": 23.16,
+     "bias": -0.27,
+     "aqi_hit_rate": 0.632
+    },
+    "same_hour_yesterday": {
+     "mae": 10.74,
+     "rmse": 18.65,
+     "bias": -0.26,
+     "aqi_hit_rate": 0.694
+    },
+    "cams_raw": {
+     "mae": 18.77,
+     "rmse": 29.08,
+     "bias": 13.08,
+     "aqi_hit_rate": 0.567
+    },
+    "cams_bias_corrected": {
+     "mae": 11.54,
+     "rmse": 18.42,
+     "bias": -2.2,
+     "aqi_hit_rate": 0.644
+    },
+    "n": 12833
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 11.69,
+     "rmse": 19.26,
+     "bias": -4.65,
+     "aqi_hit_rate": 0.661
+    },
+    "persistence": {
+     "mae": 16.14,
+     "rmse": 25.78,
+     "bias": -0.16,
+     "aqi_hit_rate": 0.566
+    },
+    "same_hour_yesterday": {
+     "mae": 14.46,
+     "rmse": 22.96,
+     "bias": -0.17,
+     "aqi_hit_rate": 0.593
+    },
+    "cams_raw": {
+     "mae": 18.94,
+     "rmse": 29.34,
+     "bias": 13.3,
+     "aqi_hit_rate": 0.561
+    },
+    "cams_bias_corrected": {
+     "mae": 11.55,
+     "rmse": 18.79,
+     "bias": -2.18,
+     "aqi_hit_rate": 0.647
+    },
+    "n": 14272
+   }
+  },
+  "Agra": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 9.38,
+     "rmse": 15.67,
+     "bias": -1.51,
+     "aqi_hit_rate": 0.702
+    },
+    "persistence": {
+     "mae": 13.05,
+     "rmse": 21.47,
+     "bias": -0.37,
+     "aqi_hit_rate": 0.64
+    },
+    "same_hour_yesterday": {
+     "mae": 13.53,
+     "rmse": 21.52,
+     "bias": -0.2,
+     "aqi_hit_rate": 0.609
+    },
+    "cams_raw": {
+     "mae": 41.65,
+     "rmse": 58.85,
+     "bias": 38.08,
+     "aqi_hit_rate": 0.295
+    },
+    "cams_bias_corrected": {
+     "mae": 15.63,
+     "rmse": 22.83,
+     "bias": -3.9,
+     "aqi_hit_rate": 0.551
+    },
+    "n": 11065
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 11.53,
+     "rmse": 18.29,
+     "bias": -2.67,
+     "aqi_hit_rate": 0.652
+    },
+    "persistence": {
+     "mae": 17.44,
+     "rmse": 26.47,
+     "bias": -0.23,
+     "aqi_hit_rate": 0.542
+    },
+    "same_hour_yesterday": {
+     "mae": 13.62,
+     "rmse": 21.42,
+     "bias": -0.21,
+     "aqi_hit_rate": 0.617
+    },
+    "cams_raw": {
+     "mae": 42.76,
+     "rmse": 59.96,
+     "bias": 39.1,
+     "aqi_hit_rate": 0.292
+    },
+    "cams_bias_corrected": {
+     "mae": 15.75,
+     "rmse": 23.14,
+     "bias": -3.56,
+     "aqi_hit_rate": 0.55
+    },
+    "n": 12752
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 12.71,
+     "rmse": 19.99,
+     "bias": -4.38,
+     "aqi_hit_rate": 0.624
+    },
+    "persistence": {
+     "mae": 19.14,
+     "rmse": 28.47,
+     "bias": -0.62,
+     "aqi_hit_rate": 0.517
+    },
+    "same_hour_yesterday": {
+     "mae": 16.34,
+     "rmse": 25.06,
+     "bias": -0.58,
+     "aqi_hit_rate": 0.568
+    },
+    "cams_raw": {
+     "mae": 41.57,
+     "rmse": 59.16,
+     "bias": 38.12,
+     "aqi_hit_rate": 0.306
+    },
+    "cams_bias_corrected": {
+     "mae": 16.18,
+     "rmse": 23.99,
+     "bias": -4.45,
+     "aqi_hit_rate": 0.543
+    },
+    "n": 14194
+   }
+  },
+  "Jaipur": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 11.29,
+     "rmse": 18.07,
+     "bias": -1.38,
+     "aqi_hit_rate": 0.669
+    },
+    "persistence": {
+     "mae": 16.5,
+     "rmse": 26.61,
+     "bias": -0.51,
+     "aqi_hit_rate": 0.584
+    },
+    "same_hour_yesterday": {
+     "mae": 15.68,
+     "rmse": 23.8,
+     "bias": 0.08,
+     "aqi_hit_rate": 0.563
+    },
+    "cams_raw": {
+     "mae": 25.81,
+     "rmse": 35.04,
+     "bias": -17.46,
+     "aqi_hit_rate": 0.375
+    },
+    "cams_bias_corrected": {
+     "mae": 22.92,
+     "rmse": 30.81,
+     "bias": -1.36,
+     "aqi_hit_rate": 0.398
+    },
+    "n": 11058
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 14.18,
+     "rmse": 24.03,
+     "bias": -3.71,
+     "aqi_hit_rate": 0.592
+    },
+    "persistence": {
+     "mae": 21.19,
+     "rmse": 33.41,
+     "bias": -0.06,
+     "aqi_hit_rate": 0.473
+    },
+    "same_hour_yesterday": {
+     "mae": 15.75,
+     "rmse": 26.12,
+     "bias": -0.24,
+     "aqi_hit_rate": 0.564
+    },
+    "cams_raw": {
+     "mae": 25.38,
+     "rmse": 36.42,
+     "bias": -16.74,
+     "aqi_hit_rate": 0.39
+    },
+    "cams_bias_corrected": {
+     "mae": 23.15,
+     "rmse": 32.98,
+     "bias": -0.73,
+     "aqi_hit_rate": 0.391
+    },
+    "n": 12771
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 16.94,
+     "rmse": 30.03,
+     "bias": -6.99,
+     "aqi_hit_rate": 0.54
+    },
+    "persistence": {
+     "mae": 24.6,
+     "rmse": 39.07,
+     "bias": -0.58,
+     "aqi_hit_rate": 0.425
+    },
+    "same_hour_yesterday": {
+     "mae": 20.14,
+     "rmse": 34.84,
+     "bias": -0.72,
+     "aqi_hit_rate": 0.492
+    },
+    "cams_raw": {
+     "mae": 26.24,
+     "rmse": 39.33,
+     "bias": -17.92,
+     "aqi_hit_rate": 0.388
+    },
+    "cams_bias_corrected": {
+     "mae": 23.86,
+     "rmse": 36.01,
+     "bias": -2.08,
+     "aqi_hit_rate": 0.39
+    },
+    "n": 14192
+   }
+  },
+  "Lucknow": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 9.85,
+     "rmse": 14.75,
+     "bias": -0.1,
+     "aqi_hit_rate": 0.691
+    },
+    "persistence": {
+     "mae": 13.22,
+     "rmse": 20.35,
+     "bias": -0.22,
+     "aqi_hit_rate": 0.624
+    },
+    "same_hour_yesterday": {
+     "mae": 15.9,
+     "rmse": 25.07,
+     "bias": 0.54,
+     "aqi_hit_rate": 0.553
+    },
+    "cams_raw": {
+     "mae": 22.19,
+     "rmse": 34.13,
+     "bias": 8.24,
+     "aqi_hit_rate": 0.479
+    },
+    "cams_bias_corrected": {
+     "mae": 19.47,
+     "rmse": 26.69,
+     "bias": 8.06,
+     "aqi_hit_rate": 0.432
+    },
+    "n": 11265
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 12.63,
+     "rmse": 20.95,
+     "bias": -1.04,
+     "aqi_hit_rate": 0.594
+    },
+    "persistence": {
+     "mae": 18.26,
+     "rmse": 28.16,
+     "bias": -0.23,
+     "aqi_hit_rate": 0.511
+    },
+    "same_hour_yesterday": {
+     "mae": 16.01,
+     "rmse": 27.04,
+     "bias": 0.02,
+     "aqi_hit_rate": 0.558
+    },
+    "cams_raw": {
+     "mae": 23.0,
+     "rmse": 36.58,
+     "bias": 8.97,
+     "aqi_hit_rate": 0.467
+    },
+    "cams_bias_corrected": {
+     "mae": 20.14,
+     "rmse": 29.64,
+     "bias": 8.55,
+     "aqi_hit_rate": 0.418
+    },
+    "n": 12994
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 14.56,
+     "rmse": 25.19,
+     "bias": -3.25,
+     "aqi_hit_rate": 0.542
+    },
+    "persistence": {
+     "mae": 20.49,
+     "rmse": 32.09,
+     "bias": -1.02,
+     "aqi_hit_rate": 0.454
+    },
+    "same_hour_yesterday": {
+     "mae": 18.52,
+     "rmse": 30.75,
+     "bias": -0.74,
+     "aqi_hit_rate": 0.483
+    },
+    "cams_raw": {
+     "mae": 23.78,
+     "rmse": 38.55,
+     "bias": 8.39,
+     "aqi_hit_rate": 0.451
+    },
+    "cams_bias_corrected": {
+     "mae": 20.69,
+     "rmse": 32.0,
+     "bias": 7.95,
+     "aqi_hit_rate": 0.418
+    },
+    "n": 14449
+   }
+  },
+  "Moradabad": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 8.88,
+     "rmse": 12.84,
+     "bias": -2.1,
+     "aqi_hit_rate": 0.712
+    },
+    "persistence": {
+     "mae": 11.87,
+     "rmse": 17.6,
+     "bias": 0.1,
+     "aqi_hit_rate": 0.654
+    },
+    "same_hour_yesterday": {
+     "mae": 13.02,
+     "rmse": 18.07,
+     "bias": -0.15,
+     "aqi_hit_rate": 0.608
+    },
+    "cams_raw": {
+     "mae": 27.78,
+     "rmse": 40.38,
+     "bias": 23.07,
+     "aqi_hit_rate": 0.393
+    },
+    "cams_bias_corrected": {
+     "mae": 15.6,
+     "rmse": 21.59,
+     "bias": -3.47,
+     "aqi_hit_rate": 0.552
+    },
+    "n": 10967
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 11.6,
+     "rmse": 17.18,
+     "bias": -4.08,
+     "aqi_hit_rate": 0.628
+    },
+    "persistence": {
+     "mae": 16.78,
+     "rmse": 23.3,
+     "bias": -0.2,
+     "aqi_hit_rate": 0.526
+    },
+    "same_hour_yesterday": {
+     "mae": 13.16,
+     "rmse": 18.87,
+     "bias": -0.28,
+     "aqi_hit_rate": 0.606
+    },
+    "cams_raw": {
+     "mae": 28.57,
+     "rmse": 41.93,
+     "bias": 23.73,
+     "aqi_hit_rate": 0.383
+    },
+    "cams_bias_corrected": {
+     "mae": 15.9,
+     "rmse": 22.7,
+     "bias": -3.36,
+     "aqi_hit_rate": 0.552
+    },
+    "n": 12626
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 14.29,
+     "rmse": 21.92,
+     "bias": -6.82,
+     "aqi_hit_rate": 0.576
+    },
+    "persistence": {
+     "mae": 19.34,
+     "rmse": 27.21,
+     "bias": -0.97,
+     "aqi_hit_rate": 0.473
+    },
+    "same_hour_yesterday": {
+     "mae": 16.85,
+     "rmse": 24.57,
+     "bias": -1.06,
+     "aqi_hit_rate": 0.514
+    },
+    "cams_raw": {
+     "mae": 29.24,
+     "rmse": 43.15,
+     "bias": 23.68,
+     "aqi_hit_rate": 0.381
+    },
+    "cams_bias_corrected": {
+     "mae": 16.8,
+     "rmse": 25.06,
+     "bias": -4.14,
+     "aqi_hit_rate": 0.543
+    },
+    "n": 13958
+   }
+  },
+  "Navi Mumbai": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 6.5,
+     "rmse": 15.14,
+     "bias": -1.09,
+     "aqi_hit_rate": 0.819
+    },
+    "persistence": {
+     "mae": 8.44,
+     "rmse": 18.35,
+     "bias": -0.37,
+     "aqi_hit_rate": 0.77
+    },
+    "same_hour_yesterday": {
+     "mae": 10.22,
+     "rmse": 22.1,
+     "bias": 0.05,
+     "aqi_hit_rate": 0.737
+    },
+    "cams_raw": {
+     "mae": 12.83,
+     "rmse": 21.44,
+     "bias": -5.38,
+     "aqi_hit_rate": 0.654
+    },
+    "cams_bias_corrected": {
+     "mae": 13.93,
+     "rmse": 21.0,
+     "bias": -0.82,
+     "aqi_hit_rate": 0.622
+    },
+    "n": 11317
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 8.26,
+     "rmse": 15.96,
+     "bias": -1.64,
+     "aqi_hit_rate": 0.774
+    },
+    "persistence": {
+     "mae": 12.43,
+     "rmse": 21.97,
+     "bias": -0.25,
+     "aqi_hit_rate": 0.661
+    },
+    "same_hour_yesterday": {
+     "mae": 9.94,
+     "rmse": 20.28,
+     "bias": -0.02,
+     "aqi_hit_rate": 0.74
+    },
+    "cams_raw": {
+     "mae": 12.63,
+     "rmse": 20.36,
+     "bias": -5.03,
+     "aqi_hit_rate": 0.659
+    },
+    "cams_bias_corrected": {
+     "mae": 13.76,
+     "rmse": 19.98,
+     "bias": -0.51,
+     "aqi_hit_rate": 0.633
+    },
+    "n": 13049
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 9.59,
+     "rmse": 17.09,
+     "bias": -2.56,
+     "aqi_hit_rate": 0.735
+    },
+    "persistence": {
+     "mae": 13.92,
+     "rmse": 23.81,
+     "bias": -0.12,
+     "aqi_hit_rate": 0.645
+    },
+    "same_hour_yesterday": {
+     "mae": 11.89,
+     "rmse": 21.68,
+     "bias": 0.02,
+     "aqi_hit_rate": 0.695
+    },
+    "cams_raw": {
+     "mae": 12.78,
+     "rmse": 20.61,
+     "bias": -4.9,
+     "aqi_hit_rate": 0.652
+    },
+    "cams_bias_corrected": {
+     "mae": 13.94,
+     "rmse": 20.14,
+     "bias": -0.46,
+     "aqi_hit_rate": 0.623
+    },
+    "n": 14511
+   }
+  },
+  "Patna": {
+   "stations": 6,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 6.91,
+     "rmse": 11.19,
+     "bias": -0.08,
+     "aqi_hit_rate": 0.762
+    },
+    "persistence": {
+     "mae": 7.99,
+     "rmse": 13.93,
+     "bias": -0.22,
+     "aqi_hit_rate": 0.739
+    },
+    "same_hour_yesterday": {
+     "mae": 10.42,
+     "rmse": 16.73,
+     "bias": 0.27,
+     "aqi_hit_rate": 0.664
+    },
+    "cams_raw": {
+     "mae": 25.32,
+     "rmse": 35.72,
+     "bias": 16.81,
+     "aqi_hit_rate": 0.41
+    },
+    "cams_bias_corrected": {
+     "mae": 15.62,
+     "rmse": 20.67,
+     "bias": 8.45,
+     "aqi_hit_rate": 0.485
+    },
+    "n": 10363
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 9.31,
+     "rmse": 14.85,
+     "bias": -0.34,
+     "aqi_hit_rate": 0.692
+    },
+    "persistence": {
+     "mae": 12.34,
+     "rmse": 19.52,
+     "bias": 0.07,
+     "aqi_hit_rate": 0.615
+    },
+    "same_hour_yesterday": {
+     "mae": 10.63,
+     "rmse": 17.54,
+     "bias": 0.01,
+     "aqi_hit_rate": 0.666
+    },
+    "cams_raw": {
+     "mae": 25.88,
+     "rmse": 36.56,
+     "bias": 17.5,
+     "aqi_hit_rate": 0.401
+    },
+    "cams_bias_corrected": {
+     "mae": 16.06,
+     "rmse": 21.74,
+     "bias": 8.99,
+     "aqi_hit_rate": 0.479
+    },
+    "n": 11906
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 10.93,
+     "rmse": 18.15,
+     "bias": -1.95,
+     "aqi_hit_rate": 0.65
+    },
+    "persistence": {
+     "mae": 14.66,
+     "rmse": 22.99,
+     "bias": -0.45,
+     "aqi_hit_rate": 0.558
+    },
+    "same_hour_yesterday": {
+     "mae": 13.24,
+     "rmse": 21.44,
+     "bias": -0.57,
+     "aqi_hit_rate": 0.589
+    },
+    "cams_raw": {
+     "mae": 26.22,
+     "rmse": 37.7,
+     "bias": 17.4,
+     "aqi_hit_rate": 0.403
+    },
+    "cams_bias_corrected": {
+     "mae": 16.37,
+     "rmse": 22.95,
+     "bias": 8.87,
+     "aqi_hit_rate": 0.477
+    },
+    "n": 13236
+   }
+  },
+  "Howrah": {
+   "stations": 5,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 7.52,
+     "rmse": 12.5,
+     "bias": -1.08,
+     "aqi_hit_rate": 0.766
+    },
+    "persistence": {
+     "mae": 10.32,
+     "rmse": 18.16,
+     "bias": -0.37,
+     "aqi_hit_rate": 0.713
+    },
+    "same_hour_yesterday": {
+     "mae": 12.19,
+     "rmse": 19.82,
+     "bias": -0.04,
+     "aqi_hit_rate": 0.646
+    },
+    "cams_raw": {
+     "mae": 18.69,
+     "rmse": 28.57,
+     "bias": 9.95,
+     "aqi_hit_rate": 0.593
+    },
+    "cams_bias_corrected": {
+     "mae": 13.07,
+     "rmse": 20.63,
+     "bias": -2.21,
+     "aqi_hit_rate": 0.622
+    },
+    "n": 11165
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 10.46,
+     "rmse": 17.76,
+     "bias": -3.3,
+     "aqi_hit_rate": 0.678
+    },
+    "persistence": {
+     "mae": 16.25,
+     "rmse": 26.8,
+     "bias": -0.07,
+     "aqi_hit_rate": 0.574
+    },
+    "same_hour_yesterday": {
+     "mae": 12.33,
+     "rmse": 20.47,
+     "bias": -0.07,
+     "aqi_hit_rate": 0.652
+    },
+    "cams_raw": {
+     "mae": 19.03,
+     "rmse": 29.23,
+     "bias": 10.63,
+     "aqi_hit_rate": 0.586
+    },
+    "cams_bias_corrected": {
+     "mae": 13.06,
+     "rmse": 21.0,
+     "bias": -1.63,
+     "aqi_hit_rate": 0.619
+    },
+    "n": 12893
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 12.56,
+     "rmse": 20.59,
+     "bias": -5.1,
+     "aqi_hit_rate": 0.614
+    },
+    "persistence": {
+     "mae": 18.64,
+     "rmse": 29.19,
+     "bias": -0.32,
+     "aqi_hit_rate": 0.502
+    },
+    "same_hour_yesterday": {
+     "mae": 16.17,
+     "rmse": 24.88,
+     "bias": -0.34,
+     "aqi_hit_rate": 0.54
+    },
+    "cams_raw": {
+     "mae": 19.26,
+     "rmse": 29.67,
+     "bias": 10.69,
+     "aqi_hit_rate": 0.578
+    },
+    "cams_bias_corrected": {
+     "mae": 13.23,
+     "rmse": 21.75,
+     "bias": -1.74,
+     "aqi_hit_rate": 0.62
+    },
+    "n": 14319
+   }
+  },
+  "Indore": {
+   "stations": 5,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 8.7,
+     "rmse": 16.0,
+     "bias": -2.52,
+     "aqi_hit_rate": 0.749
+    },
+    "persistence": {
+     "mae": 12.22,
+     "rmse": 21.86,
+     "bias": -0.53,
+     "aqi_hit_rate": 0.68
+    },
+    "same_hour_yesterday": {
+     "mae": 12.39,
+     "rmse": 23.25,
+     "bias": -0.11,
+     "aqi_hit_rate": 0.678
+    },
+    "cams_raw": {
+     "mae": 16.03,
+     "rmse": 24.91,
+     "bias": -9.22,
+     "aqi_hit_rate": 0.589
+    },
+    "cams_bias_corrected": {
+     "mae": 14.22,
+     "rmse": 23.2,
+     "bias": -4.84,
+     "aqi_hit_rate": 0.565
+    },
+    "n": 10033
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 10.47,
+     "rmse": 19.7,
+     "bias": -4.13,
+     "aqi_hit_rate": 0.709
+    },
+    "persistence": {
+     "mae": 17.02,
+     "rmse": 29.43,
+     "bias": -0.06,
+     "aqi_hit_rate": 0.588
+    },
+    "same_hour_yesterday": {
+     "mae": 12.33,
+     "rmse": 23.89,
+     "bias": -0.15,
+     "aqi_hit_rate": 0.681
+    },
+    "cams_raw": {
+     "mae": 15.98,
+     "rmse": 25.23,
+     "bias": -8.79,
+     "aqi_hit_rate": 0.591
+    },
+    "cams_bias_corrected": {
+     "mae": 14.18,
+     "rmse": 23.55,
+     "bias": -4.42,
+     "aqi_hit_rate": 0.564
+    },
+    "n": 11502
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 11.97,
+     "rmse": 22.49,
+     "bias": -6.1,
+     "aqi_hit_rate": 0.673
+    },
+    "persistence": {
+     "mae": 18.07,
+     "rmse": 30.71,
+     "bias": -0.84,
+     "aqi_hit_rate": 0.559
+    },
+    "same_hour_yesterday": {
+     "mae": 14.55,
+     "rmse": 26.8,
+     "bias": -0.91,
+     "aqi_hit_rate": 0.624
+    },
+    "cams_raw": {
+     "mae": 16.41,
+     "rmse": 26.58,
+     "bias": -9.28,
+     "aqi_hit_rate": 0.589
+    },
+    "cams_bias_corrected": {
+     "mae": 14.92,
+     "rmse": 25.39,
+     "bias": -4.92,
+     "aqi_hit_rate": 0.557
+    },
+    "n": 12652
+   }
+  },
+  "Jodhpur": {
+   "stations": 5,
+   "1-6 h": {
+    "airgrove": {
+     "mae": 8.75,
+     "rmse": 16.35,
+     "bias": -2.17,
+     "aqi_hit_rate": 0.758
+    },
+    "persistence": {
+     "mae": 12.68,
+     "rmse": 21.89,
+     "bias": -0.49,
+     "aqi_hit_rate": 0.684
+    },
+    "same_hour_yesterday": {
+     "mae": 11.29,
+     "rmse": 20.23,
+     "bias": -0.18,
+     "aqi_hit_rate": 0.706
+    },
+    "cams_raw": {
+     "mae": 22.1,
+     "rmse": 31.19,
+     "bias": -6.6,
+     "aqi_hit_rate": 0.45
+    },
+    "cams_bias_corrected": {
+     "mae": 21.55,
+     "rmse": 29.26,
+     "bias": -1.76,
+     "aqi_hit_rate": 0.313
+    },
+    "n": 11023
+   },
+   "7-24 h": {
+    "airgrove": {
+     "mae": 10.67,
+     "rmse": 20.08,
+     "bias": -3.97,
+     "aqi_hit_rate": 0.724
+    },
+    "persistence": {
+     "mae": 15.79,
+     "rmse": 26.43,
+     "bias": -0.55,
+     "aqi_hit_rate": 0.627
+    },
+    "same_hour_yesterday": {
+     "mae": 11.33,
+     "rmse": 20.06,
+     "bias": -0.36,
+     "aqi_hit_rate": 0.708
+    },
+    "cams_raw": {
+     "mae": 22.28,
+     "rmse": 32.15,
+     "bias": -6.13,
+     "aqi_hit_rate": 0.45
+    },
+    "cams_bias_corrected": {
+     "mae": 21.78,
+     "rmse": 30.24,
+     "bias": -1.49,
+     "aqi_hit_rate": 0.301
+    },
+    "n": 12708
+   },
+   "25-72 h": {
+    "airgrove": {
+     "mae": 12.18,
+     "rmse": 22.45,
+     "bias": -5.57,
+     "aqi_hit_rate": 0.692
+    },
+    "persistence": {
+     "mae": 17.75,
+     "rmse": 29.65,
+     "bias": -1.05,
+     "aqi_hit_rate": 0.599
+    },
+    "same_hour_yesterday": {
+     "mae": 14.17,
+     "rmse": 25.42,
+     "bias": -0.86,
+     "aqi_hit_rate": 0.652
+    },
+    "cams_raw": {
+     "mae": 22.47,
+     "rmse": 32.7,
+     "bias": -6.75,
+     "aqi_hit_rate": 0.443
+    },
+    "cams_bias_corrected": {
+     "mae": 22.03,
+     "rmse": 30.9,
+     "bias": -2.15,
+     "aqi_hit_rate": 0.297
+    },
+    "n": 14139
+   }
+  }
+ },
+ "by_city_all": {
+  "Agartala": {
+   "airgrove": {
+    "mae": 17.28,
+    "rmse": 40.6,
+    "bias": -8.95,
+    "aqi_hit_rate": 0.674
+   },
+   "persistence": {
+    "mae": 23.53,
+    "rmse": 52.18,
+    "bias": -0.46,
+    "aqi_hit_rate": 0.628
+   },
+   "same_hour_yesterday": {
+    "mae": 20.24,
+    "rmse": 43.26,
+    "bias": -0.34,
+    "aqi_hit_rate": 0.637
+   },
+   "cams_raw": {
+    "mae": 27.75,
+    "rmse": 46.05,
+    "bias": 3.15,
+    "aqi_hit_rate": 0.468
+   },
+   "cams_bias_corrected": {
+    "mae": 23.65,
+    "rmse": 48.84,
+    "bias": -19.22,
+    "aqi_hit_rate": 0.604
+   },
+   "n": 18818
+  },
+  "Agra": {
+   "airgrove": {
+    "mae": 11.35,
+    "rmse": 18.25,
+    "bias": -2.97,
+    "aqi_hit_rate": 0.656
+   },
+   "persistence": {
+    "mae": 16.8,
+    "rmse": 25.92,
+    "bias": -0.42,
+    "aqi_hit_rate": 0.561
+   },
+   "same_hour_yesterday": {
+    "mae": 14.61,
+    "rmse": 22.87,
+    "bias": -0.34,
+    "aqi_hit_rate": 0.596
+   },
+   "cams_raw": {
+    "mae": 41.99,
+    "rmse": 59.34,
+    "bias": 38.44,
+    "aqi_hit_rate": 0.298
+   },
+   "cams_bias_corrected": {
+    "mae": 15.88,
+    "rmse": 23.37,
+    "bias": -3.99,
+    "aqi_hit_rate": 0.548
+   },
+   "n": 38011
+  },
+  "Ahmedabad": {
+   "airgrove": {
+    "mae": 9.39,
+    "rmse": 19.12,
+    "bias": -1.73,
+    "aqi_hit_rate": 0.684
+   },
+   "persistence": {
+    "mae": 14.18,
+    "rmse": 24.77,
+    "bias": -0.78,
+    "aqi_hit_rate": 0.567
+   },
+   "same_hour_yesterday": {
+    "mae": 12.95,
+    "rmse": 25.97,
+    "bias": -0.01,
+    "aqi_hit_rate": 0.609
+   },
+   "cams_raw": {
+    "mae": 18.83,
+    "rmse": 27.77,
+    "bias": -16.83,
+    "aqi_hit_rate": 0.456
+   },
+   "cams_bias_corrected": {
+    "mae": 14.03,
+    "rmse": 22.3,
+    "bias": 2.9,
+    "aqi_hit_rate": 0.512
+   },
+   "n": 38127
+  },
+  "Ajmer": {
+   "airgrove": {
+    "mae": 9.29,
+    "rmse": 18.77,
+    "bias": -2.92,
+    "aqi_hit_rate": 0.711
+   },
+   "persistence": {
+    "mae": 12.31,
+    "rmse": 22.83,
+    "bias": -0.33,
+    "aqi_hit_rate": 0.636
+   },
+   "same_hour_yesterday": {
+    "mae": 11.12,
+    "rmse": 22.38,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.66
+   },
+   "cams_raw": {
+    "mae": 18.65,
+    "rmse": 26.23,
+    "bias": -15.4,
+    "aqi_hit_rate": 0.392
+   },
+   "cams_bias_corrected": {
+    "mae": 10.85,
+    "rmse": 20.12,
+    "bias": -1.32,
+    "aqi_hit_rate": 0.693
+   },
+   "n": 31306
+  },
+  "Akola": {
+   "airgrove": {
+    "mae": 9.76,
+    "rmse": 18.65,
+    "bias": -2.51,
+    "aqi_hit_rate": 0.712
+   },
+   "persistence": {
+    "mae": 14.81,
+    "rmse": 27.58,
+    "bias": -0.06,
+    "aqi_hit_rate": 0.638
+   },
+   "same_hour_yesterday": {
+    "mae": 12.15,
+    "rmse": 22.63,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.669
+   },
+   "cams_raw": {
+    "mae": 14.39,
+    "rmse": 23.21,
+    "bias": -6.29,
+    "aqi_hit_rate": 0.636
+   },
+   "cams_bias_corrected": {
+    "mae": 12.95,
+    "rmse": 21.91,
+    "bias": -1.02,
+    "aqi_hit_rate": 0.626
+   },
+   "n": 30521
+  },
+  "Alwar": {
+   "airgrove": {
+    "mae": 10.82,
+    "rmse": 25.59,
+    "bias": -4.59,
+    "aqi_hit_rate": 0.738
+   },
+   "persistence": {
+    "mae": 12.93,
+    "rmse": 32.67,
+    "bias": 0.22,
+    "aqi_hit_rate": 0.686
+   },
+   "same_hour_yesterday": {
+    "mae": 12.52,
+    "rmse": 29.64,
+    "bias": -0.38,
+    "aqi_hit_rate": 0.69
+   },
+   "cams_raw": {
+    "mae": 24.35,
+    "rmse": 38.1,
+    "bias": 6.04,
+    "aqi_hit_rate": 0.389
+   },
+   "cams_bias_corrected": {
+    "mae": 13.59,
+    "rmse": 26.54,
+    "bias": -9.06,
+    "aqi_hit_rate": 0.643
+   },
+   "n": 26483
+  },
+  "Amaravati": {
+   "airgrove": {
+    "mae": 7.71,
+    "rmse": 11.41,
+    "bias": -2.16,
+    "aqi_hit_rate": 0.769
+   },
+   "persistence": {
+    "mae": 9.84,
+    "rmse": 14.7,
+    "bias": -0.22,
+    "aqi_hit_rate": 0.717
+   },
+   "same_hour_yesterday": {
+    "mae": 9.53,
+    "rmse": 13.7,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.718
+   },
+   "cams_raw": {
+    "mae": 14.07,
+    "rmse": 19.93,
+    "bias": 5.38,
+    "aqi_hit_rate": 0.579
+   },
+   "cams_bias_corrected": {
+    "mae": 11.93,
+    "rmse": 17.19,
+    "bias": -2.47,
+    "aqi_hit_rate": 0.631
+   },
+   "n": 37208
+  },
+  "Amravati": {
+   "airgrove": {
+    "mae": 8.06,
+    "rmse": 13.0,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.761
+   },
+   "persistence": {
+    "mae": 9.73,
+    "rmse": 15.0,
+    "bias": 0.05,
+    "aqi_hit_rate": 0.719
+   },
+   "same_hour_yesterday": {
+    "mae": 10.61,
+    "rmse": 16.47,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.698
+   },
+   "cams_raw": {
+    "mae": 10.66,
+    "rmse": 15.85,
+    "bias": -1.33,
+    "aqi_hit_rate": 0.697
+   },
+   "cams_bias_corrected": {
+    "mae": 9.86,
+    "rmse": 14.12,
+    "bias": 2.51,
+    "aqi_hit_rate": 0.701
+   },
+   "n": 29265
+  },
+  "Amritsar": {
+   "airgrove": {
+    "mae": 11.19,
+    "rmse": 20.33,
+    "bias": -2.95,
+    "aqi_hit_rate": 0.729
+   },
+   "persistence": {
+    "mae": 12.34,
+    "rmse": 23.73,
+    "bias": -0.46,
+    "aqi_hit_rate": 0.697
+   },
+   "same_hour_yesterday": {
+    "mae": 13.75,
+    "rmse": 25.61,
+    "bias": -0.42,
+    "aqi_hit_rate": 0.669
+   },
+   "cams_raw": {
+    "mae": 36.13,
+    "rmse": 53.48,
+    "bias": 24.88,
+    "aqi_hit_rate": 0.335
+   },
+   "cams_bias_corrected": {
+    "mae": 14.02,
+    "rmse": 22.67,
+    "bias": -2.42,
+    "aqi_hit_rate": 0.673
+   },
+   "n": 32700
+  },
+  "Anantapur": {
+   "airgrove": {
+    "mae": 10.54,
+    "rmse": 20.87,
+    "bias": -4.13,
+    "aqi_hit_rate": 0.732
+   },
+   "persistence": {
+    "mae": 13.79,
+    "rmse": 27.07,
+    "bias": 0.22,
+    "aqi_hit_rate": 0.673
+   },
+   "same_hour_yesterday": {
+    "mae": 13.24,
+    "rmse": 25.13,
+    "bias": 0.16,
+    "aqi_hit_rate": 0.674
+   },
+   "cams_raw": {
+    "mae": 22.68,
+    "rmse": 30.22,
+    "bias": -18.79,
+    "aqi_hit_rate": 0.348
+   },
+   "cams_bias_corrected": {
+    "mae": 12.28,
+    "rmse": 22.5,
+    "bias": -4.13,
+    "aqi_hit_rate": 0.709
+   },
+   "n": 17364
+  },
+  "Angul": {
+   "airgrove": {
+    "mae": 19.86,
+    "rmse": 33.23,
+    "bias": -7.39,
+    "aqi_hit_rate": 0.58
+   },
+   "persistence": {
+    "mae": 25.83,
+    "rmse": 41.34,
+    "bias": 0.11,
+    "aqi_hit_rate": 0.519
+   },
+   "same_hour_yesterday": {
+    "mae": 23.72,
+    "rmse": 37.33,
+    "bias": -0.21,
+    "aqi_hit_rate": 0.542
+   },
+   "cams_raw": {
+    "mae": 25.35,
+    "rmse": 38.41,
+    "bias": 1.14,
+    "aqi_hit_rate": 0.467
+   },
+   "cams_bias_corrected": {
+    "mae": 27.12,
+    "rmse": 38.25,
+    "bias": 6.32,
+    "aqi_hit_rate": 0.377
+   },
+   "n": 26692
+  },
+  "Ankleshwar": {
+   "airgrove": {
+    "mae": 10.78,
+    "rmse": 16.21,
+    "bias": -2.66,
+    "aqi_hit_rate": 0.647
+   },
+   "persistence": {
+    "mae": 13.99,
+    "rmse": 20.9,
+    "bias": 0.1,
+    "aqi_hit_rate": 0.582
+   },
+   "same_hour_yesterday": {
+    "mae": 14.17,
+    "rmse": 21.26,
+    "bias": 0.05,
+    "aqi_hit_rate": 0.572
+   },
+   "cams_raw": {
+    "mae": 20.09,
+    "rmse": 26.74,
+    "bias": -16.82,
+    "aqi_hit_rate": 0.466
+   },
+   "cams_bias_corrected": {
+    "mae": 16.03,
+    "rmse": 21.94,
+    "bias": -3.24,
+    "aqi_hit_rate": 0.467
+   },
+   "n": 18749
+  },
+  "Araria": {
+   "airgrove": {
+    "mae": 14.14,
+    "rmse": 22.13,
+    "bias": -5.18,
+    "aqi_hit_rate": 0.605
+   },
+   "persistence": {
+    "mae": 18.59,
+    "rmse": 28.87,
+    "bias": 0.23,
+    "aqi_hit_rate": 0.547
+   },
+   "same_hour_yesterday": {
+    "mae": 16.72,
+    "rmse": 26.43,
+    "bias": 0.25,
+    "aqi_hit_rate": 0.573
+   },
+   "cams_raw": {
+    "mae": 23.01,
+    "rmse": 31.51,
+    "bias": 8.05,
+    "aqi_hit_rate": 0.451
+   },
+   "cams_bias_corrected": {
+    "mae": 19.77,
+    "rmse": 27.49,
+    "bias": -1.15,
+    "aqi_hit_rate": 0.403
+   },
+   "n": 26510
+  },
+  "Asansol": {
+   "airgrove": {
+    "mae": 10.71,
+    "rmse": 15.56,
+    "bias": -1.22,
+    "aqi_hit_rate": 0.699
+   },
+   "persistence": {
+    "mae": 15.46,
+    "rmse": 22.96,
+    "bias": -0.02,
+    "aqi_hit_rate": 0.608
+   },
+   "same_hour_yesterday": {
+    "mae": 13.17,
+    "rmse": 18.55,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.646
+   },
+   "cams_raw": {
+    "mae": 24.54,
+    "rmse": 31.57,
+    "bias": 15.68,
+    "aqi_hit_rate": 0.391
+   },
+   "cams_bias_corrected": {
+    "mae": 21.3,
+    "rmse": 26.96,
+    "bias": 2.62,
+    "aqi_hit_rate": 0.429
+   },
+   "n": 37546
+  },
+  "Baddi": {
+   "airgrove": {
+    "mae": 26.07,
+    "rmse": 39.53,
+    "bias": -11.18,
+    "aqi_hit_rate": 0.433
+   },
+   "persistence": {
+    "mae": 33.42,
+    "rmse": 48.83,
+    "bias": 1.05,
+    "aqi_hit_rate": 0.384
+   },
+   "same_hour_yesterday": {
+    "mae": 28.88,
+    "rmse": 42.5,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.432
+   },
+   "cams_raw": {
+    "mae": 35.69,
+    "rmse": 50.34,
+    "bias": -22.82,
+    "aqi_hit_rate": 0.308
+   },
+   "cams_bias_corrected": {
+    "mae": 35.95,
+    "rmse": 50.81,
+    "bias": -14.18,
+    "aqi_hit_rate": 0.299
+   },
+   "n": 26734
+  },
+  "Badlapur": {
+   "airgrove": {
+    "mae": 9.13,
+    "rmse": 13.6,
+    "bias": -0.06,
+    "aqi_hit_rate": 0.689
+   },
+   "persistence": {
+    "mae": 12.67,
+    "rmse": 19.51,
+    "bias": 0.19,
+    "aqi_hit_rate": 0.617
+   },
+   "same_hour_yesterday": {
+    "mae": 9.38,
+    "rmse": 14.93,
+    "bias": 0.07,
+    "aqi_hit_rate": 0.684
+   },
+   "cams_raw": {
+    "mae": 13.3,
+    "rmse": 18.2,
+    "bias": -1.57,
+    "aqi_hit_rate": 0.631
+   },
+   "cams_bias_corrected": {
+    "mae": 13.27,
+    "rmse": 17.33,
+    "bias": 2.98,
+    "aqi_hit_rate": 0.602
+   },
+   "n": 25067
+  },
+  "Baghpat": {
+   "airgrove": {
+    "mae": 25.38,
+    "rmse": 46.11,
+    "bias": -8.98,
+    "aqi_hit_rate": 0.55
+   },
+   "persistence": {
+    "mae": 32.77,
+    "rmse": 54.55,
+    "bias": -0.43,
+    "aqi_hit_rate": 0.489
+   },
+   "same_hour_yesterday": {
+    "mae": 32.0,
+    "rmse": 51.91,
+    "bias": -1.31,
+    "aqi_hit_rate": 0.472
+   },
+   "cams_raw": {
+    "mae": 45.43,
+    "rmse": 65.21,
+    "bias": 11.31,
+    "aqi_hit_rate": 0.273
+   },
+   "cams_bias_corrected": {
+    "mae": 47.28,
+    "rmse": 68.52,
+    "bias": -4.16,
+    "aqi_hit_rate": 0.21
+   },
+   "n": 19545
+  },
+  "Bahadurgarh": {
+   "airgrove": {
+    "mae": 36.44,
+    "rmse": 82.77,
+    "bias": -12.3,
+    "aqi_hit_rate": 0.467
+   },
+   "persistence": {
+    "mae": 41.98,
+    "rmse": 92.44,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.487
+   },
+   "same_hour_yesterday": {
+    "mae": 37.35,
+    "rmse": 94.71,
+    "bias": -0.01,
+    "aqi_hit_rate": 0.566
+   },
+   "cams_raw": {
+    "mae": 53.42,
+    "rmse": 88.24,
+    "bias": 8.35,
+    "aqi_hit_rate": 0.275
+   },
+   "cams_bias_corrected": {
+    "mae": 63.64,
+    "rmse": 87.33,
+    "bias": 38.91,
+    "aqi_hit_rate": 0.179
+   },
+   "n": 23416
+  },
+  "Balasore": {
+   "airgrove": {
+    "mae": 14.83,
+    "rmse": 24.57,
+    "bias": -5.04,
+    "aqi_hit_rate": 0.653
+   },
+   "persistence": {
+    "mae": 19.04,
+    "rmse": 30.69,
+    "bias": 0.76,
+    "aqi_hit_rate": 0.595
+   },
+   "same_hour_yesterday": {
+    "mae": 17.56,
+    "rmse": 26.09,
+    "bias": 0.85,
+    "aqi_hit_rate": 0.605
+   },
+   "cams_raw": {
+    "mae": 19.33,
+    "rmse": 27.79,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.513
+   },
+   "cams_bias_corrected": {
+    "mae": 20.78,
+    "rmse": 30.06,
+    "bias": -2.66,
+    "aqi_hit_rate": 0.509
+   },
+   "n": 27281
+  },
+  "Banswara": {
+   "airgrove": {
+    "mae": 15.88,
+    "rmse": 41.14,
+    "bias": -5.12,
+    "aqi_hit_rate": 0.645
+   },
+   "persistence": {
+    "mae": 22.15,
+    "rmse": 55.15,
+    "bias": 0.71,
+    "aqi_hit_rate": 0.587
+   },
+   "same_hour_yesterday": {
+    "mae": 20.66,
+    "rmse": 54.31,
+    "bias": 0.31,
+    "aqi_hit_rate": 0.62
+   },
+   "cams_raw": {
+    "mae": 20.72,
+    "rmse": 42.13,
+    "bias": -9.13,
+    "aqi_hit_rate": 0.523
+   },
+   "cams_bias_corrected": {
+    "mae": 20.08,
+    "rmse": 40.08,
+    "bias": 2.24,
+    "aqi_hit_rate": 0.377
+   },
+   "n": 25364
+  },
+  "Baran": {
+   "airgrove": {
+    "mae": 13.13,
+    "rmse": 23.06,
+    "bias": -3.61,
+    "aqi_hit_rate": 0.66
+   },
+   "persistence": {
+    "mae": 16.89,
+    "rmse": 29.8,
+    "bias": 0.68,
+    "aqi_hit_rate": 0.606
+   },
+   "same_hour_yesterday": {
+    "mae": 15.98,
+    "rmse": 28.18,
+    "bias": 0.45,
+    "aqi_hit_rate": 0.621
+   },
+   "cams_raw": {
+    "mae": 16.32,
+    "rmse": 24.58,
+    "bias": 0.54,
+    "aqi_hit_rate": 0.59
+   },
+   "cams_bias_corrected": {
+    "mae": 16.98,
+    "rmse": 25.69,
+    "bias": 0.3,
+    "aqi_hit_rate": 0.568
+   },
+   "n": 30648
+  },
+  "Barbil": {
+   "airgrove": {
+    "mae": 19.06,
+    "rmse": 29.81,
+    "bias": -5.35,
+    "aqi_hit_rate": 0.525
+   },
+   "persistence": {
+    "mae": 26.65,
+    "rmse": 39.61,
+    "bias": 0.4,
+    "aqi_hit_rate": 0.447
+   },
+   "same_hour_yesterday": {
+    "mae": 21.46,
+    "rmse": 33.2,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.508
+   },
+   "cams_raw": {
+    "mae": 23.93,
+    "rmse": 34.99,
+    "bias": -8.66,
+    "aqi_hit_rate": 0.422
+   },
+   "cams_bias_corrected": {
+    "mae": 24.45,
+    "rmse": 34.63,
+    "bias": -3.06,
+    "aqi_hit_rate": 0.412
+   },
+   "n": 27216
+  },
+  "Bareilly": {
+   "airgrove": {
+    "mae": 10.2,
+    "rmse": 15.3,
+    "bias": -3.56,
+    "aqi_hit_rate": 0.658
+   },
+   "persistence": {
+    "mae": 13.11,
+    "rmse": 19.45,
+    "bias": -0.4,
+    "aqi_hit_rate": 0.577
+   },
+   "same_hour_yesterday": {
+    "mae": 12.53,
+    "rmse": 18.56,
+    "bias": -0.55,
+    "aqi_hit_rate": 0.594
+   },
+   "cams_raw": {
+    "mae": 28.65,
+    "rmse": 40.17,
+    "bias": 22.06,
+    "aqi_hit_rate": 0.356
+   },
+   "cams_bias_corrected": {
+    "mae": 18.18,
+    "rmse": 24.16,
+    "bias": -15.14,
+    "aqi_hit_rate": 0.469
+   },
+   "n": 33634
+  },
+  "Baripada": {
+   "airgrove": {
+    "mae": 10.22,
+    "rmse": 14.65,
+    "bias": -3.32,
+    "aqi_hit_rate": 0.727
+   },
+   "persistence": {
+    "mae": 12.15,
+    "rmse": 17.77,
+    "bias": -0.32,
+    "aqi_hit_rate": 0.67
+   },
+   "same_hour_yesterday": {
+    "mae": 12.61,
+    "rmse": 17.42,
+    "bias": -0.36,
+    "aqi_hit_rate": 0.66
+   },
+   "cams_raw": {
+    "mae": 13.08,
+    "rmse": 17.55,
+    "bias": 5.05,
+    "aqi_hit_rate": 0.63
+   },
+   "cams_bias_corrected": {
+    "mae": 12.98,
+    "rmse": 17.24,
+    "bias": 0.77,
+    "aqi_hit_rate": 0.644
+   },
+   "n": 22700
+  },
+  "Barmer": {
+   "airgrove": {
+    "mae": 12.09,
+    "rmse": 26.0,
+    "bias": -4.25,
+    "aqi_hit_rate": 0.723
+   },
+   "persistence": {
+    "mae": 16.05,
+    "rmse": 30.64,
+    "bias": -0.45,
+    "aqi_hit_rate": 0.653
+   },
+   "same_hour_yesterday": {
+    "mae": 15.2,
+    "rmse": 32.41,
+    "bias": -0.29,
+    "aqi_hit_rate": 0.684
+   },
+   "cams_raw": {
+    "mae": 18.37,
+    "rmse": 31.23,
+    "bias": -6.83,
+    "aqi_hit_rate": 0.578
+   },
+   "cams_bias_corrected": {
+    "mae": 18.35,
+    "rmse": 30.79,
+    "bias": -3.38,
+    "aqi_hit_rate": 0.532
+   },
+   "n": 31619
+  },
+  "Barrackpore": {
+   "airgrove": {
+    "mae": 9.79,
+    "rmse": 15.09,
+    "bias": -2.44,
+    "aqi_hit_rate": 0.709
+   },
+   "persistence": {
+    "mae": 12.62,
+    "rmse": 19.23,
+    "bias": -0.1,
+    "aqi_hit_rate": 0.641
+   },
+   "same_hour_yesterday": {
+    "mae": 12.4,
+    "rmse": 18.35,
+    "bias": -0.02,
+    "aqi_hit_rate": 0.642
+   },
+   "cams_raw": {
+    "mae": 23.16,
+    "rmse": 34.35,
+    "bias": 20.42,
+    "aqi_hit_rate": 0.497
+   },
+   "cams_bias_corrected": {
+    "mae": 11.23,
+    "rmse": 16.83,
+    "bias": -2.18,
+    "aqi_hit_rate": 0.663
+   },
+   "n": 33058
+  },
+  "Bathinda": {
+   "airgrove": {
+    "mae": 15.82,
+    "rmse": 25.87,
+    "bias": -5.01,
+    "aqi_hit_rate": 0.617
+   },
+   "persistence": {
+    "mae": 19.55,
+    "rmse": 31.11,
+    "bias": -0.89,
+    "aqi_hit_rate": 0.564
+   },
+   "same_hour_yesterday": {
+    "mae": 19.35,
+    "rmse": 31.05,
+    "bias": -1.24,
+    "aqi_hit_rate": 0.572
+   },
+   "cams_raw": {
+    "mae": 46.7,
+    "rmse": 66.96,
+    "bias": 37.97,
+    "aqi_hit_rate": 0.256
+   },
+   "cams_bias_corrected": {
+    "mae": 22.19,
+    "rmse": 31.18,
+    "bias": 2.47,
+    "aqi_hit_rate": 0.402
+   },
+   "n": 27014
+  },
+  "Begusarai": {
+   "airgrove": {
+    "mae": 14.41,
+    "rmse": 23.69,
+    "bias": -2.9,
+    "aqi_hit_rate": 0.594
+   },
+   "persistence": {
+    "mae": 18.11,
+    "rmse": 29.91,
+    "bias": 0.38,
+    "aqi_hit_rate": 0.563
+   },
+   "same_hour_yesterday": {
+    "mae": 17.61,
+    "rmse": 28.69,
+    "bias": -0.15,
+    "aqi_hit_rate": 0.573
+   },
+   "cams_raw": {
+    "mae": 31.41,
+    "rmse": 43.85,
+    "bias": 22.61,
+    "aqi_hit_rate": 0.354
+   },
+   "cams_bias_corrected": {
+    "mae": 18.89,
+    "rmse": 27.54,
+    "bias": 1.62,
+    "aqi_hit_rate": 0.459
+   },
+   "n": 22296
+  },
+  "Bhagalpur": {
+   "airgrove": {
+    "mae": 16.1,
+    "rmse": 37.27,
+    "bias": -7.42,
+    "aqi_hit_rate": 0.612
+   },
+   "persistence": {
+    "mae": 21.06,
+    "rmse": 44.03,
+    "bias": -1.35,
+    "aqi_hit_rate": 0.53
+   },
+   "same_hour_yesterday": {
+    "mae": 20.63,
+    "rmse": 45.43,
+    "bias": -0.89,
+    "aqi_hit_rate": 0.546
+   },
+   "cams_raw": {
+    "mae": 29.72,
+    "rmse": 47.16,
+    "bias": 15.13,
+    "aqi_hit_rate": 0.359
+   },
+   "cams_bias_corrected": {
+    "mae": 18.34,
+    "rmse": 37.81,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.518
+   },
+   "n": 31158
+  },
+  "Bharatpur": {
+   "airgrove": {
+    "mae": 11.51,
+    "rmse": 19.27,
+    "bias": -1.95,
+    "aqi_hit_rate": 0.746
+   },
+   "persistence": {
+    "mae": 15.05,
+    "rmse": 24.42,
+    "bias": -0.11,
+    "aqi_hit_rate": 0.69
+   },
+   "same_hour_yesterday": {
+    "mae": 13.84,
+    "rmse": 22.76,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.708
+   },
+   "cams_raw": {
+    "mae": 36.86,
+    "rmse": 49.72,
+    "bias": 32.59,
+    "aqi_hit_rate": 0.306
+   },
+   "cams_bias_corrected": {
+    "mae": 18.56,
+    "rmse": 26.76,
+    "bias": 0.93,
+    "aqi_hit_rate": 0.565
+   },
+   "n": 34236
+  },
+  "Bhilai": {
+   "airgrove": {
+    "mae": 5.9,
+    "rmse": 15.2,
+    "bias": -0.53,
+    "aqi_hit_rate": 0.903
+   },
+   "persistence": {
+    "mae": 8.11,
+    "rmse": 19.92,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.873
+   },
+   "same_hour_yesterday": {
+    "mae": 7.56,
+    "rmse": 19.63,
+    "bias": -0.36,
+    "aqi_hit_rate": 0.886
+   },
+   "cams_raw": {
+    "mae": 27.85,
+    "rmse": 35.51,
+    "bias": 26.16,
+    "aqi_hit_rate": 0.33
+   },
+   "cams_bias_corrected": {
+    "mae": 7.52,
+    "rmse": 15.72,
+    "bias": 2.17,
+    "aqi_hit_rate": 0.889
+   },
+   "n": 20904
+  },
+  "Bhilwara": {
+   "airgrove": {
+    "mae": 13.17,
+    "rmse": 23.1,
+    "bias": -3.8,
+    "aqi_hit_rate": 0.599
+   },
+   "persistence": {
+    "mae": 18.48,
+    "rmse": 31.73,
+    "bias": -0.68,
+    "aqi_hit_rate": 0.51
+   },
+   "same_hour_yesterday": {
+    "mae": 15.34,
+    "rmse": 26.23,
+    "bias": -0.96,
+    "aqi_hit_rate": 0.562
+   },
+   "cams_raw": {
+    "mae": 18.91,
+    "rmse": 29.89,
+    "bias": -15.72,
+    "aqi_hit_rate": 0.522
+   },
+   "cams_bias_corrected": {
+    "mae": 16.4,
+    "rmse": 26.22,
+    "bias": -1.87,
+    "aqi_hit_rate": 0.496
+   },
+   "n": 32406
+  },
+  "Bhiwadi": {
+   "airgrove": {
+    "mae": 28.58,
+    "rmse": 50.45,
+    "bias": -11.85,
+    "aqi_hit_rate": 0.523
+   },
+   "persistence": {
+    "mae": 39.72,
+    "rmse": 65.95,
+    "bias": -0.87,
+    "aqi_hit_rate": 0.434
+   },
+   "same_hour_yesterday": {
+    "mae": 35.04,
+    "rmse": 58.63,
+    "bias": -0.98,
+    "aqi_hit_rate": 0.466
+   },
+   "cams_raw": {
+    "mae": 46.9,
+    "rmse": 69.42,
+    "bias": -0.87,
+    "aqi_hit_rate": 0.314
+   },
+   "cams_bias_corrected": {
+    "mae": 48.29,
+    "rmse": 71.62,
+    "bias": -14.46,
+    "aqi_hit_rate": 0.262
+   },
+   "n": 37704
+  },
+  "Bhiwandi": {
+   "airgrove": {
+    "mae": 9.33,
+    "rmse": 17.4,
+    "bias": -1.33,
+    "aqi_hit_rate": 0.697
+   },
+   "persistence": {
+    "mae": 14.47,
+    "rmse": 24.26,
+    "bias": 0.1,
+    "aqi_hit_rate": 0.578
+   },
+   "same_hour_yesterday": {
+    "mae": 10.68,
+    "rmse": 19.29,
+    "bias": 0.07,
+    "aqi_hit_rate": 0.654
+   },
+   "cams_raw": {
+    "mae": 16.15,
+    "rmse": 24.57,
+    "bias": -6.48,
+    "aqi_hit_rate": 0.532
+   },
+   "cams_bias_corrected": {
+    "mae": 15.36,
+    "rmse": 23.21,
+    "bias": -2.1,
+    "aqi_hit_rate": 0.509
+   },
+   "n": 25907
+  },
+  "Bhiwani": {
+   "airgrove": {
+    "mae": 21.34,
+    "rmse": 45.09,
+    "bias": -5.72,
+    "aqi_hit_rate": 0.591
+   },
+   "persistence": {
+    "mae": 24.89,
+    "rmse": 55.36,
+    "bias": 2.54,
+    "aqi_hit_rate": 0.61
+   },
+   "same_hour_yesterday": {
+    "mae": 27.11,
+    "rmse": 58.93,
+    "bias": 2.12,
+    "aqi_hit_rate": 0.564
+   },
+   "cams_raw": {
+    "mae": 47.38,
+    "rmse": 73.27,
+    "bias": 10.68,
+    "aqi_hit_rate": 0.283
+   },
+   "cams_bias_corrected": {
+    "mae": 44.36,
+    "rmse": 62.19,
+    "bias": 20.81,
+    "aqi_hit_rate": 0.273
+   },
+   "n": 25122
+  },
+  "Bhopal": {
+   "airgrove": {
+    "mae": 11.91,
+    "rmse": 23.12,
+    "bias": -3.99,
+    "aqi_hit_rate": 0.709
+   },
+   "persistence": {
+    "mae": 16.26,
+    "rmse": 28.55,
+    "bias": -0.44,
+    "aqi_hit_rate": 0.634
+   },
+   "same_hour_yesterday": {
+    "mae": 13.8,
+    "rmse": 25.38,
+    "bias": -0.0,
+    "aqi_hit_rate": 0.672
+   },
+   "cams_raw": {
+    "mae": 17.13,
+    "rmse": 29.38,
+    "bias": -13.47,
+    "aqi_hit_rate": 0.619
+   },
+   "cams_bias_corrected": {
+    "mae": 17.37,
+    "rmse": 29.01,
+    "bias": -6.16,
+    "aqi_hit_rate": 0.532
+   },
+   "n": 34033
+  },
+  "Bhubaneswar": {
+   "airgrove": {
+    "mae": 12.72,
+    "rmse": 20.86,
+    "bias": -5.52,
+    "aqi_hit_rate": 0.701
+   },
+   "persistence": {
+    "mae": 16.58,
+    "rmse": 26.85,
+    "bias": 0.3,
+    "aqi_hit_rate": 0.646
+   },
+   "same_hour_yesterday": {
+    "mae": 14.97,
+    "rmse": 22.97,
+    "bias": 0.02,
+    "aqi_hit_rate": 0.663
+   },
+   "cams_raw": {
+    "mae": 16.23,
+    "rmse": 23.87,
+    "bias": -1.55,
+    "aqi_hit_rate": 0.588
+   },
+   "cams_bias_corrected": {
+    "mae": 17.3,
+    "rmse": 25.9,
+    "bias": -1.1,
+    "aqi_hit_rate": 0.582
+   },
+   "n": 37528
+  },
+  "Bikaner": {
+   "airgrove": {
+    "mae": 14.39,
+    "rmse": 26.84,
+    "bias": -3.22,
+    "aqi_hit_rate": 0.659
+   },
+   "persistence": {
+    "mae": 21.55,
+    "rmse": 37.19,
+    "bias": 0.62,
+    "aqi_hit_rate": 0.56
+   },
+   "same_hour_yesterday": {
+    "mae": 18.91,
+    "rmse": 34.21,
+    "bias": 0.5,
+    "aqi_hit_rate": 0.613
+   },
+   "cams_raw": {
+    "mae": 32.18,
+    "rmse": 45.21,
+    "bias": -14.77,
+    "aqi_hit_rate": 0.336
+   },
+   "cams_bias_corrected": {
+    "mae": 30.15,
+    "rmse": 41.68,
+    "bias": -4.58,
+    "aqi_hit_rate": 0.211
+   },
+   "n": 27781
+  },
+  "Bilaspur": {
+   "airgrove": {
+    "mae": 10.52,
+    "rmse": 21.7,
+    "bias": -2.49,
+    "aqi_hit_rate": 0.714
+   },
+   "persistence": {
+    "mae": 15.32,
+    "rmse": 29.15,
+    "bias": -0.01,
+    "aqi_hit_rate": 0.625
+   },
+   "same_hour_yesterday": {
+    "mae": 14.22,
+    "rmse": 28.67,
+    "bias": 0.3,
+    "aqi_hit_rate": 0.651
+   },
+   "cams_raw": {
+    "mae": 17.61,
+    "rmse": 28.56,
+    "bias": 7.03,
+    "aqi_hit_rate": 0.559
+   },
+   "cams_bias_corrected": {
+    "mae": 12.53,
+    "rmse": 23.46,
+    "bias": -2.21,
+    "aqi_hit_rate": 0.685
+   },
+   "n": 22772
+  },
+  "Bileipada": {
+   "airgrove": {
+    "mae": 22.56,
+    "rmse": 44.66,
+    "bias": -8.68,
+    "aqi_hit_rate": 0.494
+   },
+   "persistence": {
+    "mae": 27.38,
+    "rmse": 53.53,
+    "bias": -0.87,
+    "aqi_hit_rate": 0.469
+   },
+   "same_hour_yesterday": {
+    "mae": 26.5,
+    "rmse": 48.14,
+    "bias": 0.42,
+    "aqi_hit_rate": 0.451
+   },
+   "cams_raw": {
+    "mae": 29.53,
+    "rmse": 50.77,
+    "bias": -12.07,
+    "aqi_hit_rate": 0.416
+   },
+   "cams_bias_corrected": {
+    "mae": 29.06,
+    "rmse": 47.96,
+    "bias": -1.66,
+    "aqi_hit_rate": 0.343
+   },
+   "n": 15190
+  },
+  "Boisar": {
+   "airgrove": {
+    "mae": 9.61,
+    "rmse": 18.92,
+    "bias": -2.21,
+    "aqi_hit_rate": 0.731
+   },
+   "persistence": {
+    "mae": 12.25,
+    "rmse": 24.78,
+    "bias": -0.14,
+    "aqi_hit_rate": 0.699
+   },
+   "same_hour_yesterday": {
+    "mae": 12.0,
+    "rmse": 25.26,
+    "bias": -0.12,
+    "aqi_hit_rate": 0.689
+   },
+   "cams_raw": {
+    "mae": 13.88,
+    "rmse": 22.65,
+    "bias": -8.13,
+    "aqi_hit_rate": 0.668
+   },
+   "cams_bias_corrected": {
+    "mae": 11.64,
+    "rmse": 20.78,
+    "bias": -0.97,
+    "aqi_hit_rate": 0.653
+   },
+   "n": 23562
+  },
+  "Brajrajnagar": {
+   "airgrove": {
+    "mae": 13.48,
+    "rmse": 26.59,
+    "bias": -2.64,
+    "aqi_hit_rate": 0.652
+   },
+   "persistence": {
+    "mae": 20.88,
+    "rmse": 38.31,
+    "bias": 1.24,
+    "aqi_hit_rate": 0.553
+   },
+   "same_hour_yesterday": {
+    "mae": 15.73,
+    "rmse": 31.27,
+    "bias": 0.13,
+    "aqi_hit_rate": 0.637
+   },
+   "cams_raw": {
+    "mae": 23.53,
+    "rmse": 34.19,
+    "bias": 14.16,
+    "aqi_hit_rate": 0.435
+   },
+   "cams_bias_corrected": {
+    "mae": 16.87,
+    "rmse": 27.62,
+    "bias": 0.99,
+    "aqi_hit_rate": 0.546
+   },
+   "n": 24103
+  },
+  "Bulandshahr": {
+   "airgrove": {
+    "mae": 22.74,
+    "rmse": 38.71,
+    "bias": -7.86,
+    "aqi_hit_rate": 0.53
+   },
+   "persistence": {
+    "mae": 29.57,
+    "rmse": 46.22,
+    "bias": -0.66,
+    "aqi_hit_rate": 0.458
+   },
+   "same_hour_yesterday": {
+    "mae": 26.83,
+    "rmse": 42.38,
+    "bias": -0.59,
+    "aqi_hit_rate": 0.468
+   },
+   "cams_raw": {
+    "mae": 39.73,
+    "rmse": 57.81,
+    "bias": 15.92,
+    "aqi_hit_rate": 0.339
+   },
+   "cams_bias_corrected": {
+    "mae": 37.62,
+    "rmse": 54.67,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.288
+   },
+   "n": 32505
+  },
+  "Bundi": {
+   "airgrove": {
+    "mae": 12.95,
+    "rmse": 19.42,
+    "bias": -4.26,
+    "aqi_hit_rate": 0.675
+   },
+   "persistence": {
+    "mae": 16.34,
+    "rmse": 23.86,
+    "bias": 0.18,
+    "aqi_hit_rate": 0.619
+   },
+   "same_hour_yesterday": {
+    "mae": 15.33,
+    "rmse": 22.27,
+    "bias": 0.12,
+    "aqi_hit_rate": 0.626
+   },
+   "cams_raw": {
+    "mae": 16.99,
+    "rmse": 24.59,
+    "bias": -8.16,
+    "aqi_hit_rate": 0.592
+   },
+   "cams_bias_corrected": {
+    "mae": 17.66,
+    "rmse": 23.62,
+    "bias": 0.39,
+    "aqi_hit_rate": 0.498
+   },
+   "n": 29276
+  },
+  "Byasanagar": {
+   "airgrove": {
+    "mae": 14.5,
+    "rmse": 21.8,
+    "bias": -5.75,
+    "aqi_hit_rate": 0.604
+   },
+   "persistence": {
+    "mae": 18.39,
+    "rmse": 27.36,
+    "bias": 1.34,
+    "aqi_hit_rate": 0.536
+   },
+   "same_hour_yesterday": {
+    "mae": 17.69,
+    "rmse": 25.37,
+    "bias": 1.27,
+    "aqi_hit_rate": 0.54
+   },
+   "cams_raw": {
+    "mae": 17.06,
+    "rmse": 23.65,
+    "bias": 1.09,
+    "aqi_hit_rate": 0.536
+   },
+   "cams_bias_corrected": {
+    "mae": 16.67,
+    "rmse": 23.38,
+    "bias": -3.56,
+    "aqi_hit_rate": 0.536
+   },
+   "n": 20225
+  },
+  "Byrnihat": {
+   "airgrove": {
+    "mae": 15.8,
+    "rmse": 25.95,
+    "bias": -3.48,
+    "aqi_hit_rate": 0.589
+   },
+   "persistence": {
+    "mae": 20.17,
+    "rmse": 33.23,
+    "bias": 0.31,
+    "aqi_hit_rate": 0.533
+   },
+   "same_hour_yesterday": {
+    "mae": 12.53,
+    "rmse": 22.56,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.679
+   },
+   "cams_raw": {
+    "mae": 40.4,
+    "rmse": 50.35,
+    "bias": -38.16,
+    "aqi_hit_rate": 0.186
+   },
+   "cams_bias_corrected": {
+    "mae": 28.36,
+    "rmse": 36.78,
+    "bias": 13.98,
+    "aqi_hit_rate": 0.297
+   },
+   "n": 15945
+  },
+  "Chamarajanagar": {
+   "airgrove": {
+    "mae": 3.88,
+    "rmse": 15.16,
+    "bias": 0.25,
+    "aqi_hit_rate": 0.977
+   },
+   "persistence": {
+    "mae": 5.52,
+    "rmse": 21.79,
+    "bias": 0.06,
+    "aqi_hit_rate": 0.962
+   },
+   "same_hour_yesterday": {
+    "mae": 5.13,
+    "rmse": 19.87,
+    "bias": -0.09,
+    "aqi_hit_rate": 0.963
+   },
+   "cams_raw": {
+    "mae": 12.29,
+    "rmse": 19.91,
+    "bias": -1.5,
+    "aqi_hit_rate": 0.804
+   },
+   "cams_bias_corrected": {
+    "mae": 3.94,
+    "rmse": 14.66,
+    "bias": -0.31,
+    "aqi_hit_rate": 0.979
+   },
+   "n": 30614
+  },
+  "Chandigarh": {
+   "airgrove": {
+    "mae": 12.51,
+    "rmse": 19.76,
+    "bias": -2.94,
+    "aqi_hit_rate": 0.66
+   },
+   "persistence": {
+    "mae": 14.79,
+    "rmse": 22.83,
+    "bias": -0.54,
+    "aqi_hit_rate": 0.611
+   },
+   "same_hour_yesterday": {
+    "mae": 14.63,
+    "rmse": 22.01,
+    "bias": 0.07,
+    "aqi_hit_rate": 0.619
+   },
+   "cams_raw": {
+    "mae": 23.33,
+    "rmse": 30.68,
+    "bias": 2.76,
+    "aqi_hit_rate": 0.391
+   },
+   "cams_bias_corrected": {
+    "mae": 25.27,
+    "rmse": 32.55,
+    "bias": -1.18,
+    "aqi_hit_rate": 0.329
+   },
+   "n": 27227
+  },
+  "Chandrapur": {
+   "airgrove": {
+    "mae": 10.54,
+    "rmse": 16.88,
+    "bias": -2.68,
+    "aqi_hit_rate": 0.707
+   },
+   "persistence": {
+    "mae": 14.5,
+    "rmse": 22.98,
+    "bias": 0.28,
+    "aqi_hit_rate": 0.621
+   },
+   "same_hour_yesterday": {
+    "mae": 13.68,
+    "rmse": 22.26,
+    "bias": 0.11,
+    "aqi_hit_rate": 0.641
+   },
+   "cams_raw": {
+    "mae": 16.57,
+    "rmse": 23.88,
+    "bias": -0.78,
+    "aqi_hit_rate": 0.54
+   },
+   "cams_bias_corrected": {
+    "mae": 15.03,
+    "rmse": 21.13,
+    "bias": -0.7,
+    "aqi_hit_rate": 0.567
+   },
+   "n": 36517
+  },
+  "Chennai": {
+   "airgrove": {
+    "mae": 12.1,
+    "rmse": 27.01,
+    "bias": -5.76,
+    "aqi_hit_rate": 0.717
+   },
+   "persistence": {
+    "mae": 15.27,
+    "rmse": 31.8,
+    "bias": -0.14,
+    "aqi_hit_rate": 0.661
+   },
+   "same_hour_yesterday": {
+    "mae": 15.69,
+    "rmse": 33.61,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.65
+   },
+   "cams_raw": {
+    "mae": 14.76,
+    "rmse": 29.63,
+    "bias": -13.5,
+    "aqi_hit_rate": 0.691
+   },
+   "cams_bias_corrected": {
+    "mae": 13.7,
+    "rmse": 27.26,
+    "bias": -2.42,
+    "aqi_hit_rate": 0.608
+   },
+   "n": 35813
+  },
+  "Chhal": {
+   "airgrove": {
+    "mae": 9.91,
+    "rmse": 14.09,
+    "bias": -1.88,
+    "aqi_hit_rate": 0.696
+   },
+   "persistence": {
+    "mae": 13.29,
+    "rmse": 19.07,
+    "bias": 0.93,
+    "aqi_hit_rate": 0.625
+   },
+   "same_hour_yesterday": {
+    "mae": 12.38,
+    "rmse": 17.47,
+    "bias": -0.26,
+    "aqi_hit_rate": 0.624
+   },
+   "cams_raw": {
+    "mae": 19.78,
+    "rmse": 26.97,
+    "bias": 13.01,
+    "aqi_hit_rate": 0.487
+   },
+   "cams_bias_corrected": {
+    "mae": 11.25,
+    "rmse": 15.58,
+    "bias": -2.75,
+    "aqi_hit_rate": 0.625
+   },
+   "n": 13738
+  },
+  "Chittorgarh": {
+   "airgrove": {
+    "mae": 13.67,
+    "rmse": 20.68,
+    "bias": -5.42,
+    "aqi_hit_rate": 0.58
+   },
+   "persistence": {
+    "mae": 19.26,
+    "rmse": 27.63,
+    "bias": -0.37,
+    "aqi_hit_rate": 0.472
+   },
+   "same_hour_yesterday": {
+    "mae": 15.85,
+    "rmse": 23.17,
+    "bias": -0.64,
+    "aqi_hit_rate": 0.556
+   },
+   "cams_raw": {
+    "mae": 23.52,
+    "rmse": 32.28,
+    "bias": -20.65,
+    "aqi_hit_rate": 0.403
+   },
+   "cams_bias_corrected": {
+    "mae": 18.33,
+    "rmse": 26.94,
+    "bias": -7.03,
+    "aqi_hit_rate": 0.474
+   },
+   "n": 29617
+  },
+  "Churu": {
+   "airgrove": {
+    "mae": 18.14,
+    "rmse": 34.71,
+    "bias": -6.62,
+    "aqi_hit_rate": 0.615
+   },
+   "persistence": {
+    "mae": 26.16,
+    "rmse": 47.84,
+    "bias": 1.23,
+    "aqi_hit_rate": 0.538
+   },
+   "same_hour_yesterday": {
+    "mae": 21.69,
+    "rmse": 42.46,
+    "bias": -0.02,
+    "aqi_hit_rate": 0.585
+   },
+   "cams_raw": {
+    "mae": 26.43,
+    "rmse": 43.3,
+    "bias": -9.8,
+    "aqi_hit_rate": 0.435
+   },
+   "cams_bias_corrected": {
+    "mae": 28.2,
+    "rmse": 44.19,
+    "bias": -3.65,
+    "aqi_hit_rate": 0.394
+   },
+   "n": 27973
+  },
+  "Cuttack": {
+   "airgrove": {
+    "mae": 15.4,
+    "rmse": 24.35,
+    "bias": -5.44,
+    "aqi_hit_rate": 0.634
+   },
+   "persistence": {
+    "mae": 19.94,
+    "rmse": 30.38,
+    "bias": 0.21,
+    "aqi_hit_rate": 0.578
+   },
+   "same_hour_yesterday": {
+    "mae": 17.68,
+    "rmse": 26.19,
+    "bias": 0.3,
+    "aqi_hit_rate": 0.598
+   },
+   "cams_raw": {
+    "mae": 19.0,
+    "rmse": 28.06,
+    "bias": -4.47,
+    "aqi_hit_rate": 0.53
+   },
+   "cams_bias_corrected": {
+    "mae": 20.78,
+    "rmse": 30.01,
+    "bias": 0.78,
+    "aqi_hit_rate": 0.514
+   },
+   "n": 24036
+  },
+  "Dausa": {
+   "airgrove": {
+    "mae": 12.58,
+    "rmse": 20.48,
+    "bias": -3.31,
+    "aqi_hit_rate": 0.646
+   },
+   "persistence": {
+    "mae": 17.57,
+    "rmse": 27.57,
+    "bias": -0.08,
+    "aqi_hit_rate": 0.554
+   },
+   "same_hour_yesterday": {
+    "mae": 15.3,
+    "rmse": 23.99,
+    "bias": 0.15,
+    "aqi_hit_rate": 0.604
+   },
+   "cams_raw": {
+    "mae": 17.02,
+    "rmse": 25.37,
+    "bias": -0.28,
+    "aqi_hit_rate": 0.523
+   },
+   "cams_bias_corrected": {
+    "mae": 16.75,
+    "rmse": 24.03,
+    "bias": 2.84,
+    "aqi_hit_rate": 0.485
+   },
+   "n": 27893
+  },
+  "Dehradun": {
+   "airgrove": {
+    "mae": 16.75,
+    "rmse": 24.64,
+    "bias": -6.27,
+    "aqi_hit_rate": 0.569
+   },
+   "persistence": {
+    "mae": 21.51,
+    "rmse": 30.24,
+    "bias": -0.46,
+    "aqi_hit_rate": 0.487
+   },
+   "same_hour_yesterday": {
+    "mae": 19.62,
+    "rmse": 26.88,
+    "bias": -0.81,
+    "aqi_hit_rate": 0.513
+   },
+   "cams_raw": {
+    "mae": 21.8,
+    "rmse": 29.45,
+    "bias": -14.96,
+    "aqi_hit_rate": 0.436
+   },
+   "cams_bias_corrected": {
+    "mae": 24.59,
+    "rmse": 34.0,
+    "bias": -16.64,
+    "aqi_hit_rate": 0.39
+   },
+   "n": 22163
+  },
+  "Delhi": {
+   "airgrove": {
+    "mae": 29.25,
+    "rmse": 50.78,
+    "bias": -10.1,
+    "aqi_hit_rate": 0.556
+   },
+   "persistence": {
+    "mae": 36.2,
+    "rmse": 58.94,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.48
+   },
+   "same_hour_yesterday": {
+    "mae": 33.01,
+    "rmse": 53.07,
+    "bias": -0.37,
+    "aqi_hit_rate": 0.492
+   },
+   "cams_raw": {
+    "mae": 53.32,
+    "rmse": 78.22,
+    "bias": -16.99,
+    "aqi_hit_rate": 0.298
+   },
+   "cams_bias_corrected": {
+    "mae": 59.98,
+    "rmse": 85.01,
+    "bias": -8.25,
+    "aqi_hit_rate": 0.251
+   },
+   "n": 39448
+  },
+  "Dewas": {
+   "airgrove": {
+    "mae": 12.28,
+    "rmse": 19.22,
+    "bias": -3.32,
+    "aqi_hit_rate": 0.643
+   },
+   "persistence": {
+    "mae": 16.02,
+    "rmse": 24.66,
+    "bias": 0.11,
+    "aqi_hit_rate": 0.567
+   },
+   "same_hour_yesterday": {
+    "mae": 14.67,
+    "rmse": 22.55,
+    "bias": -0.06,
+    "aqi_hit_rate": 0.601
+   },
+   "cams_raw": {
+    "mae": 14.89,
+    "rmse": 22.4,
+    "bias": -9.81,
+    "aqi_hit_rate": 0.605
+   },
+   "cams_bias_corrected": {
+    "mae": 14.0,
+    "rmse": 21.2,
+    "bias": -1.93,
+    "aqi_hit_rate": 0.557
+   },
+   "n": 31636
+  },
+  "Dharwad": {
+   "airgrove": {
+    "mae": 5.92,
+    "rmse": 23.07,
+    "bias": -3.29,
+    "aqi_hit_rate": 0.773
+   },
+   "persistence": {
+    "mae": 7.39,
+    "rmse": 28.07,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.762
+   },
+   "same_hour_yesterday": {
+    "mae": 6.85,
+    "rmse": 26.86,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.759
+   },
+   "cams_raw": {
+    "mae": 22.15,
+    "rmse": 32.25,
+    "bias": -20.6,
+    "aqi_hit_rate": 0.489
+   },
+   "cams_bias_corrected": {
+    "mae": 7.26,
+    "rmse": 23.5,
+    "bias": -3.81,
+    "aqi_hit_rate": 0.553
+   },
+   "n": 11402
+  },
+  "Dholpur": {
+   "airgrove": {
+    "mae": 19.3,
+    "rmse": 48.13,
+    "bias": -7.99,
+    "aqi_hit_rate": 0.608
+   },
+   "persistence": {
+    "mae": 24.93,
+    "rmse": 55.73,
+    "bias": -1.8,
+    "aqi_hit_rate": 0.52
+   },
+   "same_hour_yesterday": {
+    "mae": 24.98,
+    "rmse": 60.36,
+    "bias": -0.06,
+    "aqi_hit_rate": 0.544
+   },
+   "cams_raw": {
+    "mae": 31.7,
+    "rmse": 58.58,
+    "bias": 13.62,
+    "aqi_hit_rate": 0.412
+   },
+   "cams_bias_corrected": {
+    "mae": 25.65,
+    "rmse": 50.13,
+    "bias": 2.34,
+    "aqi_hit_rate": 0.313
+   },
+   "n": 22298
+  },
+  "Dhule": {
+   "airgrove": {
+    "mae": 13.88,
+    "rmse": 22.0,
+    "bias": -2.34,
+    "aqi_hit_rate": 0.63
+   },
+   "persistence": {
+    "mae": 18.57,
+    "rmse": 28.61,
+    "bias": 0.41,
+    "aqi_hit_rate": 0.55
+   },
+   "same_hour_yesterday": {
+    "mae": 18.33,
+    "rmse": 28.33,
+    "bias": 0.14,
+    "aqi_hit_rate": 0.546
+   },
+   "cams_raw": {
+    "mae": 19.89,
+    "rmse": 27.91,
+    "bias": -14.53,
+    "aqi_hit_rate": 0.494
+   },
+   "cams_bias_corrected": {
+    "mae": 16.76,
+    "rmse": 24.4,
+    "bias": -2.94,
+    "aqi_hit_rate": 0.531
+   },
+   "n": 24017
+  },
+  "Dungarpur": {
+   "airgrove": {
+    "mae": 12.46,
+    "rmse": 18.49,
+    "bias": -3.21,
+    "aqi_hit_rate": 0.648
+   },
+   "persistence": {
+    "mae": 16.08,
+    "rmse": 23.78,
+    "bias": -0.34,
+    "aqi_hit_rate": 0.581
+   },
+   "same_hour_yesterday": {
+    "mae": 13.62,
+    "rmse": 20.11,
+    "bias": -0.68,
+    "aqi_hit_rate": 0.623
+   },
+   "cams_raw": {
+    "mae": 18.38,
+    "rmse": 26.56,
+    "bias": -15.77,
+    "aqi_hit_rate": 0.552
+   },
+   "cams_bias_corrected": {
+    "mae": 16.45,
+    "rmse": 23.26,
+    "bias": -3.89,
+    "aqi_hit_rate": 0.541
+   },
+   "n": 30447
+  },
+  "Durgapur": {
+   "airgrove": {
+    "mae": 9.13,
+    "rmse": 13.31,
+    "bias": -0.99,
+    "aqi_hit_rate": 0.686
+   },
+   "persistence": {
+    "mae": 13.23,
+    "rmse": 19.01,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.6
+   },
+   "same_hour_yesterday": {
+    "mae": 12.22,
+    "rmse": 16.77,
+    "bias": -0.05,
+    "aqi_hit_rate": 0.606
+   },
+   "cams_raw": {
+    "mae": 26.66,
+    "rmse": 34.04,
+    "bias": 23.4,
+    "aqi_hit_rate": 0.35
+   },
+   "cams_bias_corrected": {
+    "mae": 14.79,
+    "rmse": 19.45,
+    "bias": 0.31,
+    "aqi_hit_rate": 0.55
+   },
+   "n": 34167
+  },
+  "Firozabad": {
+   "airgrove": {
+    "mae": 8.72,
+    "rmse": 14.99,
+    "bias": -2.63,
+    "aqi_hit_rate": 0.757
+   },
+   "persistence": {
+    "mae": 13.08,
+    "rmse": 21.53,
+    "bias": 0.14,
+    "aqi_hit_rate": 0.649
+   },
+   "same_hour_yesterday": {
+    "mae": 11.34,
+    "rmse": 18.95,
+    "bias": -0.18,
+    "aqi_hit_rate": 0.694
+   },
+   "cams_raw": {
+    "mae": 44.78,
+    "rmse": 61.34,
+    "bias": 43.33,
+    "aqi_hit_rate": 0.255
+   },
+   "cams_bias_corrected": {
+    "mae": 12.75,
+    "rmse": 19.25,
+    "bias": -3.21,
+    "aqi_hit_rate": 0.631
+   },
+   "n": 35067
+  },
+  "Gandhinagar": {
+   "airgrove": {
+    "mae": 9.24,
+    "rmse": 15.8,
+    "bias": -1.87,
+    "aqi_hit_rate": 0.731
+   },
+   "persistence": {
+    "mae": 11.77,
+    "rmse": 19.15,
+    "bias": -0.63,
+    "aqi_hit_rate": 0.664
+   },
+   "same_hour_yesterday": {
+    "mae": 12.18,
+    "rmse": 20.19,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.658
+   },
+   "cams_raw": {
+    "mae": 13.56,
+    "rmse": 20.26,
+    "bias": -4.44,
+    "aqi_hit_rate": 0.583
+   },
+   "cams_bias_corrected": {
+    "mae": 12.85,
+    "rmse": 18.84,
+    "bias": 0.75,
+    "aqi_hit_rate": 0.553
+   },
+   "n": 29812
+  },
+  "Gaya": {
+   "airgrove": {
+    "mae": 10.0,
+    "rmse": 13.53,
+    "bias": -0.59,
+    "aqi_hit_rate": 0.716
+   },
+   "persistence": {
+    "mae": 13.03,
+    "rmse": 18.16,
+    "bias": 0.12,
+    "aqi_hit_rate": 0.631
+   },
+   "same_hour_yesterday": {
+    "mae": 12.7,
+    "rmse": 17.37,
+    "bias": -1.3,
+    "aqi_hit_rate": 0.647
+   },
+   "cams_raw": {
+    "mae": 21.72,
+    "rmse": 30.43,
+    "bias": 17.0,
+    "aqi_hit_rate": 0.448
+   },
+   "cams_bias_corrected": {
+    "mae": 12.72,
+    "rmse": 17.5,
+    "bias": 5.42,
+    "aqi_hit_rate": 0.666
+   },
+   "n": 6152
+  },
+  "Ghaziabad": {
+   "airgrove": {
+    "mae": 30.4,
+    "rmse": 49.34,
+    "bias": -8.89,
+    "aqi_hit_rate": 0.547
+   },
+   "persistence": {
+    "mae": 41.87,
+    "rmse": 63.88,
+    "bias": -0.76,
+    "aqi_hit_rate": 0.447
+   },
+   "same_hour_yesterday": {
+    "mae": 36.46,
+    "rmse": 55.04,
+    "bias": -0.8,
+    "aqi_hit_rate": 0.468
+   },
+   "cams_raw": {
+    "mae": 54.35,
+    "rmse": 76.54,
+    "bias": -18.25,
+    "aqi_hit_rate": 0.281
+   },
+   "cams_bias_corrected": {
+    "mae": 60.26,
+    "rmse": 82.99,
+    "bias": -7.8,
+    "aqi_hit_rate": 0.244
+   },
+   "n": 37484
+  },
+  "Greater Noida": {
+   "airgrove": {
+    "mae": 29.81,
+    "rmse": 48.94,
+    "bias": -12.13,
+    "aqi_hit_rate": 0.533
+   },
+   "persistence": {
+    "mae": 39.2,
+    "rmse": 60.43,
+    "bias": -0.96,
+    "aqi_hit_rate": 0.445
+   },
+   "same_hour_yesterday": {
+    "mae": 36.17,
+    "rmse": 55.19,
+    "bias": -1.23,
+    "aqi_hit_rate": 0.454
+   },
+   "cams_raw": {
+    "mae": 53.55,
+    "rmse": 76.09,
+    "bias": 0.8,
+    "aqi_hit_rate": 0.306
+   },
+   "cams_bias_corrected": {
+    "mae": 61.36,
+    "rmse": 88.05,
+    "bias": -20.53,
+    "aqi_hit_rate": 0.195
+   },
+   "n": 37623
+  },
+  "Gummidipoondi": {
+   "airgrove": {
+    "mae": 31.62,
+    "rmse": 57.38,
+    "bias": -17.84,
+    "aqi_hit_rate": 0.417
+   },
+   "persistence": {
+    "mae": 45.19,
+    "rmse": 72.66,
+    "bias": -2.41,
+    "aqi_hit_rate": 0.322
+   },
+   "same_hour_yesterday": {
+    "mae": 36.96,
+    "rmse": 65.94,
+    "bias": 0.44,
+    "aqi_hit_rate": 0.398
+   },
+   "cams_raw": {
+    "mae": 51.3,
+    "rmse": 77.68,
+    "bias": -51.08,
+    "aqi_hit_rate": 0.239
+   },
+   "cams_bias_corrected": {
+    "mae": 36.02,
+    "rmse": 60.23,
+    "bias": -10.79,
+    "aqi_hit_rate": 0.329
+   },
+   "n": 29964
+  },
+  "Gurugram": {
+   "airgrove": {
+    "mae": 33.03,
+    "rmse": 50.99,
+    "bias": -13.79,
+    "aqi_hit_rate": 0.48
+   },
+   "persistence": {
+    "mae": 41.81,
+    "rmse": 63.3,
+    "bias": 0.75,
+    "aqi_hit_rate": 0.446
+   },
+   "same_hour_yesterday": {
+    "mae": 42.0,
+    "rmse": 63.79,
+    "bias": 0.4,
+    "aqi_hit_rate": 0.433
+   },
+   "cams_raw": {
+    "mae": 52.75,
+    "rmse": 74.74,
+    "bias": -4.57,
+    "aqi_hit_rate": 0.297
+   },
+   "cams_bias_corrected": {
+    "mae": 56.61,
+    "rmse": 68.87,
+    "bias": 9.13,
+    "aqi_hit_rate": 0.164
+   },
+   "n": 25045
+  },
+  "Guwahati": {
+   "airgrove": {
+    "mae": 10.22,
+    "rmse": 14.99,
+    "bias": 0.7,
+    "aqi_hit_rate": 0.668
+   },
+   "persistence": {
+    "mae": 13.0,
+    "rmse": 19.19,
+    "bias": 0.67,
+    "aqi_hit_rate": 0.61
+   },
+   "same_hour_yesterday": {
+    "mae": 11.29,
+    "rmse": 17.39,
+    "bias": 0.78,
+    "aqi_hit_rate": 0.671
+   },
+   "cams_raw": {
+    "mae": 17.25,
+    "rmse": 23.5,
+    "bias": -6.12,
+    "aqi_hit_rate": 0.501
+   },
+   "cams_bias_corrected": {
+    "mae": 17.36,
+    "rmse": 23.77,
+    "bias": 4.18,
+    "aqi_hit_rate": 0.512
+   },
+   "n": 11286
+  },
+  "Gwalior": {
+   "airgrove": {
+    "mae": 15.64,
+    "rmse": 25.79,
+    "bias": -5.57,
+    "aqi_hit_rate": 0.609
+   },
+   "persistence": {
+    "mae": 23.72,
+    "rmse": 37.77,
+    "bias": -0.67,
+    "aqi_hit_rate": 0.527
+   },
+   "same_hour_yesterday": {
+    "mae": 18.44,
+    "rmse": 30.85,
+    "bias": -0.43,
+    "aqi_hit_rate": 0.591
+   },
+   "cams_raw": {
+    "mae": 21.51,
+    "rmse": 33.66,
+    "bias": -11.04,
+    "aqi_hit_rate": 0.523
+   },
+   "cams_bias_corrected": {
+    "mae": 22.5,
+    "rmse": 33.63,
+    "bias": -3.42,
+    "aqi_hit_rate": 0.455
+   },
+   "n": 28791
+  },
+  "Hajipur": {
+   "airgrove": {
+    "mae": 14.32,
+    "rmse": 25.48,
+    "bias": -0.01,
+    "aqi_hit_rate": 0.588
+   },
+   "persistence": {
+    "mae": 19.71,
+    "rmse": 35.63,
+    "bias": -0.22,
+    "aqi_hit_rate": 0.52
+   },
+   "same_hour_yesterday": {
+    "mae": 20.01,
+    "rmse": 33.99,
+    "bias": 0.03,
+    "aqi_hit_rate": 0.491
+   },
+   "cams_raw": {
+    "mae": 24.03,
+    "rmse": 37.02,
+    "bias": 7.42,
+    "aqi_hit_rate": 0.463
+   },
+   "cams_bias_corrected": {
+    "mae": 24.49,
+    "rmse": 33.01,
+    "bias": 13.72,
+    "aqi_hit_rate": 0.353
+   },
+   "n": 28715
+  },
+  "Haldia": {
+   "airgrove": {
+    "mae": 11.16,
+    "rmse": 18.03,
+    "bias": -4.98,
+    "aqi_hit_rate": 0.718
+   },
+   "persistence": {
+    "mae": 13.02,
+    "rmse": 20.87,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.676
+   },
+   "same_hour_yesterday": {
+    "mae": 13.73,
+    "rmse": 21.15,
+    "bias": -0.17,
+    "aqi_hit_rate": 0.66
+   },
+   "cams_raw": {
+    "mae": 15.92,
+    "rmse": 24.63,
+    "bias": 6.91,
+    "aqi_hit_rate": 0.6
+   },
+   "cams_bias_corrected": {
+    "mae": 15.46,
+    "rmse": 23.76,
+    "bias": -5.25,
+    "aqi_hit_rate": 0.605
+   },
+   "n": 34284
+  },
+  "Hanumangarh": {
+   "airgrove": {
+    "mae": 15.49,
+    "rmse": 24.61,
+    "bias": -1.33,
+    "aqi_hit_rate": 0.625
+   },
+   "persistence": {
+    "mae": 21.25,
+    "rmse": 34.12,
+    "bias": 1.02,
+    "aqi_hit_rate": 0.563
+   },
+   "same_hour_yesterday": {
+    "mae": 19.19,
+    "rmse": 31.45,
+    "bias": 1.1,
+    "aqi_hit_rate": 0.597
+   },
+   "cams_raw": {
+    "mae": 37.32,
+    "rmse": 53.46,
+    "bias": 19.99,
+    "aqi_hit_rate": 0.308
+   },
+   "cams_bias_corrected": {
+    "mae": 27.87,
+    "rmse": 37.8,
+    "bias": 4.53,
+    "aqi_hit_rate": 0.251
+   },
+   "n": 28111
+  },
+  "Hapur": {
+   "airgrove": {
+    "mae": 40.76,
+    "rmse": 77.8,
+    "bias": -18.07,
+    "aqi_hit_rate": 0.434
+   },
+   "persistence": {
+    "mae": 48.6,
+    "rmse": 87.48,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.41
+   },
+   "same_hour_yesterday": {
+    "mae": 38.82,
+    "rmse": 77.68,
+    "bias": -0.3,
+    "aqi_hit_rate": 0.457
+   },
+   "cams_raw": {
+    "mae": 54.27,
+    "rmse": 87.98,
+    "bias": -16.1,
+    "aqi_hit_rate": 0.306
+   },
+   "cams_bias_corrected": {
+    "mae": 63.72,
+    "rmse": 100.33,
+    "bias": -27.61,
+    "aqi_hit_rate": 0.223
+   },
+   "n": 19493
+  },
+  "Howrah": {
+   "airgrove": {
+    "mae": 10.39,
+    "rmse": 17.6,
+    "bias": -3.33,
+    "aqi_hit_rate": 0.68
+   },
+   "persistence": {
+    "mae": 15.41,
+    "rmse": 25.6,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.588
+   },
+   "same_hour_yesterday": {
+    "mae": 13.72,
+    "rmse": 22.05,
+    "bias": -0.16,
+    "aqi_hit_rate": 0.609
+   },
+   "cams_raw": {
+    "mae": 19.02,
+    "rmse": 29.21,
+    "bias": 10.45,
+    "aqi_hit_rate": 0.585
+   },
+   "cams_bias_corrected": {
+    "mae": 13.13,
+    "rmse": 21.18,
+    "bias": -1.84,
+    "aqi_hit_rate": 0.62
+   },
+   "n": 38377
+  },
+  "Hubballi": {
+   "airgrove": {
+    "mae": 2.02,
+    "rmse": 3.25,
+    "bias": -0.64,
+    "aqi_hit_rate": 0.977
+   },
+   "persistence": {
+    "mae": 2.22,
+    "rmse": 3.84,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.963
+   },
+   "same_hour_yesterday": {
+    "mae": 2.52,
+    "rmse": 4.1,
+    "bias": -0.19,
+    "aqi_hit_rate": 0.963
+   },
+   "cams_raw": {
+    "mae": 12.8,
+    "rmse": 14.6,
+    "bias": -5.75,
+    "aqi_hit_rate": 0.8
+   },
+   "cams_bias_corrected": {
+    "mae": 3.12,
+    "rmse": 4.19,
+    "bias": -1.71,
+    "aqi_hit_rate": 0.977
+   },
+   "n": 19777
+  },
+  "Hyderabad": {
+   "airgrove": {
+    "mae": 3.7,
+    "rmse": 5.57,
+    "bias": -0.19,
+    "aqi_hit_rate": 0.88
+   },
+   "persistence": {
+    "mae": 4.52,
+    "rmse": 6.7,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.846
+   },
+   "same_hour_yesterday": {
+    "mae": 4.52,
+    "rmse": 6.76,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.853
+   },
+   "cams_raw": {
+    "mae": 12.08,
+    "rmse": 15.52,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.69
+   },
+   "cams_bias_corrected": {
+    "mae": 5.7,
+    "rmse": 7.39,
+    "bias": 1.47,
+    "aqi_hit_rate": 0.774
+   },
+   "n": 38140
+  },
+  "Indore": {
+   "airgrove": {
+    "mae": 10.5,
+    "rmse": 19.82,
+    "bias": -4.39,
+    "aqi_hit_rate": 0.707
+   },
+   "persistence": {
+    "mae": 16.0,
+    "rmse": 27.94,
+    "bias": -0.49,
+    "aqi_hit_rate": 0.604
+   },
+   "same_hour_yesterday": {
+    "mae": 13.17,
+    "rmse": 24.83,
+    "bias": -0.42,
+    "aqi_hit_rate": 0.659
+   },
+   "cams_raw": {
+    "mae": 16.15,
+    "rmse": 25.65,
+    "bias": -9.1,
+    "aqi_hit_rate": 0.59
+   },
+   "cams_bias_corrected": {
+    "mae": 14.47,
+    "rmse": 24.15,
+    "bias": -4.73,
+    "aqi_hit_rate": 0.562
+   },
+   "n": 34187
+  },
+  "Jabalpur": {
+   "airgrove": {
+    "mae": 10.68,
+    "rmse": 17.98,
+    "bias": -2.92,
+    "aqi_hit_rate": 0.707
+   },
+   "persistence": {
+    "mae": 15.01,
+    "rmse": 25.56,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.619
+   },
+   "same_hour_yesterday": {
+    "mae": 12.76,
+    "rmse": 23.21,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.679
+   },
+   "cams_raw": {
+    "mae": 14.02,
+    "rmse": 21.69,
+    "bias": -6.83,
+    "aqi_hit_rate": 0.615
+   },
+   "cams_bias_corrected": {
+    "mae": 14.16,
+    "rmse": 22.09,
+    "bias": -4.79,
+    "aqi_hit_rate": 0.575
+   },
+   "n": 35096
+  },
+  "Jaipur": {
+   "airgrove": {
+    "mae": 14.37,
+    "rmse": 25.01,
+    "bias": -4.26,
+    "aqi_hit_rate": 0.595
+   },
+   "persistence": {
+    "mae": 21.1,
+    "rmse": 33.92,
+    "bias": -0.38,
+    "aqi_hit_rate": 0.487
+   },
+   "same_hour_yesterday": {
+    "mae": 17.37,
+    "rmse": 29.1,
+    "bias": -0.33,
+    "aqi_hit_rate": 0.537
+   },
+   "cams_raw": {
+    "mae": 25.82,
+    "rmse": 37.15,
+    "bias": -17.39,
+    "aqi_hit_rate": 0.385
+   },
+   "cams_bias_corrected": {
+    "mae": 23.35,
+    "rmse": 33.55,
+    "bias": -1.42,
+    "aqi_hit_rate": 0.393
+   },
+   "n": 38021
+  },
+  "Jaisalmer": {
+   "airgrove": {
+    "mae": 15.56,
+    "rmse": 29.33,
+    "bias": -6.46,
+    "aqi_hit_rate": 0.647
+   },
+   "persistence": {
+    "mae": 22.12,
+    "rmse": 38.89,
+    "bias": 0.35,
+    "aqi_hit_rate": 0.558
+   },
+   "same_hour_yesterday": {
+    "mae": 20.45,
+    "rmse": 38.08,
+    "bias": -0.11,
+    "aqi_hit_rate": 0.584
+   },
+   "cams_raw": {
+    "mae": 107.1,
+    "rmse": 163.64,
+    "bias": 74.38,
+    "aqi_hit_rate": 0.193
+   },
+   "cams_bias_corrected": {
+    "mae": 24.31,
+    "rmse": 38.63,
+    "bias": -9.35,
+    "aqi_hit_rate": 0.319
+   },
+   "n": 31964
+  },
+  "Jalandhar": {
+   "airgrove": {
+    "mae": 14.4,
+    "rmse": 32.89,
+    "bias": -4.23,
+    "aqi_hit_rate": 0.622
+   },
+   "persistence": {
+    "mae": 17.92,
+    "rmse": 42.92,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.565
+   },
+   "same_hour_yesterday": {
+    "mae": 18.64,
+    "rmse": 40.51,
+    "bias": 0.24,
+    "aqi_hit_rate": 0.54
+   },
+   "cams_raw": {
+    "mae": 39.03,
+    "rmse": 59.32,
+    "bias": 25.53,
+    "aqi_hit_rate": 0.304
+   },
+   "cams_bias_corrected": {
+    "mae": 19.99,
+    "rmse": 35.24,
+    "bias": -3.5,
+    "aqi_hit_rate": 0.471
+   },
+   "n": 34379
+  },
+  "Jalgaon": {
+   "airgrove": {
+    "mae": 14.11,
+    "rmse": 31.29,
+    "bias": -3.25,
+    "aqi_hit_rate": 0.651
+   },
+   "persistence": {
+    "mae": 19.3,
+    "rmse": 40.6,
+    "bias": 0.16,
+    "aqi_hit_rate": 0.575
+   },
+   "same_hour_yesterday": {
+    "mae": 17.89,
+    "rmse": 38.79,
+    "bias": 0.23,
+    "aqi_hit_rate": 0.593
+   },
+   "cams_raw": {
+    "mae": 22.11,
+    "rmse": 37.92,
+    "bias": -17.96,
+    "aqi_hit_rate": 0.472
+   },
+   "cams_bias_corrected": {
+    "mae": 18.93,
+    "rmse": 33.42,
+    "bias": -1.92,
+    "aqi_hit_rate": 0.444
+   },
+   "n": 27105
+  },
+  "Jalore": {
+   "airgrove": {
+    "mae": 11.49,
+    "rmse": 19.8,
+    "bias": -3.32,
+    "aqi_hit_rate": 0.711
+   },
+   "persistence": {
+    "mae": 15.71,
+    "rmse": 26.43,
+    "bias": -0.46,
+    "aqi_hit_rate": 0.644
+   },
+   "same_hour_yesterday": {
+    "mae": 12.96,
+    "rmse": 22.11,
+    "bias": -0.48,
+    "aqi_hit_rate": 0.685
+   },
+   "cams_raw": {
+    "mae": 18.75,
+    "rmse": 30.63,
+    "bias": -15.34,
+    "aqi_hit_rate": 0.608
+   },
+   "cams_bias_corrected": {
+    "mae": 19.37,
+    "rmse": 28.66,
+    "bias": -3.57,
+    "aqi_hit_rate": 0.446
+   },
+   "n": 33627
+  },
+  "Jhalawar": {
+   "airgrove": {
+    "mae": 15.25,
+    "rmse": 25.0,
+    "bias": -4.34,
+    "aqi_hit_rate": 0.608
+   },
+   "persistence": {
+    "mae": 20.6,
+    "rmse": 33.05,
+    "bias": -0.14,
+    "aqi_hit_rate": 0.533
+   },
+   "same_hour_yesterday": {
+    "mae": 18.24,
+    "rmse": 29.52,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.563
+   },
+   "cams_raw": {
+    "mae": 19.14,
+    "rmse": 30.68,
+    "bias": -11.34,
+    "aqi_hit_rate": 0.553
+   },
+   "cams_bias_corrected": {
+    "mae": 19.15,
+    "rmse": 29.76,
+    "bias": -4.16,
+    "aqi_hit_rate": 0.47
+   },
+   "n": 30308
+  },
+  "Jhansi": {
+   "airgrove": {
+    "mae": 9.18,
+    "rmse": 15.69,
+    "bias": 0.08,
+    "aqi_hit_rate": 0.757
+   },
+   "persistence": {
+    "mae": 12.73,
+    "rmse": 21.32,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.687
+   },
+   "same_hour_yesterday": {
+    "mae": 12.15,
+    "rmse": 22.18,
+    "bias": 0.26,
+    "aqi_hit_rate": 0.703
+   },
+   "cams_raw": {
+    "mae": 22.93,
+    "rmse": 32.4,
+    "bias": 15.08,
+    "aqi_hit_rate": 0.462
+   },
+   "cams_bias_corrected": {
+    "mae": 14.97,
+    "rmse": 19.81,
+    "bias": 8.27,
+    "aqi_hit_rate": 0.492
+   },
+   "n": 28383
+  },
+  "Jhunjhunu": {
+   "airgrove": {
+    "mae": 13.69,
+    "rmse": 21.94,
+    "bias": -3.66,
+    "aqi_hit_rate": 0.639
+   },
+   "persistence": {
+    "mae": 20.01,
+    "rmse": 30.56,
+    "bias": 0.06,
+    "aqi_hit_rate": 0.53
+   },
+   "same_hour_yesterday": {
+    "mae": 16.46,
+    "rmse": 26.09,
+    "bias": -0.58,
+    "aqi_hit_rate": 0.604
+   },
+   "cams_raw": {
+    "mae": 18.23,
+    "rmse": 27.09,
+    "bias": -4.84,
+    "aqi_hit_rate": 0.52
+   },
+   "cams_bias_corrected": {
+    "mae": 19.29,
+    "rmse": 27.6,
+    "bias": -0.94,
+    "aqi_hit_rate": 0.484
+   },
+   "n": 33884
+  },
+  "Jodhpur": {
+   "airgrove": {
+    "mae": 10.68,
+    "rmse": 20.03,
+    "bias": -4.04,
+    "aqi_hit_rate": 0.722
+   },
+   "persistence": {
+    "mae": 15.61,
+    "rmse": 26.5,
+    "bias": -0.72,
+    "aqi_hit_rate": 0.633
+   },
+   "same_hour_yesterday": {
+    "mae": 12.38,
+    "rmse": 22.26,
+    "bias": -0.49,
+    "aqi_hit_rate": 0.686
+   },
+   "cams_raw": {
+    "mae": 22.3,
+    "rmse": 32.08,
+    "bias": -6.5,
+    "aqi_hit_rate": 0.448
+   },
+   "cams_bias_corrected": {
+    "mae": 21.8,
+    "rmse": 30.21,
+    "bias": -1.81,
+    "aqi_hit_rate": 0.303
+   },
+   "n": 37870
+  },
+  "Kadapa": {
+   "airgrove": {
+    "mae": 8.65,
+    "rmse": 14.53,
+    "bias": -2.74,
+    "aqi_hit_rate": 0.759
+   },
+   "persistence": {
+    "mae": 10.58,
+    "rmse": 18.0,
+    "bias": 0.1,
+    "aqi_hit_rate": 0.712
+   },
+   "same_hour_yesterday": {
+    "mae": 10.73,
+    "rmse": 17.75,
+    "bias": -0.26,
+    "aqi_hit_rate": 0.672
+   },
+   "cams_raw": {
+    "mae": 21.55,
+    "rmse": 25.63,
+    "bias": -17.2,
+    "aqi_hit_rate": 0.37
+   },
+   "cams_bias_corrected": {
+    "mae": 10.83,
+    "rmse": 17.54,
+    "bias": -3.36,
+    "aqi_hit_rate": 0.699
+   },
+   "n": 10970
+  },
+  "Kannur": {
+   "airgrove": {
+    "mae": 4.76,
+    "rmse": 7.55,
+    "bias": 0.12,
+    "aqi_hit_rate": 0.781
+   },
+   "persistence": {
+    "mae": 5.66,
+    "rmse": 9.92,
+    "bias": -0.31,
+    "aqi_hit_rate": 0.749
+   },
+   "same_hour_yesterday": {
+    "mae": 4.22,
+    "rmse": 7.24,
+    "bias": 0.33,
+    "aqi_hit_rate": 0.786
+   },
+   "cams_raw": {
+    "mae": 17.53,
+    "rmse": 21.46,
+    "bias": -9.71,
+    "aqi_hit_rate": 0.448
+   },
+   "cams_bias_corrected": {
+    "mae": 8.93,
+    "rmse": 12.31,
+    "bias": -4.68,
+    "aqi_hit_rate": 0.595
+   },
+   "n": 13633
+  },
+  "Kanpur": {
+   "airgrove": {
+    "mae": 13.72,
+    "rmse": 21.78,
+    "bias": -3.34,
+    "aqi_hit_rate": 0.608
+   },
+   "persistence": {
+    "mae": 20.52,
+    "rmse": 30.52,
+    "bias": -0.73,
+    "aqi_hit_rate": 0.487
+   },
+   "same_hour_yesterday": {
+    "mae": 17.5,
+    "rmse": 26.77,
+    "bias": -0.44,
+    "aqi_hit_rate": 0.534
+   },
+   "cams_raw": {
+    "mae": 27.79,
+    "rmse": 40.26,
+    "bias": 18.24,
+    "aqi_hit_rate": 0.412
+   },
+   "cams_bias_corrected": {
+    "mae": 19.08,
+    "rmse": 27.68,
+    "bias": 2.49,
+    "aqi_hit_rate": 0.483
+   },
+   "n": 34958
+  },
+  "Karauli": {
+   "airgrove": {
+    "mae": 19.57,
+    "rmse": 44.94,
+    "bias": -9.34,
+    "aqi_hit_rate": 0.574
+   },
+   "persistence": {
+    "mae": 26.95,
+    "rmse": 56.55,
+    "bias": -0.01,
+    "aqi_hit_rate": 0.499
+   },
+   "same_hour_yesterday": {
+    "mae": 23.34,
+    "rmse": 55.0,
+    "bias": 0.29,
+    "aqi_hit_rate": 0.563
+   },
+   "cams_raw": {
+    "mae": 24.01,
+    "rmse": 48.29,
+    "bias": -8.68,
+    "aqi_hit_rate": 0.515
+   },
+   "cams_bias_corrected": {
+    "mae": 24.45,
+    "rmse": 46.65,
+    "bias": -1.49,
+    "aqi_hit_rate": 0.413
+   },
+   "n": 21330
+  },
+  "Katihar": {
+   "airgrove": {
+    "mae": 9.13,
+    "rmse": 14.14,
+    "bias": -1.59,
+    "aqi_hit_rate": 0.765
+   },
+   "persistence": {
+    "mae": 12.4,
+    "rmse": 19.52,
+    "bias": 0.29,
+    "aqi_hit_rate": 0.696
+   },
+   "same_hour_yesterday": {
+    "mae": 10.99,
+    "rmse": 16.9,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.731
+   },
+   "cams_raw": {
+    "mae": 28.96,
+    "rmse": 36.31,
+    "bias": 26.34,
+    "aqi_hit_rate": 0.32
+   },
+   "cams_bias_corrected": {
+    "mae": 16.05,
+    "rmse": 21.09,
+    "bias": 2.13,
+    "aqi_hit_rate": 0.526
+   },
+   "n": 19577
+  },
+  "Katni": {
+   "airgrove": {
+    "mae": 15.43,
+    "rmse": 35.82,
+    "bias": -5.15,
+    "aqi_hit_rate": 0.644
+   },
+   "persistence": {
+    "mae": 22.85,
+    "rmse": 49.25,
+    "bias": 0.09,
+    "aqi_hit_rate": 0.527
+   },
+   "same_hour_yesterday": {
+    "mae": 18.59,
+    "rmse": 45.94,
+    "bias": -0.09,
+    "aqi_hit_rate": 0.601
+   },
+   "cams_raw": {
+    "mae": 19.4,
+    "rmse": 38.64,
+    "bias": -12.39,
+    "aqi_hit_rate": 0.575
+   },
+   "cams_bias_corrected": {
+    "mae": 19.65,
+    "rmse": 38.81,
+    "bias": -8.97,
+    "aqi_hit_rate": 0.54
+   },
+   "n": 28648
+  },
+  "Keonjhar": {
+   "airgrove": {
+    "mae": 6.44,
+    "rmse": 10.98,
+    "bias": -1.22,
+    "aqi_hit_rate": 0.829
+   },
+   "persistence": {
+    "mae": 7.47,
+    "rmse": 12.84,
+    "bias": 0.21,
+    "aqi_hit_rate": 0.805
+   },
+   "same_hour_yesterday": {
+    "mae": 7.78,
+    "rmse": 13.77,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.798
+   },
+   "cams_raw": {
+    "mae": 16.43,
+    "rmse": 23.35,
+    "bias": 8.52,
+    "aqi_hit_rate": 0.554
+   },
+   "cams_bias_corrected": {
+    "mae": 12.39,
+    "rmse": 16.82,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.656
+   },
+   "n": 24052
+  },
+  "Khanna": {
+   "airgrove": {
+    "mae": 13.6,
+    "rmse": 30.93,
+    "bias": -4.58,
+    "aqi_hit_rate": 0.63
+   },
+   "persistence": {
+    "mae": 16.56,
+    "rmse": 35.19,
+    "bias": -0.49,
+    "aqi_hit_rate": 0.592
+   },
+   "same_hour_yesterday": {
+    "mae": 16.02,
+    "rmse": 36.11,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.597
+   },
+   "cams_raw": {
+    "mae": 34.62,
+    "rmse": 51.63,
+    "bias": 18.24,
+    "aqi_hit_rate": 0.294
+   },
+   "cams_bias_corrected": {
+    "mae": 22.83,
+    "rmse": 37.04,
+    "bias": -3.39,
+    "aqi_hit_rate": 0.342
+   },
+   "n": 26459
+  },
+  "Khurja": {
+   "airgrove": {
+    "mae": 19.61,
+    "rmse": 32.12,
+    "bias": -7.97,
+    "aqi_hit_rate": 0.582
+   },
+   "persistence": {
+    "mae": 24.77,
+    "rmse": 38.32,
+    "bias": -0.19,
+    "aqi_hit_rate": 0.522
+   },
+   "same_hour_yesterday": {
+    "mae": 21.8,
+    "rmse": 34.31,
+    "bias": -0.1,
+    "aqi_hit_rate": 0.568
+   },
+   "cams_raw": {
+    "mae": 42.85,
+    "rmse": 58.63,
+    "bias": 28.0,
+    "aqi_hit_rate": 0.285
+   },
+   "cams_bias_corrected": {
+    "mae": 32.92,
+    "rmse": 46.37,
+    "bias": -3.01,
+    "aqi_hit_rate": 0.317
+   },
+   "n": 27396
+  },
+  "Kishanganj": {
+   "airgrove": {
+    "mae": 9.92,
+    "rmse": 27.12,
+    "bias": -5.39,
+    "aqi_hit_rate": 0.691
+   },
+   "persistence": {
+    "mae": 11.67,
+    "rmse": 29.39,
+    "bias": -0.77,
+    "aqi_hit_rate": 0.683
+   },
+   "same_hour_yesterday": {
+    "mae": 11.31,
+    "rmse": 29.23,
+    "bias": -0.96,
+    "aqi_hit_rate": 0.694
+   },
+   "cams_raw": {
+    "mae": 23.92,
+    "rmse": 38.95,
+    "bias": 9.26,
+    "aqi_hit_rate": 0.436
+   },
+   "cams_bias_corrected": {
+    "mae": 16.78,
+    "rmse": 30.54,
+    "bias": 2.55,
+    "aqi_hit_rate": 0.416
+   },
+   "n": 18042
+  },
+  "Kohima": {
+   "airgrove": {
+    "mae": 8.48,
+    "rmse": 12.21,
+    "bias": -0.18,
+    "aqi_hit_rate": 0.809
+   },
+   "persistence": {
+    "mae": 11.42,
+    "rmse": 16.71,
+    "bias": 0.32,
+    "aqi_hit_rate": 0.76
+   },
+   "same_hour_yesterday": {
+    "mae": 10.15,
+    "rmse": 15.19,
+    "bias": 0.09,
+    "aqi_hit_rate": 0.796
+   },
+   "cams_raw": {
+    "mae": 12.73,
+    "rmse": 18.53,
+    "bias": -2.69,
+    "aqi_hit_rate": 0.74
+   },
+   "cams_bias_corrected": {
+    "mae": 12.08,
+    "rmse": 16.2,
+    "bias": 3.54,
+    "aqi_hit_rate": 0.727
+   },
+   "n": 28897
+  },
+  "Kolkata": {
+   "airgrove": {
+    "mae": 9.37,
+    "rmse": 16.26,
+    "bias": -3.11,
+    "aqi_hit_rate": 0.724
+   },
+   "persistence": {
+    "mae": 12.96,
+    "rmse": 22.26,
+    "bias": -0.21,
+    "aqi_hit_rate": 0.648
+   },
+   "same_hour_yesterday": {
+    "mae": 12.0,
+    "rmse": 19.86,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.659
+   },
+   "cams_raw": {
+    "mae": 18.68,
+    "rmse": 28.91,
+    "bias": 13.03,
+    "aqi_hit_rate": 0.568
+   },
+   "cams_bias_corrected": {
+    "mae": 11.49,
+    "rmse": 18.24,
+    "bias": -2.25,
+    "aqi_hit_rate": 0.646
+   },
+   "n": 38215
+  },
+  "Korba": {
+   "airgrove": {
+    "mae": 8.18,
+    "rmse": 19.55,
+    "bias": -1.9,
+    "aqi_hit_rate": 0.85
+   },
+   "persistence": {
+    "mae": 10.75,
+    "rmse": 27.59,
+    "bias": 0.77,
+    "aqi_hit_rate": 0.829
+   },
+   "same_hour_yesterday": {
+    "mae": 10.4,
+    "rmse": 25.61,
+    "bias": 0.51,
+    "aqi_hit_rate": 0.832
+   },
+   "cams_raw": {
+    "mae": 21.37,
+    "rmse": 30.09,
+    "bias": 13.48,
+    "aqi_hit_rate": 0.504
+   },
+   "cams_bias_corrected": {
+    "mae": 18.04,
+    "rmse": 26.04,
+    "bias": 9.43,
+    "aqi_hit_rate": 0.496
+   },
+   "n": 34967
+  },
+  "Kota": {
+   "airgrove": {
+    "mae": 13.9,
+    "rmse": 21.53,
+    "bias": -1.75,
+    "aqi_hit_rate": 0.611
+   },
+   "persistence": {
+    "mae": 20.0,
+    "rmse": 30.5,
+    "bias": -0.81,
+    "aqi_hit_rate": 0.532
+   },
+   "same_hour_yesterday": {
+    "mae": 15.77,
+    "rmse": 24.05,
+    "bias": -0.53,
+    "aqi_hit_rate": 0.583
+   },
+   "cams_raw": {
+    "mae": 19.79,
+    "rmse": 29.3,
+    "bias": -14.26,
+    "aqi_hit_rate": 0.512
+   },
+   "cams_bias_corrected": {
+    "mae": 19.28,
+    "rmse": 26.74,
+    "bias": -2.25,
+    "aqi_hit_rate": 0.429
+   },
+   "n": 26250
+  },
+  "Kunjemura": {
+   "airgrove": {
+    "mae": 6.49,
+    "rmse": 10.88,
+    "bias": -0.41,
+    "aqi_hit_rate": 0.809
+   },
+   "persistence": {
+    "mae": 7.89,
+    "rmse": 13.57,
+    "bias": -0.17,
+    "aqi_hit_rate": 0.78
+   },
+   "same_hour_yesterday": {
+    "mae": 8.19,
+    "rmse": 13.64,
+    "bias": 0.14,
+    "aqi_hit_rate": 0.789
+   },
+   "cams_raw": {
+    "mae": 26.82,
+    "rmse": 35.3,
+    "bias": 23.62,
+    "aqi_hit_rate": 0.404
+   },
+   "cams_bias_corrected": {
+    "mae": 13.03,
+    "rmse": 17.7,
+    "bias": 3.88,
+    "aqi_hit_rate": 0.7
+   },
+   "n": 30271
+  },
+  "Kurukshetra": {
+   "airgrove": {
+    "mae": 14.7,
+    "rmse": 23.64,
+    "bias": -2.2,
+    "aqi_hit_rate": 0.582
+   },
+   "persistence": {
+    "mae": 17.23,
+    "rmse": 27.35,
+    "bias": 0.01,
+    "aqi_hit_rate": 0.538
+   },
+   "same_hour_yesterday": {
+    "mae": 17.93,
+    "rmse": 26.89,
+    "bias": -0.66,
+    "aqi_hit_rate": 0.502
+   },
+   "cams_raw": {
+    "mae": 32.07,
+    "rmse": 46.0,
+    "bias": 19.19,
+    "aqi_hit_rate": 0.339
+   },
+   "cams_bias_corrected": {
+    "mae": 26.84,
+    "rmse": 34.2,
+    "bias": 12.33,
+    "aqi_hit_rate": 0.34
+   },
+   "n": 31929
+  },
+  "Latur": {
+   "airgrove": {
+    "mae": 8.66,
+    "rmse": 14.57,
+    "bias": -1.26,
+    "aqi_hit_rate": 0.765
+   },
+   "persistence": {
+    "mae": 11.14,
+    "rmse": 18.39,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.698
+   },
+   "same_hour_yesterday": {
+    "mae": 10.99,
+    "rmse": 18.25,
+    "bias": 0.09,
+    "aqi_hit_rate": 0.701
+   },
+   "cams_raw": {
+    "mae": 13.55,
+    "rmse": 19.13,
+    "bias": -9.06,
+    "aqi_hit_rate": 0.626
+   },
+   "cams_bias_corrected": {
+    "mae": 11.53,
+    "rmse": 16.88,
+    "bias": -0.1,
+    "aqi_hit_rate": 0.693
+   },
+   "n": 25238
+  },
+  "Lucknow": {
+   "airgrove": {
+    "mae": 12.55,
+    "rmse": 21.15,
+    "bias": -1.59,
+    "aqi_hit_rate": 0.603
+   },
+   "persistence": {
+    "mae": 17.62,
+    "rmse": 27.77,
+    "bias": -0.52,
+    "aqi_hit_rate": 0.523
+   },
+   "same_hour_yesterday": {
+    "mae": 16.92,
+    "rmse": 27.95,
+    "bias": -0.11,
+    "aqi_hit_rate": 0.528
+   },
+   "cams_raw": {
+    "mae": 23.05,
+    "rmse": 36.64,
+    "bias": 8.54,
+    "aqi_hit_rate": 0.465
+   },
+   "cams_bias_corrected": {
+    "mae": 20.15,
+    "rmse": 29.74,
+    "bias": 8.18,
+    "aqi_hit_rate": 0.422
+   },
+   "n": 38708
+  },
+  "Ludhiana": {
+   "airgrove": {
+    "mae": 8.85,
+    "rmse": 13.04,
+    "bias": -1.09,
+    "aqi_hit_rate": 0.724
+   },
+   "persistence": {
+    "mae": 9.86,
+    "rmse": 14.69,
+    "bias": 0.25,
+    "aqi_hit_rate": 0.705
+   },
+   "same_hour_yesterday": {
+    "mae": 11.33,
+    "rmse": 16.44,
+    "bias": 0.37,
+    "aqi_hit_rate": 0.655
+   },
+   "cams_raw": {
+    "mae": 36.62,
+    "rmse": 53.09,
+    "bias": 22.31,
+    "aqi_hit_rate": 0.326
+   },
+   "cams_bias_corrected": {
+    "mae": 12.93,
+    "rmse": 17.21,
+    "bias": 2.03,
+    "aqi_hit_rate": 0.632
+   },
+   "n": 25483
+  },
+  "Madikeri": {
+   "airgrove": {
+    "mae": 6.9,
+    "rmse": 23.34,
+    "bias": -1.85,
+    "aqi_hit_rate": 0.836
+   },
+   "persistence": {
+    "mae": 8.19,
+    "rmse": 25.16,
+    "bias": -0.29,
+    "aqi_hit_rate": 0.803
+   },
+   "same_hour_yesterday": {
+    "mae": 9.18,
+    "rmse": 28.46,
+    "bias": -0.19,
+    "aqi_hit_rate": 0.797
+   },
+   "cams_raw": {
+    "mae": 11.36,
+    "rmse": 25.9,
+    "bias": 0.91,
+    "aqi_hit_rate": 0.743
+   },
+   "cams_bias_corrected": {
+    "mae": 8.59,
+    "rmse": 24.19,
+    "bias": -1.64,
+    "aqi_hit_rate": 0.811
+   },
+   "n": 26119
+  },
+  "Mahad": {
+   "airgrove": {
+    "mae": 10.84,
+    "rmse": 16.18,
+    "bias": -2.2,
+    "aqi_hit_rate": 0.678
+   },
+   "persistence": {
+    "mae": 13.28,
+    "rmse": 20.7,
+    "bias": 0.46,
+    "aqi_hit_rate": 0.639
+   },
+   "same_hour_yesterday": {
+    "mae": 12.84,
+    "rmse": 19.69,
+    "bias": 0.03,
+    "aqi_hit_rate": 0.65
+   },
+   "cams_raw": {
+    "mae": 19.41,
+    "rmse": 26.09,
+    "bias": -15.99,
+    "aqi_hit_rate": 0.544
+   },
+   "cams_bias_corrected": {
+    "mae": 15.16,
+    "rmse": 20.8,
+    "bias": -2.78,
+    "aqi_hit_rate": 0.605
+   },
+   "n": 23885
+  },
+  "Mandi Gobindgarh": {
+   "airgrove": {
+    "mae": 29.33,
+    "rmse": 44.35,
+    "bias": -11.52,
+    "aqi_hit_rate": 0.382
+   },
+   "persistence": {
+    "mae": 36.81,
+    "rmse": 55.98,
+    "bias": 1.53,
+    "aqi_hit_rate": 0.374
+   },
+   "same_hour_yesterday": {
+    "mae": 36.87,
+    "rmse": 57.28,
+    "bias": 1.66,
+    "aqi_hit_rate": 0.391
+   },
+   "cams_raw": {
+    "mae": 45.68,
+    "rmse": 62.65,
+    "bias": 1.04,
+    "aqi_hit_rate": 0.257
+   },
+   "cams_bias_corrected": {
+    "mae": 35.25,
+    "rmse": 50.11,
+    "bias": -9.6,
+    "aqi_hit_rate": 0.276
+   },
+   "n": 20382
+  },
+  "Mandideep": {
+   "airgrove": {
+    "mae": 22.4,
+    "rmse": 40.61,
+    "bias": -9.35,
+    "aqi_hit_rate": 0.504
+   },
+   "persistence": {
+    "mae": 31.9,
+    "rmse": 54.88,
+    "bias": -0.15,
+    "aqi_hit_rate": 0.447
+   },
+   "same_hour_yesterday": {
+    "mae": 29.42,
+    "rmse": 51.01,
+    "bias": -0.3,
+    "aqi_hit_rate": 0.455
+   },
+   "cams_raw": {
+    "mae": 39.38,
+    "rmse": 62.63,
+    "bias": -37.88,
+    "aqi_hit_rate": 0.309
+   },
+   "cams_bias_corrected": {
+    "mae": 31.95,
+    "rmse": 52.23,
+    "bias": -5.45,
+    "aqi_hit_rate": 0.341
+   },
+   "n": 18697
+  },
+  "Meerut": {
+   "airgrove": {
+    "mae": 28.36,
+    "rmse": 48.19,
+    "bias": -11.24,
+    "aqi_hit_rate": 0.515
+   },
+   "persistence": {
+    "mae": 36.85,
+    "rmse": 58.1,
+    "bias": 0.38,
+    "aqi_hit_rate": 0.434
+   },
+   "same_hour_yesterday": {
+    "mae": 30.91,
+    "rmse": 46.89,
+    "bias": -0.68,
+    "aqi_hit_rate": 0.451
+   },
+   "cams_raw": {
+    "mae": 41.15,
+    "rmse": 62.6,
+    "bias": -10.93,
+    "aqi_hit_rate": 0.344
+   },
+   "cams_bias_corrected": {
+    "mae": 47.2,
+    "rmse": 72.18,
+    "bias": -20.39,
+    "aqi_hit_rate": 0.309
+   },
+   "n": 31475
+  },
+  "Mira-Bhayandar": {
+   "airgrove": {
+    "mae": 8.93,
+    "rmse": 23.75,
+    "bias": -2.23,
+    "aqi_hit_rate": 0.8
+   },
+   "persistence": {
+    "mae": 10.05,
+    "rmse": 24.39,
+    "bias": -0.68,
+    "aqi_hit_rate": 0.775
+   },
+   "same_hour_yesterday": {
+    "mae": 10.85,
+    "rmse": 27.94,
+    "bias": 0.01,
+    "aqi_hit_rate": 0.769
+   },
+   "cams_raw": {
+    "mae": 11.12,
+    "rmse": 25.3,
+    "bias": 2.49,
+    "aqi_hit_rate": 0.738
+   },
+   "cams_bias_corrected": {
+    "mae": 10.61,
+    "rmse": 25.36,
+    "bias": -2.38,
+    "aqi_hit_rate": 0.762
+   },
+   "n": 18929
+  },
+  "Moradabad": {
+   "airgrove": {
+    "mae": 11.81,
+    "rmse": 18.06,
+    "bias": -4.52,
+    "aqi_hit_rate": 0.633
+   },
+   "persistence": {
+    "mae": 16.3,
+    "rmse": 23.41,
+    "bias": -0.4,
+    "aqi_hit_rate": 0.544
+   },
+   "same_hour_yesterday": {
+    "mae": 14.49,
+    "rmse": 20.96,
+    "bias": -0.53,
+    "aqi_hit_rate": 0.572
+   },
+   "cams_raw": {
+    "mae": 28.59,
+    "rmse": 41.95,
+    "bias": 23.52,
+    "aqi_hit_rate": 0.385
+   },
+   "cams_bias_corrected": {
+    "mae": 16.15,
+    "rmse": 23.3,
+    "bias": -3.68,
+    "aqi_hit_rate": 0.549
+   },
+   "n": 37551
+  },
+  "Motihari": {
+   "airgrove": {
+    "mae": 16.48,
+    "rmse": 25.17,
+    "bias": -4.4,
+    "aqi_hit_rate": 0.554
+   },
+   "persistence": {
+    "mae": 22.63,
+    "rmse": 33.89,
+    "bias": -0.42,
+    "aqi_hit_rate": 0.472
+   },
+   "same_hour_yesterday": {
+    "mae": 20.36,
+    "rmse": 30.96,
+    "bias": -1.65,
+    "aqi_hit_rate": 0.506
+   },
+   "cams_raw": {
+    "mae": 43.22,
+    "rmse": 57.12,
+    "bias": 36.33,
+    "aqi_hit_rate": 0.231
+   },
+   "cams_bias_corrected": {
+    "mae": 20.41,
+    "rmse": 28.76,
+    "bias": -0.06,
+    "aqi_hit_rate": 0.437
+   },
+   "n": 15645
+  },
+  "Mumbai": {
+   "airgrove": {
+    "mae": 7.79,
+    "rmse": 13.78,
+    "bias": -1.83,
+    "aqi_hit_rate": 0.788
+   },
+   "persistence": {
+    "mae": 8.87,
+    "rmse": 14.97,
+    "bias": -0.15,
+    "aqi_hit_rate": 0.761
+   },
+   "same_hour_yesterday": {
+    "mae": 9.24,
+    "rmse": 15.92,
+    "bias": 0.17,
+    "aqi_hit_rate": 0.753
+   },
+   "cams_raw": {
+    "mae": 10.12,
+    "rmse": 16.42,
+    "bias": -2.69,
+    "aqi_hit_rate": 0.719
+   },
+   "cams_bias_corrected": {
+    "mae": 12.07,
+    "rmse": 16.88,
+    "bias": 0.74,
+    "aqi_hit_rate": 0.692
+   },
+   "n": 38963
+  },
+  "Munger": {
+   "airgrove": {
+    "mae": 14.14,
+    "rmse": 26.2,
+    "bias": -4.97,
+    "aqi_hit_rate": 0.601
+   },
+   "persistence": {
+    "mae": 18.96,
+    "rmse": 31.54,
+    "bias": -0.21,
+    "aqi_hit_rate": 0.503
+   },
+   "same_hour_yesterday": {
+    "mae": 16.71,
+    "rmse": 29.23,
+    "bias": -0.52,
+    "aqi_hit_rate": 0.55
+   },
+   "cams_raw": {
+    "mae": 36.95,
+    "rmse": 50.66,
+    "bias": 30.41,
+    "aqi_hit_rate": 0.292
+   },
+   "cams_bias_corrected": {
+    "mae": 19.21,
+    "rmse": 30.52,
+    "bias": -0.41,
+    "aqi_hit_rate": 0.457
+   },
+   "n": 16744
+  },
+  "Muzaffarnagar": {
+   "airgrove": {
+    "mae": 25.63,
+    "rmse": 40.11,
+    "bias": -8.29,
+    "aqi_hit_rate": 0.472
+   },
+   "persistence": {
+    "mae": 35.43,
+    "rmse": 52.0,
+    "bias": 0.83,
+    "aqi_hit_rate": 0.388
+   },
+   "same_hour_yesterday": {
+    "mae": 34.16,
+    "rmse": 50.9,
+    "bias": 0.32,
+    "aqi_hit_rate": 0.395
+   },
+   "cams_raw": {
+    "mae": 36.47,
+    "rmse": 52.69,
+    "bias": -9.13,
+    "aqi_hit_rate": 0.36
+   },
+   "cams_bias_corrected": {
+    "mae": 37.49,
+    "rmse": 53.51,
+    "bias": -5.0,
+    "aqi_hit_rate": 0.311
+   },
+   "n": 28048
+  },
+  "Muzaffarpur": {
+   "airgrove": {
+    "mae": 9.46,
+    "rmse": 13.97,
+    "bias": -1.63,
+    "aqi_hit_rate": 0.722
+   },
+   "persistence": {
+    "mae": 12.94,
+    "rmse": 19.27,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.647
+   },
+   "same_hour_yesterday": {
+    "mae": 13.09,
+    "rmse": 19.22,
+    "bias": 0.33,
+    "aqi_hit_rate": 0.64
+   },
+   "cams_raw": {
+    "mae": 27.33,
+    "rmse": 38.85,
+    "bias": 20.29,
+    "aqi_hit_rate": 0.392
+   },
+   "cams_bias_corrected": {
+    "mae": 15.1,
+    "rmse": 19.98,
+    "bias": 3.77,
+    "aqi_hit_rate": 0.513
+   },
+   "n": 34313
+  },
+  "Mysuru": {
+   "airgrove": {
+    "mae": 6.07,
+    "rmse": 21.33,
+    "bias": -0.69,
+    "aqi_hit_rate": 0.842
+   },
+   "persistence": {
+    "mae": 7.9,
+    "rmse": 28.46,
+    "bias": 0.28,
+    "aqi_hit_rate": 0.829
+   },
+   "same_hour_yesterday": {
+    "mae": 7.35,
+    "rmse": 27.91,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.819
+   },
+   "cams_raw": {
+    "mae": 10.65,
+    "rmse": 23.72,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.778
+   },
+   "cams_bias_corrected": {
+    "mae": 8.0,
+    "rmse": 22.03,
+    "bias": 0.12,
+    "aqi_hit_rate": 0.791
+   },
+   "n": 21456
+  },
+  "Nagaon": {
+   "airgrove": {
+    "mae": 7.34,
+    "rmse": 11.11,
+    "bias": -1.35,
+    "aqi_hit_rate": 0.716
+   },
+   "persistence": {
+    "mae": 8.48,
+    "rmse": 12.61,
+    "bias": -0.48,
+    "aqi_hit_rate": 0.681
+   },
+   "same_hour_yesterday": {
+    "mae": 8.9,
+    "rmse": 13.64,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.671
+   },
+   "cams_raw": {
+    "mae": 21.46,
+    "rmse": 26.99,
+    "bias": 2.52,
+    "aqi_hit_rate": 0.359
+   },
+   "cams_bias_corrected": {
+    "mae": 13.38,
+    "rmse": 18.13,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.539
+   },
+   "n": 18098
+  },
+  "Nagaur": {
+   "airgrove": {
+    "mae": 14.5,
+    "rmse": 25.31,
+    "bias": -5.02,
+    "aqi_hit_rate": 0.681
+   },
+   "persistence": {
+    "mae": 20.5,
+    "rmse": 34.32,
+    "bias": 0.16,
+    "aqi_hit_rate": 0.602
+   },
+   "same_hour_yesterday": {
+    "mae": 16.74,
+    "rmse": 27.86,
+    "bias": -0.62,
+    "aqi_hit_rate": 0.657
+   },
+   "cams_raw": {
+    "mae": 27.09,
+    "rmse": 40.55,
+    "bias": -9.62,
+    "aqi_hit_rate": 0.445
+   },
+   "cams_bias_corrected": {
+    "mae": 27.07,
+    "rmse": 37.88,
+    "bias": -1.48,
+    "aqi_hit_rate": 0.289
+   },
+   "n": 31528
+  },
+  "Nagpur": {
+   "airgrove": {
+    "mae": 9.53,
+    "rmse": 14.44,
+    "bias": -1.93,
+    "aqi_hit_rate": 0.694
+   },
+   "persistence": {
+    "mae": 12.74,
+    "rmse": 19.58,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.62
+   },
+   "same_hour_yesterday": {
+    "mae": 12.19,
+    "rmse": 18.12,
+    "bias": 0.04,
+    "aqi_hit_rate": 0.629
+   },
+   "cams_raw": {
+    "mae": 15.4,
+    "rmse": 21.39,
+    "bias": -11.92,
+    "aqi_hit_rate": 0.542
+   },
+   "cams_bias_corrected": {
+    "mae": 13.94,
+    "rmse": 18.55,
+    "bias": -2.37,
+    "aqi_hit_rate": 0.544
+   },
+   "n": 38192
+  },
+  "Naharlagun": {
+   "airgrove": {
+    "mae": 17.29,
+    "rmse": 32.58,
+    "bias": -6.85,
+    "aqi_hit_rate": 0.674
+   },
+   "persistence": {
+    "mae": 27.18,
+    "rmse": 49.2,
+    "bias": 0.5,
+    "aqi_hit_rate": 0.575
+   },
+   "same_hour_yesterday": {
+    "mae": 19.44,
+    "rmse": 33.85,
+    "bias": 0.23,
+    "aqi_hit_rate": 0.641
+   },
+   "cams_raw": {
+    "mae": 27.78,
+    "rmse": 48.56,
+    "bias": -23.21,
+    "aqi_hit_rate": 0.564
+   },
+   "cams_bias_corrected": {
+    "mae": 27.18,
+    "rmse": 45.9,
+    "bias": -10.83,
+    "aqi_hit_rate": 0.444
+   },
+   "n": 18182
+  },
+  "Nalbari": {
+   "airgrove": {
+    "mae": 11.86,
+    "rmse": 18.68,
+    "bias": -3.13,
+    "aqi_hit_rate": 0.645
+   },
+   "persistence": {
+    "mae": 14.18,
+    "rmse": 25.4,
+    "bias": 2.0,
+    "aqi_hit_rate": 0.649
+   },
+   "same_hour_yesterday": {
+    "mae": 14.27,
+    "rmse": 23.24,
+    "bias": -0.41,
+    "aqi_hit_rate": 0.617
+   },
+   "cams_raw": {
+    "mae": 26.45,
+    "rmse": 33.68,
+    "bias": 5.88,
+    "aqi_hit_rate": 0.336
+   },
+   "cams_bias_corrected": {
+    "mae": 18.91,
+    "rmse": 24.26,
+    "bias": 1.22,
+    "aqi_hit_rate": 0.414
+   },
+   "n": 11682
+  },
+  "Nanded": {
+   "airgrove": {
+    "mae": 10.0,
+    "rmse": 19.38,
+    "bias": -1.66,
+    "aqi_hit_rate": 0.741
+   },
+   "persistence": {
+    "mae": 12.23,
+    "rmse": 24.45,
+    "bias": 0.02,
+    "aqi_hit_rate": 0.709
+   },
+   "same_hour_yesterday": {
+    "mae": 12.06,
+    "rmse": 23.34,
+    "bias": -0.4,
+    "aqi_hit_rate": 0.709
+   },
+   "cams_raw": {
+    "mae": 15.62,
+    "rmse": 24.59,
+    "bias": -9.25,
+    "aqi_hit_rate": 0.623
+   },
+   "cams_bias_corrected": {
+    "mae": 14.87,
+    "rmse": 23.79,
+    "bias": -2.48,
+    "aqi_hit_rate": 0.606
+   },
+   "n": 23465
+  },
+  "Narnaul": {
+   "airgrove": {
+    "mae": 20.13,
+    "rmse": 44.99,
+    "bias": -4.39,
+    "aqi_hit_rate": 0.515
+   },
+   "persistence": {
+    "mae": 24.13,
+    "rmse": 53.9,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.499
+   },
+   "same_hour_yesterday": {
+    "mae": 23.15,
+    "rmse": 51.98,
+    "bias": -0.14,
+    "aqi_hit_rate": 0.52
+   },
+   "cams_raw": {
+    "mae": 30.46,
+    "rmse": 53.79,
+    "bias": -20.41,
+    "aqi_hit_rate": 0.365
+   },
+   "cams_bias_corrected": {
+    "mae": 30.77,
+    "rmse": 49.94,
+    "bias": 12.85,
+    "aqi_hit_rate": 0.276
+   },
+   "n": 31643
+  },
+  "Nashik": {
+   "airgrove": {
+    "mae": 7.95,
+    "rmse": 14.01,
+    "bias": -0.3,
+    "aqi_hit_rate": 0.797
+   },
+   "persistence": {
+    "mae": 10.19,
+    "rmse": 18.05,
+    "bias": 0.15,
+    "aqi_hit_rate": 0.746
+   },
+   "same_hour_yesterday": {
+    "mae": 9.8,
+    "rmse": 18.0,
+    "bias": 0.16,
+    "aqi_hit_rate": 0.751
+   },
+   "cams_raw": {
+    "mae": 15.16,
+    "rmse": 21.79,
+    "bias": -13.19,
+    "aqi_hit_rate": 0.64
+   },
+   "cams_bias_corrected": {
+    "mae": 12.13,
+    "rmse": 17.54,
+    "bias": 2.02,
+    "aqi_hit_rate": 0.681
+   },
+   "n": 34141
+  },
+  "Navi Mumbai": {
+   "airgrove": {
+    "mae": 8.24,
+    "rmse": 16.16,
+    "bias": -1.83,
+    "aqi_hit_rate": 0.772
+   },
+   "persistence": {
+    "mae": 11.82,
+    "rmse": 21.72,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.687
+   },
+   "same_hour_yesterday": {
+    "mae": 10.75,
+    "rmse": 21.35,
+    "bias": 0.02,
+    "aqi_hit_rate": 0.722
+   },
+   "cams_raw": {
+    "mae": 12.74,
+    "rmse": 20.78,
+    "bias": -5.08,
+    "aqi_hit_rate": 0.655
+   },
+   "cams_bias_corrected": {
+    "mae": 13.88,
+    "rmse": 20.34,
+    "bias": -0.58,
+    "aqi_hit_rate": 0.626
+   },
+   "n": 38877
+  },
+  "Noida": {
+   "airgrove": {
+    "mae": 32.57,
+    "rmse": 53.94,
+    "bias": -14.73,
+    "aqi_hit_rate": 0.521
+   },
+   "persistence": {
+    "mae": 40.69,
+    "rmse": 64.41,
+    "bias": -0.8,
+    "aqi_hit_rate": 0.451
+   },
+   "same_hour_yesterday": {
+    "mae": 38.37,
+    "rmse": 59.73,
+    "bias": -0.7,
+    "aqi_hit_rate": 0.444
+   },
+   "cams_raw": {
+    "mae": 64.82,
+    "rmse": 92.48,
+    "bias": 0.51,
+    "aqi_hit_rate": 0.267
+   },
+   "cams_bias_corrected": {
+    "mae": 70.8,
+    "rmse": 101.76,
+    "bias": -26.06,
+    "aqi_hit_rate": 0.155
+   },
+   "n": 37492
+  },
+  "Pali": {
+   "airgrove": {
+    "mae": 15.15,
+    "rmse": 21.39,
+    "bias": -3.15,
+    "aqi_hit_rate": 0.576
+   },
+   "persistence": {
+    "mae": 21.28,
+    "rmse": 29.49,
+    "bias": -0.12,
+    "aqi_hit_rate": 0.465
+   },
+   "same_hour_yesterday": {
+    "mae": 19.08,
+    "rmse": 26.88,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.49
+   },
+   "cams_raw": {
+    "mae": 34.98,
+    "rmse": 41.3,
+    "bias": -34.26,
+    "aqi_hit_rate": 0.145
+   },
+   "cams_bias_corrected": {
+    "mae": 17.05,
+    "rmse": 23.28,
+    "bias": -0.65,
+    "aqi_hit_rate": 0.55
+   },
+   "n": 28792
+  },
+  "Parbhani": {
+   "airgrove": {
+    "mae": 10.48,
+    "rmse": 20.05,
+    "bias": -3.11,
+    "aqi_hit_rate": 0.734
+   },
+   "persistence": {
+    "mae": 12.64,
+    "rmse": 23.42,
+    "bias": -0.45,
+    "aqi_hit_rate": 0.687
+   },
+   "same_hour_yesterday": {
+    "mae": 12.38,
+    "rmse": 23.86,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.698
+   },
+   "cams_raw": {
+    "mae": 16.61,
+    "rmse": 25.74,
+    "bias": -9.78,
+    "aqi_hit_rate": 0.595
+   },
+   "cams_bias_corrected": {
+    "mae": 16.65,
+    "rmse": 25.51,
+    "bias": -1.61,
+    "aqi_hit_rate": 0.574
+   },
+   "n": 30735
+  },
+  "Patiala": {
+   "airgrove": {
+    "mae": 9.88,
+    "rmse": 18.95,
+    "bias": -2.23,
+    "aqi_hit_rate": 0.744
+   },
+   "persistence": {
+    "mae": 12.1,
+    "rmse": 21.7,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.688
+   },
+   "same_hour_yesterday": {
+    "mae": 12.84,
+    "rmse": 22.63,
+    "bias": -0.47,
+    "aqi_hit_rate": 0.664
+   },
+   "cams_raw": {
+    "mae": 43.8,
+    "rmse": 56.86,
+    "bias": 40.55,
+    "aqi_hit_rate": 0.205
+   },
+   "cams_bias_corrected": {
+    "mae": 17.19,
+    "rmse": 25.32,
+    "bias": 1.69,
+    "aqi_hit_rate": 0.51
+   },
+   "n": 29310
+  },
+  "Patna": {
+   "airgrove": {
+    "mae": 9.21,
+    "rmse": 15.27,
+    "bias": -0.86,
+    "aqi_hit_rate": 0.697
+   },
+   "persistence": {
+    "mae": 11.94,
+    "rmse": 19.53,
+    "bias": -0.21,
+    "aqi_hit_rate": 0.63
+   },
+   "same_hour_yesterday": {
+    "mae": 11.54,
+    "rmse": 18.87,
+    "bias": -0.13,
+    "aqi_hit_rate": 0.637
+   },
+   "cams_raw": {
+    "mae": 25.84,
+    "rmse": 36.75,
+    "bias": 17.26,
+    "aqi_hit_rate": 0.404
+   },
+   "cams_bias_corrected": {
+    "mae": 16.05,
+    "rmse": 21.9,
+    "bias": 8.79,
+    "aqi_hit_rate": 0.48
+   },
+   "n": 35505
+  },
+  "Pimpri Chinchwad": {
+   "airgrove": {
+    "mae": 10.46,
+    "rmse": 18.37,
+    "bias": -1.92,
+    "aqi_hit_rate": 0.726
+   },
+   "persistence": {
+    "mae": 14.33,
+    "rmse": 24.98,
+    "bias": -0.33,
+    "aqi_hit_rate": 0.67
+   },
+   "same_hour_yesterday": {
+    "mae": 11.58,
+    "rmse": 19.76,
+    "bias": -0.19,
+    "aqi_hit_rate": 0.697
+   },
+   "cams_raw": {
+    "mae": 21.23,
+    "rmse": 33.63,
+    "bias": -16.16,
+    "aqi_hit_rate": 0.58
+   },
+   "cams_bias_corrected": {
+    "mae": 21.11,
+    "rmse": 30.92,
+    "bias": -3.51,
+    "aqi_hit_rate": 0.49
+   },
+   "n": 32523
+  },
+  "Pithampur": {
+   "airgrove": {
+    "mae": 17.21,
+    "rmse": 26.45,
+    "bias": -6.94,
+    "aqi_hit_rate": 0.537
+   },
+   "persistence": {
+    "mae": 23.82,
+    "rmse": 35.63,
+    "bias": -0.08,
+    "aqi_hit_rate": 0.447
+   },
+   "same_hour_yesterday": {
+    "mae": 21.79,
+    "rmse": 32.69,
+    "bias": 0.34,
+    "aqi_hit_rate": 0.459
+   },
+   "cams_raw": {
+    "mae": 29.56,
+    "rmse": 38.69,
+    "bias": -28.43,
+    "aqi_hit_rate": 0.287
+   },
+   "cams_bias_corrected": {
+    "mae": 18.75,
+    "rmse": 28.37,
+    "bias": -6.56,
+    "aqi_hit_rate": 0.508
+   },
+   "n": 29872
+  },
+  "Pratapgarh": {
+   "airgrove": {
+    "mae": 10.23,
+    "rmse": 15.26,
+    "bias": -2.91,
+    "aqi_hit_rate": 0.687
+   },
+   "persistence": {
+    "mae": 12.99,
+    "rmse": 18.82,
+    "bias": 0.09,
+    "aqi_hit_rate": 0.615
+   },
+   "same_hour_yesterday": {
+    "mae": 12.28,
+    "rmse": 18.01,
+    "bias": -0.1,
+    "aqi_hit_rate": 0.632
+   },
+   "cams_raw": {
+    "mae": 12.56,
+    "rmse": 17.38,
+    "bias": -7.36,
+    "aqi_hit_rate": 0.645
+   },
+   "cams_bias_corrected": {
+    "mae": 12.13,
+    "rmse": 17.35,
+    "bias": -3.17,
+    "aqi_hit_rate": 0.616
+   },
+   "n": 32239
+  },
+  "Prayagraj": {
+   "airgrove": {
+    "mae": 9.63,
+    "rmse": 15.26,
+    "bias": -1.72,
+    "aqi_hit_rate": 0.744
+   },
+   "persistence": {
+    "mae": 13.29,
+    "rmse": 20.55,
+    "bias": -0.58,
+    "aqi_hit_rate": 0.656
+   },
+   "same_hour_yesterday": {
+    "mae": 11.4,
+    "rmse": 17.33,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.71
+   },
+   "cams_raw": {
+    "mae": 29.47,
+    "rmse": 41.26,
+    "bias": 27.52,
+    "aqi_hit_rate": 0.391
+   },
+   "cams_bias_corrected": {
+    "mae": 13.97,
+    "rmse": 19.38,
+    "bias": 1.08,
+    "aqi_hit_rate": 0.625
+   },
+   "n": 32361
+  },
+  "Purnia": {
+   "airgrove": {
+    "mae": 8.69,
+    "rmse": 14.6,
+    "bias": 0.01,
+    "aqi_hit_rate": 0.751
+   },
+   "persistence": {
+    "mae": 11.5,
+    "rmse": 19.36,
+    "bias": 0.95,
+    "aqi_hit_rate": 0.712
+   },
+   "same_hour_yesterday": {
+    "mae": 10.16,
+    "rmse": 18.9,
+    "bias": 0.85,
+    "aqi_hit_rate": 0.732
+   },
+   "cams_raw": {
+    "mae": 22.43,
+    "rmse": 30.73,
+    "bias": 17.5,
+    "aqi_hit_rate": 0.456
+   },
+   "cams_bias_corrected": {
+    "mae": 12.63,
+    "rmse": 18.1,
+    "bias": 1.57,
+    "aqi_hit_rate": 0.622
+   },
+   "n": 17635
+  },
+  "Raipur": {
+   "airgrove": {
+    "mae": 6.34,
+    "rmse": 11.0,
+    "bias": -1.27,
+    "aqi_hit_rate": 0.834
+   },
+   "persistence": {
+    "mae": 8.71,
+    "rmse": 14.59,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.764
+   },
+   "same_hour_yesterday": {
+    "mae": 8.21,
+    "rmse": 14.32,
+    "bias": -0.09,
+    "aqi_hit_rate": 0.8
+   },
+   "cams_raw": {
+    "mae": 30.26,
+    "rmse": 38.46,
+    "bias": 28.98,
+    "aqi_hit_rate": 0.31
+   },
+   "cams_bias_corrected": {
+    "mae": 8.93,
+    "rmse": 13.22,
+    "bias": -0.24,
+    "aqi_hit_rate": 0.78
+   },
+   "n": 29390
+  },
+  "Rairangpur": {
+   "airgrove": {
+    "mae": 9.04,
+    "rmse": 13.19,
+    "bias": 1.81,
+    "aqi_hit_rate": 0.737
+   },
+   "persistence": {
+    "mae": 10.47,
+    "rmse": 16.83,
+    "bias": 0.03,
+    "aqi_hit_rate": 0.709
+   },
+   "same_hour_yesterday": {
+    "mae": 10.19,
+    "rmse": 15.56,
+    "bias": -0.17,
+    "aqi_hit_rate": 0.733
+   },
+   "cams_raw": {
+    "mae": 27.97,
+    "rmse": 37.99,
+    "bias": 26.19,
+    "aqi_hit_rate": 0.363
+   },
+   "cams_bias_corrected": {
+    "mae": 15.37,
+    "rmse": 18.65,
+    "bias": 8.86,
+    "aqi_hit_rate": 0.52
+   },
+   "n": 14303
+  },
+  "Rajamahendravaram": {
+   "airgrove": {
+    "mae": 11.43,
+    "rmse": 17.97,
+    "bias": -5.01,
+    "aqi_hit_rate": 0.702
+   },
+   "persistence": {
+    "mae": 12.45,
+    "rmse": 18.73,
+    "bias": -0.61,
+    "aqi_hit_rate": 0.675
+   },
+   "same_hour_yesterday": {
+    "mae": 12.3,
+    "rmse": 18.49,
+    "bias": -0.53,
+    "aqi_hit_rate": 0.689
+   },
+   "cams_raw": {
+    "mae": 14.02,
+    "rmse": 20.18,
+    "bias": 0.21,
+    "aqi_hit_rate": 0.596
+   },
+   "cams_bias_corrected": {
+    "mae": 18.33,
+    "rmse": 26.65,
+    "bias": -8.79,
+    "aqi_hit_rate": 0.543
+   },
+   "n": 25416
+  },
+  "Rajsamand": {
+   "airgrove": {
+    "mae": 12.14,
+    "rmse": 18.84,
+    "bias": -3.22,
+    "aqi_hit_rate": 0.686
+   },
+   "persistence": {
+    "mae": 17.38,
+    "rmse": 26.52,
+    "bias": -0.41,
+    "aqi_hit_rate": 0.593
+   },
+   "same_hour_yesterday": {
+    "mae": 13.64,
+    "rmse": 21.0,
+    "bias": -0.53,
+    "aqi_hit_rate": 0.655
+   },
+   "cams_raw": {
+    "mae": 14.19,
+    "rmse": 22.04,
+    "bias": -6.99,
+    "aqi_hit_rate": 0.65
+   },
+   "cams_bias_corrected": {
+    "mae": 14.3,
+    "rmse": 21.43,
+    "bias": -2.16,
+    "aqi_hit_rate": 0.609
+   },
+   "n": 30619
+  },
+  "Ratlam": {
+   "airgrove": {
+    "mae": 13.37,
+    "rmse": 19.12,
+    "bias": -2.06,
+    "aqi_hit_rate": 0.616
+   },
+   "persistence": {
+    "mae": 17.74,
+    "rmse": 24.99,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.529
+   },
+   "same_hour_yesterday": {
+    "mae": 15.98,
+    "rmse": 23.04,
+    "bias": -0.18,
+    "aqi_hit_rate": 0.578
+   },
+   "cams_raw": {
+    "mae": 15.32,
+    "rmse": 21.68,
+    "bias": -5.6,
+    "aqi_hit_rate": 0.595
+   },
+   "cams_bias_corrected": {
+    "mae": 14.23,
+    "rmse": 19.59,
+    "bias": 1.4,
+    "aqi_hit_rate": 0.567
+   },
+   "n": 30234
+  },
+  "Rishikesh": {
+   "airgrove": {
+    "mae": 11.05,
+    "rmse": 15.97,
+    "bias": -4.23,
+    "aqi_hit_rate": 0.648
+   },
+   "persistence": {
+    "mae": 12.29,
+    "rmse": 18.79,
+    "bias": -0.56,
+    "aqi_hit_rate": 0.596
+   },
+   "same_hour_yesterday": {
+    "mae": 13.46,
+    "rmse": 19.92,
+    "bias": -0.61,
+    "aqi_hit_rate": 0.596
+   },
+   "cams_raw": {
+    "mae": 14.92,
+    "rmse": 20.05,
+    "bias": -2.07,
+    "aqi_hit_rate": 0.553
+   },
+   "cams_bias_corrected": {
+    "mae": 16.87,
+    "rmse": 20.99,
+    "bias": -11.97,
+    "aqi_hit_rate": 0.447
+   },
+   "n": 6026
+  },
+  "Rourkela": {
+   "airgrove": {
+    "mae": 8.72,
+    "rmse": 22.84,
+    "bias": -2.99,
+    "aqi_hit_rate": 0.732
+   },
+   "persistence": {
+    "mae": 9.7,
+    "rmse": 23.57,
+    "bias": -1.14,
+    "aqi_hit_rate": 0.721
+   },
+   "same_hour_yesterday": {
+    "mae": 10.91,
+    "rmse": 31.02,
+    "bias": -0.87,
+    "aqi_hit_rate": 0.726
+   },
+   "cams_raw": {
+    "mae": 17.61,
+    "rmse": 29.1,
+    "bias": 6.28,
+    "aqi_hit_rate": 0.54
+   },
+   "cams_bias_corrected": {
+    "mae": 12.87,
+    "rmse": 24.46,
+    "bias": 2.92,
+    "aqi_hit_rate": 0.572
+   },
+   "n": 5086
+  },
+  "Rupnagar": {
+   "airgrove": {
+    "mae": 29.2,
+    "rmse": 69.76,
+    "bias": -13.89,
+    "aqi_hit_rate": 0.629
+   },
+   "persistence": {
+    "mae": 37.49,
+    "rmse": 83.3,
+    "bias": -0.42,
+    "aqi_hit_rate": 0.599
+   },
+   "same_hour_yesterday": {
+    "mae": 29.89,
+    "rmse": 69.71,
+    "bias": -0.08,
+    "aqi_hit_rate": 0.64
+   },
+   "cams_raw": {
+    "mae": 47.7,
+    "rmse": 75.51,
+    "bias": 13.24,
+    "aqi_hit_rate": 0.284
+   },
+   "cams_bias_corrected": {
+    "mae": 41.22,
+    "rmse": 77.0,
+    "bias": -7.77,
+    "aqi_hit_rate": 0.327
+   },
+   "n": 19522
+  },
+  "Sagar": {
+   "airgrove": {
+    "mae": 14.23,
+    "rmse": 23.29,
+    "bias": -2.64,
+    "aqi_hit_rate": 0.641
+   },
+   "persistence": {
+    "mae": 18.0,
+    "rmse": 28.99,
+    "bias": 0.47,
+    "aqi_hit_rate": 0.586
+   },
+   "same_hour_yesterday": {
+    "mae": 16.67,
+    "rmse": 26.71,
+    "bias": 0.66,
+    "aqi_hit_rate": 0.603
+   },
+   "cams_raw": {
+    "mae": 18.53,
+    "rmse": 28.28,
+    "bias": -13.2,
+    "aqi_hit_rate": 0.58
+   },
+   "cams_bias_corrected": {
+    "mae": 17.49,
+    "rmse": 25.87,
+    "bias": 0.63,
+    "aqi_hit_rate": 0.533
+   },
+   "n": 28410
+  },
+  "Sangli": {
+   "airgrove": {
+    "mae": 9.78,
+    "rmse": 15.56,
+    "bias": -1.33,
+    "aqi_hit_rate": 0.754
+   },
+   "persistence": {
+    "mae": 12.62,
+    "rmse": 20.51,
+    "bias": 0.08,
+    "aqi_hit_rate": 0.709
+   },
+   "same_hour_yesterday": {
+    "mae": 11.33,
+    "rmse": 18.57,
+    "bias": 0.62,
+    "aqi_hit_rate": 0.733
+   },
+   "cams_raw": {
+    "mae": 19.07,
+    "rmse": 28.22,
+    "bias": -16.16,
+    "aqi_hit_rate": 0.642
+   },
+   "cams_bias_corrected": {
+    "mae": 16.74,
+    "rmse": 23.78,
+    "bias": 1.65,
+    "aqi_hit_rate": 0.6
+   },
+   "n": 19304
+  },
+  "Satna": {
+   "airgrove": {
+    "mae": 0.7,
+    "rmse": 1.01,
+    "bias": 0.01,
+    "aqi_hit_rate": 0.834
+   },
+   "persistence": {
+    "mae": 0.62,
+    "rmse": 0.91,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.848
+   },
+   "same_hour_yesterday": {
+    "mae": 0.66,
+    "rmse": 1.01,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.84
+   },
+   "cams_raw": {
+    "mae": 20.73,
+    "rmse": 30.27,
+    "bias": 7.48,
+    "aqi_hit_rate": 0.541
+   },
+   "cams_bias_corrected": {
+    "mae": 1.91,
+    "rmse": 2.34,
+    "bias": -1.48,
+    "aqi_hit_rate": 0.817
+   },
+   "n": 36038
+  },
+  "Sawai Madhopur": {
+   "airgrove": {
+    "mae": 13.02,
+    "rmse": 22.56,
+    "bias": -3.69,
+    "aqi_hit_rate": 0.69
+   },
+   "persistence": {
+    "mae": 19.81,
+    "rmse": 32.26,
+    "bias": 0.32,
+    "aqi_hit_rate": 0.581
+   },
+   "same_hour_yesterday": {
+    "mae": 14.62,
+    "rmse": 26.81,
+    "bias": 0.51,
+    "aqi_hit_rate": 0.667
+   },
+   "cams_raw": {
+    "mae": 17.37,
+    "rmse": 28.15,
+    "bias": -1.13,
+    "aqi_hit_rate": 0.606
+   },
+   "cams_bias_corrected": {
+    "mae": 18.22,
+    "rmse": 27.29,
+    "bias": 3.24,
+    "aqi_hit_rate": 0.52
+   },
+   "n": 28122
+  },
+  "Shivamogga": {
+   "airgrove": {
+    "mae": 6.09,
+    "rmse": 28.73,
+    "bias": -1.43,
+    "aqi_hit_rate": 0.919
+   },
+   "persistence": {
+    "mae": 7.38,
+    "rmse": 34.79,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.897
+   },
+   "same_hour_yesterday": {
+    "mae": 8.67,
+    "rmse": 34.08,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.872
+   },
+   "cams_raw": {
+    "mae": 13.81,
+    "rmse": 30.67,
+    "bias": -4.65,
+    "aqi_hit_rate": 0.749
+   },
+   "cams_bias_corrected": {
+    "mae": 6.55,
+    "rmse": 28.32,
+    "bias": -2.43,
+    "aqi_hit_rate": 0.919
+   },
+   "n": 27166
+  },
+  "Sikar": {
+   "airgrove": {
+    "mae": 17.98,
+    "rmse": 32.43,
+    "bias": -8.51,
+    "aqi_hit_rate": 0.581
+   },
+   "persistence": {
+    "mae": 26.63,
+    "rmse": 46.35,
+    "bias": 0.55,
+    "aqi_hit_rate": 0.516
+   },
+   "same_hour_yesterday": {
+    "mae": 18.29,
+    "rmse": 30.41,
+    "bias": -0.51,
+    "aqi_hit_rate": 0.597
+   },
+   "cams_raw": {
+    "mae": 28.62,
+    "rmse": 47.25,
+    "bias": -18.64,
+    "aqi_hit_rate": 0.428
+   },
+   "cams_bias_corrected": {
+    "mae": 29.85,
+    "rmse": 46.15,
+    "bias": -5.83,
+    "aqi_hit_rate": 0.374
+   },
+   "n": 33223
+  },
+  "Silchar": {
+   "airgrove": {
+    "mae": 5.66,
+    "rmse": 8.35,
+    "bias": -0.96,
+    "aqi_hit_rate": 0.806
+   },
+   "persistence": {
+    "mae": 8.18,
+    "rmse": 12.16,
+    "bias": 0.08,
+    "aqi_hit_rate": 0.713
+   },
+   "same_hour_yesterday": {
+    "mae": 6.63,
+    "rmse": 10.02,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.797
+   },
+   "cams_raw": {
+    "mae": 16.39,
+    "rmse": 22.26,
+    "bias": 9.27,
+    "aqi_hit_rate": 0.562
+   },
+   "cams_bias_corrected": {
+    "mae": 7.8,
+    "rmse": 10.75,
+    "bias": -1.36,
+    "aqi_hit_rate": 0.712
+   },
+   "n": 25275
+  },
+  "Siliguri": {
+   "airgrove": {
+    "mae": 7.1,
+    "rmse": 11.6,
+    "bias": 0.0,
+    "aqi_hit_rate": 0.8
+   },
+   "persistence": {
+    "mae": 9.73,
+    "rmse": 15.95,
+    "bias": -0.3,
+    "aqi_hit_rate": 0.734
+   },
+   "same_hour_yesterday": {
+    "mae": 8.21,
+    "rmse": 13.38,
+    "bias": -0.26,
+    "aqi_hit_rate": 0.785
+   },
+   "cams_raw": {
+    "mae": 15.57,
+    "rmse": 21.72,
+    "bias": 9.88,
+    "aqi_hit_rate": 0.603
+   },
+   "cams_bias_corrected": {
+    "mae": 11.4,
+    "rmse": 15.33,
+    "bias": 3.35,
+    "aqi_hit_rate": 0.688
+   },
+   "n": 27855
+  },
+  "Singrauli": {
+   "airgrove": {
+    "mae": 30.91,
+    "rmse": 55.2,
+    "bias": -14.49,
+    "aqi_hit_rate": 0.456
+   },
+   "persistence": {
+    "mae": 45.26,
+    "rmse": 74.28,
+    "bias": 0.94,
+    "aqi_hit_rate": 0.379
+   },
+   "same_hour_yesterday": {
+    "mae": 36.29,
+    "rmse": 61.93,
+    "bias": 0.42,
+    "aqi_hit_rate": 0.433
+   },
+   "cams_raw": {
+    "mae": 41.45,
+    "rmse": 65.38,
+    "bias": -31.27,
+    "aqi_hit_rate": 0.332
+   },
+   "cams_bias_corrected": {
+    "mae": 37.57,
+    "rmse": 58.7,
+    "bias": -14.77,
+    "aqi_hit_rate": 0.309
+   },
+   "n": 15895
+  },
+  "Sirohi": {
+   "airgrove": {
+    "mae": 8.75,
+    "rmse": 13.84,
+    "bias": -1.81,
+    "aqi_hit_rate": 0.767
+   },
+   "persistence": {
+    "mae": 11.41,
+    "rmse": 17.63,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.709
+   },
+   "same_hour_yesterday": {
+    "mae": 10.5,
+    "rmse": 16.31,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.737
+   },
+   "cams_raw": {
+    "mae": 9.98,
+    "rmse": 15.04,
+    "bias": -4.41,
+    "aqi_hit_rate": 0.746
+   },
+   "cams_bias_corrected": {
+    "mae": 10.57,
+    "rmse": 15.56,
+    "bias": -1.61,
+    "aqi_hit_rate": 0.708
+   },
+   "n": 31845
+  },
+  "Sirsa": {
+   "airgrove": {
+    "mae": 16.62,
+    "rmse": 39.43,
+    "bias": -6.74,
+    "aqi_hit_rate": 0.691
+   },
+   "persistence": {
+    "mae": 19.94,
+    "rmse": 46.03,
+    "bias": -0.55,
+    "aqi_hit_rate": 0.648
+   },
+   "same_hour_yesterday": {
+    "mae": 20.98,
+    "rmse": 47.33,
+    "bias": -0.71,
+    "aqi_hit_rate": 0.632
+   },
+   "cams_raw": {
+    "mae": 56.61,
+    "rmse": 87.39,
+    "bias": 43.87,
+    "aqi_hit_rate": 0.196
+   },
+   "cams_bias_corrected": {
+    "mae": 32.59,
+    "rmse": 48.97,
+    "bias": 13.29,
+    "aqi_hit_rate": 0.265
+   },
+   "n": 23606
+  },
+  "Sivasagar": {
+   "airgrove": {
+    "mae": 5.67,
+    "rmse": 9.23,
+    "bias": -1.37,
+    "aqi_hit_rate": 0.865
+   },
+   "persistence": {
+    "mae": 8.23,
+    "rmse": 13.99,
+    "bias": -0.29,
+    "aqi_hit_rate": 0.798
+   },
+   "same_hour_yesterday": {
+    "mae": 6.6,
+    "rmse": 10.62,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.855
+   },
+   "cams_raw": {
+    "mae": 14.7,
+    "rmse": 19.72,
+    "bias": 6.69,
+    "aqi_hit_rate": 0.616
+   },
+   "cams_bias_corrected": {
+    "mae": 11.0,
+    "rmse": 14.94,
+    "bias": 0.65,
+    "aqi_hit_rate": 0.756
+   },
+   "n": 32726
+  },
+  "Solapur": {
+   "airgrove": {
+    "mae": 8.2,
+    "rmse": 12.8,
+    "bias": -1.32,
+    "aqi_hit_rate": 0.777
+   },
+   "persistence": {
+    "mae": 10.86,
+    "rmse": 16.96,
+    "bias": -0.15,
+    "aqi_hit_rate": 0.716
+   },
+   "same_hour_yesterday": {
+    "mae": 10.3,
+    "rmse": 16.87,
+    "bias": 0.23,
+    "aqi_hit_rate": 0.74
+   },
+   "cams_raw": {
+    "mae": 14.42,
+    "rmse": 19.95,
+    "bias": -12.33,
+    "aqi_hit_rate": 0.648
+   },
+   "cams_bias_corrected": {
+    "mae": 11.22,
+    "rmse": 15.98,
+    "bias": 0.16,
+    "aqi_hit_rate": 0.71
+   },
+   "n": 37081
+  },
+  "Sri Ganganagar": {
+   "airgrove": {
+    "mae": 14.16,
+    "rmse": 27.53,
+    "bias": 0.15,
+    "aqi_hit_rate": 0.624
+   },
+   "persistence": {
+    "mae": 18.35,
+    "rmse": 37.99,
+    "bias": -0.25,
+    "aqi_hit_rate": 0.584
+   },
+   "same_hour_yesterday": {
+    "mae": 17.5,
+    "rmse": 37.71,
+    "bias": -0.03,
+    "aqi_hit_rate": 0.606
+   },
+   "cams_raw": {
+    "mae": 40.22,
+    "rmse": 57.45,
+    "bias": 27.57,
+    "aqi_hit_rate": 0.283
+   },
+   "cams_bias_corrected": {
+    "mae": 26.93,
+    "rmse": 35.31,
+    "bias": 16.86,
+    "aqi_hit_rate": 0.296
+   },
+   "n": 29522
+  },
+  "Srinagar": {
+   "airgrove": {
+    "mae": 5.01,
+    "rmse": 11.5,
+    "bias": -0.79,
+    "aqi_hit_rate": 0.922
+   },
+   "persistence": {
+    "mae": 6.04,
+    "rmse": 13.26,
+    "bias": -0.23,
+    "aqi_hit_rate": 0.91
+   },
+   "same_hour_yesterday": {
+    "mae": 5.62,
+    "rmse": 13.03,
+    "bias": -0.11,
+    "aqi_hit_rate": 0.924
+   },
+   "cams_raw": {
+    "mae": 21.77,
+    "rmse": 30.05,
+    "bias": 15.55,
+    "aqi_hit_rate": 0.513
+   },
+   "cams_bias_corrected": {
+    "mae": 18.04,
+    "rmse": 22.58,
+    "bias": 9.19,
+    "aqi_hit_rate": 0.585
+   },
+   "n": 20948
+  },
+  "Surat": {
+   "airgrove": {
+    "mae": 20.76,
+    "rmse": 70.44,
+    "bias": -9.29,
+    "aqi_hit_rate": 0.678
+   },
+   "persistence": {
+    "mae": 26.21,
+    "rmse": 83.17,
+    "bias": 2.23,
+    "aqi_hit_rate": 0.62
+   },
+   "same_hour_yesterday": {
+    "mae": 27.46,
+    "rmse": 89.01,
+    "bias": 2.16,
+    "aqi_hit_rate": 0.613
+   },
+   "cams_raw": {
+    "mae": 25.94,
+    "rmse": 70.62,
+    "bias": 0.93,
+    "aqi_hit_rate": 0.552
+   },
+   "cams_bias_corrected": {
+    "mae": 26.25,
+    "rmse": 69.81,
+    "bias": -3.39,
+    "aqi_hit_rate": 0.296
+   },
+   "n": 26054
+  },
+  "Talcher": {
+   "airgrove": {
+    "mae": 34.14,
+    "rmse": 49.37,
+    "bias": -13.0,
+    "aqi_hit_rate": 0.376
+   },
+   "persistence": {
+    "mae": 46.18,
+    "rmse": 64.69,
+    "bias": 1.26,
+    "aqi_hit_rate": 0.33
+   },
+   "same_hour_yesterday": {
+    "mae": 37.81,
+    "rmse": 54.24,
+    "bias": 0.19,
+    "aqi_hit_rate": 0.398
+   },
+   "cams_raw": {
+    "mae": 35.07,
+    "rmse": 49.69,
+    "bias": -2.48,
+    "aqi_hit_rate": 0.36
+   },
+   "cams_bias_corrected": {
+    "mae": 35.83,
+    "rmse": 50.97,
+    "bias": -8.6,
+    "aqi_hit_rate": 0.327
+   },
+   "n": 20404
+  },
+  "Thiruvananthapuram": {
+   "airgrove": {
+    "mae": 7.28,
+    "rmse": 22.78,
+    "bias": -1.99,
+    "aqi_hit_rate": 0.864
+   },
+   "persistence": {
+    "mae": 9.14,
+    "rmse": 30.35,
+    "bias": -0.07,
+    "aqi_hit_rate": 0.838
+   },
+   "same_hour_yesterday": {
+    "mae": 8.74,
+    "rmse": 27.31,
+    "bias": -0.66,
+    "aqi_hit_rate": 0.84
+   },
+   "cams_raw": {
+    "mae": 10.42,
+    "rmse": 24.3,
+    "bias": -8.63,
+    "aqi_hit_rate": 0.839
+   },
+   "cams_bias_corrected": {
+    "mae": 9.85,
+    "rmse": 23.17,
+    "bias": 3.01,
+    "aqi_hit_rate": 0.798
+   },
+   "n": 36107
+  },
+  "Thrissur": {
+   "airgrove": {
+    "mae": 2.54,
+    "rmse": 4.37,
+    "bias": 0.07,
+    "aqi_hit_rate": 0.762
+   },
+   "persistence": {
+    "mae": 2.89,
+    "rmse": 5.0,
+    "bias": 0.06,
+    "aqi_hit_rate": 0.766
+   },
+   "same_hour_yesterday": {
+    "mae": 3.4,
+    "rmse": 5.66,
+    "bias": 0.01,
+    "aqi_hit_rate": 0.732
+   },
+   "cams_raw": {
+    "mae": 14.12,
+    "rmse": 16.81,
+    "bias": -4.42,
+    "aqi_hit_rate": 0.614
+   },
+   "cams_bias_corrected": {
+    "mae": 3.65,
+    "rmse": 5.41,
+    "bias": -0.37,
+    "aqi_hit_rate": 0.627
+   },
+   "n": 17732
+  },
+  "Tirupati": {
+   "airgrove": {
+    "mae": 10.7,
+    "rmse": 20.83,
+    "bias": -3.35,
+    "aqi_hit_rate": 0.688
+   },
+   "persistence": {
+    "mae": 12.91,
+    "rmse": 25.58,
+    "bias": -0.28,
+    "aqi_hit_rate": 0.664
+   },
+   "same_hour_yesterday": {
+    "mae": 13.76,
+    "rmse": 26.0,
+    "bias": -0.55,
+    "aqi_hit_rate": 0.645
+   },
+   "cams_raw": {
+    "mae": 19.19,
+    "rmse": 27.98,
+    "bias": -18.52,
+    "aqi_hit_rate": 0.593
+   },
+   "cams_bias_corrected": {
+    "mae": 11.52,
+    "rmse": 20.17,
+    "bias": 0.76,
+    "aqi_hit_rate": 0.644
+   },
+   "n": 36659
+  },
+  "Tonk": {
+   "airgrove": {
+    "mae": 19.99,
+    "rmse": 38.41,
+    "bias": -9.06,
+    "aqi_hit_rate": 0.544
+   },
+   "persistence": {
+    "mae": 28.11,
+    "rmse": 50.36,
+    "bias": 0.2,
+    "aqi_hit_rate": 0.457
+   },
+   "same_hour_yesterday": {
+    "mae": 20.99,
+    "rmse": 35.62,
+    "bias": 0.03,
+    "aqi_hit_rate": 0.52
+   },
+   "cams_raw": {
+    "mae": 30.42,
+    "rmse": 51.13,
+    "bias": -27.56,
+    "aqi_hit_rate": 0.392
+   },
+   "cams_bias_corrected": {
+    "mae": 26.34,
+    "rmse": 44.67,
+    "bias": -5.97,
+    "aqi_hit_rate": 0.423
+   },
+   "n": 28839
+  },
+  "Tumidih": {
+   "airgrove": {
+    "mae": 11.6,
+    "rmse": 20.64,
+    "bias": 0.05,
+    "aqi_hit_rate": 0.676
+   },
+   "persistence": {
+    "mae": 16.05,
+    "rmse": 29.53,
+    "bias": 0.94,
+    "aqi_hit_rate": 0.607
+   },
+   "same_hour_yesterday": {
+    "mae": 15.92,
+    "rmse": 27.7,
+    "bias": 1.48,
+    "aqi_hit_rate": 0.601
+   },
+   "cams_raw": {
+    "mae": 18.7,
+    "rmse": 27.25,
+    "bias": 9.62,
+    "aqi_hit_rate": 0.466
+   },
+   "cams_bias_corrected": {
+    "mae": 15.51,
+    "rmse": 23.56,
+    "bias": 5.37,
+    "aqi_hit_rate": 0.502
+   },
+   "n": 17494
+  },
+  "Udaipur": {
+   "airgrove": {
+    "mae": 13.49,
+    "rmse": 22.67,
+    "bias": -4.57,
+    "aqi_hit_rate": 0.609
+   },
+   "persistence": {
+    "mae": 18.81,
+    "rmse": 28.7,
+    "bias": -1.36,
+    "aqi_hit_rate": 0.498
+   },
+   "same_hour_yesterday": {
+    "mae": 16.33,
+    "rmse": 28.38,
+    "bias": -0.2,
+    "aqi_hit_rate": 0.544
+   },
+   "cams_raw": {
+    "mae": 28.87,
+    "rmse": 37.06,
+    "bias": -27.81,
+    "aqi_hit_rate": 0.257
+   },
+   "cams_bias_corrected": {
+    "mae": 16.0,
+    "rmse": 25.2,
+    "bias": -4.76,
+    "aqi_hit_rate": 0.575
+   },
+   "n": 27096
+  },
+  "Ulhasnagar": {
+   "airgrove": {
+    "mae": 11.04,
+    "rmse": 20.77,
+    "bias": -2.12,
+    "aqi_hit_rate": 0.671
+   },
+   "persistence": {
+    "mae": 15.15,
+    "rmse": 27.81,
+    "bias": -0.55,
+    "aqi_hit_rate": 0.59
+   },
+   "same_hour_yesterday": {
+    "mae": 13.1,
+    "rmse": 23.72,
+    "bias": -0.37,
+    "aqi_hit_rate": 0.614
+   },
+   "cams_raw": {
+    "mae": 15.23,
+    "rmse": 24.71,
+    "bias": -8.65,
+    "aqi_hit_rate": 0.583
+   },
+   "cams_bias_corrected": {
+    "mae": 14.5,
+    "rmse": 23.71,
+    "bias": -1.83,
+    "aqi_hit_rate": 0.53
+   },
+   "n": 29246
+  },
+  "Vapi": {
+   "airgrove": {
+    "mae": 12.64,
+    "rmse": 22.88,
+    "bias": -0.88,
+    "aqi_hit_rate": 0.638
+   },
+   "persistence": {
+    "mae": 17.78,
+    "rmse": 35.55,
+    "bias": 0.67,
+    "aqi_hit_rate": 0.559
+   },
+   "same_hour_yesterday": {
+    "mae": 15.26,
+    "rmse": 30.51,
+    "bias": 0.97,
+    "aqi_hit_rate": 0.609
+   },
+   "cams_raw": {
+    "mae": 22.38,
+    "rmse": 32.75,
+    "bias": -13.75,
+    "aqi_hit_rate": 0.466
+   },
+   "cams_bias_corrected": {
+    "mae": 20.27,
+    "rmse": 29.01,
+    "bias": 4.46,
+    "aqi_hit_rate": 0.362
+   },
+   "n": 14816
+  },
+  "Varanasi": {
+   "airgrove": {
+    "mae": 9.66,
+    "rmse": 15.4,
+    "bias": -4.3,
+    "aqi_hit_rate": 0.724
+   },
+   "persistence": {
+    "mae": 13.84,
+    "rmse": 21.42,
+    "bias": -0.35,
+    "aqi_hit_rate": 0.631
+   },
+   "same_hour_yesterday": {
+    "mae": 11.91,
+    "rmse": 18.29,
+    "bias": -0.5,
+    "aqi_hit_rate": 0.67
+   },
+   "cams_raw": {
+    "mae": 33.49,
+    "rmse": 46.4,
+    "bias": 31.51,
+    "aqi_hit_rate": 0.332
+   },
+   "cams_bias_corrected": {
+    "mae": 13.0,
+    "rmse": 18.95,
+    "bias": -3.26,
+    "aqi_hit_rate": 0.607
+   },
+   "n": 29643
+  },
+  "Virar": {
+   "airgrove": {
+    "mae": 11.69,
+    "rmse": 29.77,
+    "bias": -4.35,
+    "aqi_hit_rate": 0.719
+   },
+   "persistence": {
+    "mae": 14.5,
+    "rmse": 35.02,
+    "bias": -0.27,
+    "aqi_hit_rate": 0.669
+   },
+   "same_hour_yesterday": {
+    "mae": 15.16,
+    "rmse": 35.27,
+    "bias": 0.15,
+    "aqi_hit_rate": 0.656
+   },
+   "cams_raw": {
+    "mae": 15.29,
+    "rmse": 32.6,
+    "bias": -6.34,
+    "aqi_hit_rate": 0.648
+   },
+   "cams_bias_corrected": {
+    "mae": 15.94,
+    "rmse": 32.1,
+    "bias": -0.48,
+    "aqi_hit_rate": 0.638
+   },
+   "n": 20684
+  },
+  "Visakhapatnam": {
+   "airgrove": {
+    "mae": 14.15,
+    "rmse": 19.89,
+    "bias": -4.44,
+    "aqi_hit_rate": 0.585
+   },
+   "persistence": {
+    "mae": 17.06,
+    "rmse": 23.5,
+    "bias": -0.28,
+    "aqi_hit_rate": 0.537
+   },
+   "same_hour_yesterday": {
+    "mae": 16.41,
+    "rmse": 22.03,
+    "bias": -0.82,
+    "aqi_hit_rate": 0.537
+   },
+   "cams_raw": {
+    "mae": 18.35,
+    "rmse": 25.71,
+    "bias": -9.94,
+    "aqi_hit_rate": 0.497
+   },
+   "cams_bias_corrected": {
+    "mae": 19.38,
+    "rmse": 25.99,
+    "bias": -0.36,
+    "aqi_hit_rate": 0.485
+   },
+   "n": 27547
+  }
+ },
+ "band_coverage_80": {
+  "overall": 0.747,
+  "1-6 h": 0.748,
+  "7-24 h": 0.752,
+  "25-72 h": 0.742,
+  "monsoon (Jun-Sep)": 0.776,
+  "post-monsoon (Oct-Nov)": 0.7,
+  "pre-monsoon (Mar-May)": 0.755,
+  "winter (Dec-Feb)": 0.739
+ },
+ "fire_ablation": {
+  "oct_dec_all_cities": {
+   "1-6 h": {
+    "with_fires": {
+     "mae": 15.53,
+     "rmse": 31.6,
+     "bias": -5.36,
+     "aqi_hit_rate": 0.653
+    },
+    "without_fires": {
+     "mae": 15.48,
+     "rmse": 31.51,
+     "bias": -5.08,
+     "aqi_hit_rate": 0.654
+    },
+    "n": 463749
+   },
+   "7-24 h": {
+    "with_fires": {
+     "mae": 19.97,
+     "rmse": 38.07,
+     "bias": -8.89,
+     "aqi_hit_rate": 0.566
+    },
+    "without_fires": {
+     "mae": 19.93,
+     "rmse": 37.91,
+     "bias": -8.62,
+     "aqi_hit_rate": 0.566
+    },
+    "n": 536828
+   },
+   "25-72 h": {
+    "with_fires": {
+     "mae": 23.45,
+     "rmse": 42.75,
+     "bias": -12.73,
+     "aqi_hit_rate": 0.506
+    },
+    "without_fires": {
+     "mae": 23.41,
+     "rmse": 42.6,
+     "bias": -12.23,
+     "aqi_hit_rate": 0.506
+    },
+    "n": 604013
+   }
+  },
+  "rest_of_year_all_cities": {
+   "1-6 h": {
+    "with_fires": {
+     "mae": 8.44,
+     "rmse": 18.22,
+     "bias": -1.11,
+     "aqi_hit_rate": 0.772
+    },
+    "without_fires": {
+     "mae": 8.45,
+     "rmse": 18.22,
+     "bias": -1.05,
+     "aqi_hit_rate": 0.772
+    },
+    "n": 963638
+   },
+   "7-24 h": {
+    "with_fires": {
+     "mae": 10.51,
+     "rmse": 20.91,
+     "bias": -1.56,
+     "aqi_hit_rate": 0.721
+    },
+    "without_fires": {
+     "mae": 10.53,
+     "rmse": 20.93,
+     "bias": -1.46,
+     "aqi_hit_rate": 0.721
+    },
+    "n": 1094995
+   },
+   "25-72 h": {
+    "with_fires": {
+     "mae": 11.62,
+     "rmse": 22.19,
+     "bias": -1.75,
+     "aqi_hit_rate": 0.693
+    },
+    "without_fires": {
+     "mae": 11.63,
+     "rmse": 22.23,
+     "bias": -1.6,
+     "aqi_hit_rate": 0.693
+    },
+    "n": 1193412
+   }
+  },
+  "oct_dec_north_india": {
+   "1-6 h": {
+    "with_fires": {
+     "mae": 18.41,
+     "rmse": 35.07,
+     "bias": -6.74,
+     "aqi_hit_rate": 0.617
+    },
+    "without_fires": {
+     "mae": 18.37,
+     "rmse": 34.98,
+     "bias": -6.34,
+     "aqi_hit_rate": 0.618
+    },
+    "n": 252390
+   },
+   "7-24 h": {
+    "with_fires": {
+     "mae": 23.53,
+     "rmse": 43.03,
+     "bias": -10.93,
+     "aqi_hit_rate": 0.53
+    },
+    "without_fires": {
+     "mae": 23.52,
+     "rmse": 42.84,
+     "bias": -10.56,
+     "aqi_hit_rate": 0.529
+    },
+    "n": 292436
+   },
+   "25-72 h": {
+    "with_fires": {
+     "mae": 27.4,
+     "rmse": 48.55,
+     "bias": -15.17,
+     "aqi_hit_rate": 0.472
+    },
+    "without_fires": {
+     "mae": 27.39,
+     "rmse": 48.38,
+     "bias": -14.44,
+     "aqi_hit_rate": 0.471
+    },
+    "n": 329417
+   }
+  },
+  "rest_of_year_north_india": {
+   "1-6 h": {
+    "with_fires": {
+     "mae": 9.52,
+     "rmse": 19.72,
+     "bias": -1.14,
+     "aqi_hit_rate": 0.744
+    },
+    "without_fires": {
+     "mae": 9.53,
+     "rmse": 19.71,
+     "bias": -1.04,
+     "aqi_hit_rate": 0.744
+    },
+    "n": 514893
+   },
+   "7-24 h": {
+    "with_fires": {
+     "mae": 11.86,
+     "rmse": 23.1,
+     "bias": -1.72,
+     "aqi_hit_rate": 0.688
+    },
+    "without_fires": {
+     "mae": 11.89,
+     "rmse": 23.12,
+     "bias": -1.6,
+     "aqi_hit_rate": 0.687
+    },
+    "n": 585676
+   },
+   "25-72 h": {
+    "with_fires": {
+     "mae": 13.03,
+     "rmse": 24.47,
+     "bias": -2.13,
+     "aqi_hit_rate": 0.659
+    },
+    "without_fires": {
+     "mae": 13.05,
+     "rmse": 24.51,
+     "bias": -1.95,
+     "aqi_hit_rate": 0.659
+    },
+    "n": 638513
+   }
+  }
+ },
+ "national_vs_per_city": {
+  "Delhi": {
+   "1-6 h": {
+    "national": {
+     "mae": 20.5,
+     "rmse": 34.86,
+     "bias": -4.79,
+     "aqi_hit_rate": 0.67
+    },
+    "per_city": {
+     "mae": 20.95,
+     "rmse": 34.68,
+     "bias": -4.94,
+     "aqi_hit_rate": 0.658
+    },
+    "persistence": {
+     "mae": 22.4,
+     "rmse": 38.34,
+     "bias": -0.37,
+     "aqi_hit_rate": 0.628
+    },
+    "n": 11500
+   },
+   "7-24 h": {
+    "national": {
+     "mae": 29.92,
+     "rmse": 50.69,
+     "bias": -10.47,
+     "aqi_hit_rate": 0.535
+    },
+    "per_city": {
+     "mae": 29.5,
+     "rmse": 49.26,
+     "bias": -8.15,
+     "aqi_hit_rate": 0.543
+    },
+    "persistence": {
+     "mae": 38.53,
+     "rmse": 59.58,
+     "bias": -0.35,
+     "aqi_hit_rate": 0.439
+    },
+    "n": 13243
+   },
+   "25-72 h": {
+    "national": {
+     "mae": 35.47,
+     "rmse": 60.44,
+     "bias": -13.93,
+     "aqi_hit_rate": 0.485
+    },
+    "per_city": {
+     "mae": 34.65,
+     "rmse": 58.31,
+     "bias": -9.66,
+     "aqi_hit_rate": 0.496
+    },
+    "persistence": {
+     "mae": 44.88,
+     "rmse": 70.52,
+     "bias": -1.31,
+     "aqi_hit_rate": 0.402
+    },
+    "n": 14705
+   }
+  },
+  "Mumbai": {
+   "1-6 h": {
+    "national": {
+     "mae": 5.57,
+     "rmse": 9.57,
+     "bias": -0.98,
+     "aqi_hit_rate": 0.841
+    },
+    "per_city": {
+     "mae": 6.47,
+     "rmse": 10.96,
+     "bias": -1.11,
+     "aqi_hit_rate": 0.82
+    },
+    "persistence": {
+     "mae": 6.06,
+     "rmse": 10.56,
+     "bias": -0.11,
+     "aqi_hit_rate": 0.833
+    },
+    "n": 11343
+   },
+   "7-24 h": {
+    "national": {
+     "mae": 7.62,
+     "rmse": 13.34,
+     "bias": -1.7,
+     "aqi_hit_rate": 0.789
+    },
+    "per_city": {
+     "mae": 8.13,
+     "rmse": 13.95,
+     "bias": -1.51,
+     "aqi_hit_rate": 0.786
+    },
+    "persistence": {
+     "mae": 8.92,
+     "rmse": 14.51,
+     "bias": -0.1,
+     "aqi_hit_rate": 0.755
+    },
+    "n": 13083
+   },
+   "25-72 h": {
+    "national": {
+     "mae": 9.67,
+     "rmse": 16.66,
+     "bias": -2.6,
+     "aqi_hit_rate": 0.746
+    },
+    "per_city": {
+     "mae": 9.78,
+     "rmse": 16.64,
+     "bias": -2.02,
+     "aqi_hit_rate": 0.747
+    },
+    "persistence": {
+     "mae": 11.02,
+     "rmse": 18.01,
+     "bias": -0.23,
+     "aqi_hit_rate": 0.709
+    },
+    "n": 14537
+   }
+  },
+  "Hyderabad": {
+   "1-6 h": {
+    "national": {
+     "mae": 2.82,
+     "rmse": 4.27,
+     "bias": 0.01,
+     "aqi_hit_rate": 0.913
+    },
+    "per_city": {
+     "mae": 3.21,
+     "rmse": 4.97,
+     "bias": -0.01,
+     "aqi_hit_rate": 0.91
+    },
+    "persistence": {
+     "mae": 3.07,
+     "rmse": 4.94,
+     "bias": -0.19,
+     "aqi_hit_rate": 0.9
+    },
+    "n": 11116
+   },
+   "7-24 h": {
+    "national": {
+     "mae": 3.76,
+     "rmse": 5.57,
+     "bias": -0.06,
+     "aqi_hit_rate": 0.88
+    },
+    "per_city": {
+     "mae": 4.1,
+     "rmse": 6.04,
+     "bias": -0.1,
+     "aqi_hit_rate": 0.872
+    },
+    "persistence": {
+     "mae": 4.69,
+     "rmse": 6.66,
+     "bias": -0.14,
+     "aqi_hit_rate": 0.837
+    },
+    "n": 12822
+   },
+   "25-72 h": {
+    "national": {
+     "mae": 4.34,
+     "rmse": 6.4,
+     "bias": -0.46,
+     "aqi_hit_rate": 0.852
+    },
+    "per_city": {
+     "mae": 4.59,
+     "rmse": 6.76,
+     "bias": -0.31,
+     "aqi_hit_rate": 0.849
+    },
+    "persistence": {
+     "mae": 5.49,
+     "rmse": 7.83,
+     "bias": -0.26,
+     "aqi_hit_rate": 0.812
+    },
+    "n": 14202
+   }
+  },
+  "Ahmedabad": {
+   "1-6 h": {
+    "national": {
+     "mae": 6.63,
+     "rmse": 10.96,
+     "bias": -0.74,
+     "aqi_hit_rate": 0.777
+    },
+    "per_city": {
+     "mae": 7.21,
+     "rmse": 11.75,
+     "bias": -0.73,
+     "aqi_hit_rate": 0.76
+    },
+    "persistence": {
+     "mae": 9.57,
+     "rmse": 15.93,
+     "bias": -0.43,
+     "aqi_hit_rate": 0.703
+    },
+    "n": 11089
+   },
+   "7-24 h": {
+    "national": {
+     "mae": 9.51,
+     "rmse": 18.99,
+     "bias": -1.62,
+     "aqi_hit_rate": 0.677
+    },
+    "per_city": {
+     "mae": 9.86,
+     "rmse": 19.39,
+     "bias": -1.43,
+     "aqi_hit_rate": 0.669
+    },
+    "persistence": {
+     "mae": 14.86,
+     "rmse": 24.92,
+     "bias": -0.65,
+     "aqi_hit_rate": 0.537
+    },
+    "n": 12800
+   },
+   "25-72 h": {
+    "national": {
+     "mae": 11.43,
+     "rmse": 23.68,
+     "bias": -2.62,
+     "aqi_hit_rate": 0.617
+    },
+    "per_city": {
+     "mae": 11.69,
+     "rmse": 23.88,
+     "bias": -2.16,
+     "aqi_hit_rate": 0.616
+    },
+    "persistence": {
+     "mae": 17.15,
+     "rmse": 29.77,
+     "bias": -1.16,
+     "aqi_hit_rate": 0.489
+    },
+    "n": 14238
+   }
+  },
+  "Chennai": {
+   "1-6 h": {
+    "national": {
+     "mae": 9.11,
+     "rmse": 20.73,
+     "bias": -3.66,
+     "aqi_hit_rate": 0.774
+    },
+    "per_city": {
+     "mae": 10.32,
+     "rmse": 21.42,
+     "bias": -3.84,
+     "aqi_hit_rate": 0.754
+    },
+    "persistence": {
+     "mae": 10.88,
+     "rmse": 23.98,
+     "bias": 0.41,
+     "aqi_hit_rate": 0.742
+    },
+    "n": 10485
+   },
+   "7-24 h": {
+    "national": {
+     "mae": 11.92,
+     "rmse": 24.93,
+     "bias": -5.8,
+     "aqi_hit_rate": 0.718
+    },
+    "per_city": {
+     "mae": 13.55,
+     "rmse": 27.14,
+     "bias": -5.66,
+     "aqi_hit_rate": 0.693
+    },
+    "persistence": {
+     "mae": 15.31,
+     "rmse": 30.3,
+     "bias": -0.15,
+     "aqi_hit_rate": 0.656
+    },
+    "n": 12029
+   },
+   "25-72 h": {
+    "national": {
+     "mae": 14.63,
+     "rmse": 32.61,
+     "bias": -7.39,
+     "aqi_hit_rate": 0.671
+    },
+    "per_city": {
+     "mae": 16.24,
+     "rmse": 34.82,
+     "bias": -7.25,
+     "aqi_hit_rate": 0.64
+    },
+    "persistence": {
+     "mae": 18.7,
+     "rmse": 37.93,
+     "bias": -0.57,
+     "aqi_hit_rate": 0.602
+    },
+    "n": 13299
+   }
+  }
+ },
+ "runtime_minutes": 63.6
+}

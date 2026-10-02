@@ -4,57 +4,57 @@ Forecast-ready cities, 2025-02-01 00:00 IST to the latest reading. `% hours` = c
 
 | City | State | Stations | Need | Station rows | % hours | % any station | Filled | Stuck runs | Stuck hours | Out of range |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Delhi | Delhi | 38 | 29 | 476,340 | 90.6 | 91.7 | 132 | 135 | 2155 | 10 |
-| Mumbai | Maharashtra | 23 | 18 | 255,623 | 73.6 | 91.1 | 305 | 205 | 5894 | 38 |
-| Hyderabad | Telangana | 14 | 11 | 158,895 | 78.6 | 90.9 | 229 | 130 | 1529 | 0 |
-| Ahmedabad | Gujarat | 9 | 7 | 112,529 | 88.2 | 91.0 | 152 | 67 | 1266 | 0 |
-| Chennai | Tamil Nadu | 7 | 6 | 81,918 | 67.3 | 90.9 | 171 | 181 | 4913 | 7 |
-| Kolkata | West Bengal | 7 | 6 | 85,961 | 81.4 | 90.9 | 126 | 39 | 1397 | 0 |
-| Agra | Uttar Pradesh | 6 | 5 | 75,358 | 86.4 | 90.9 | 204 | 124 | 1850 | 0 |
-| Jaipur | Rajasthan | 6 | 5 | 75,216 | 87.9 | 90.8 | 161 | 8 | 100 | 0 |
-| Lucknow | Uttar Pradesh | 6 | 5 | 76,289 | 88.2 | 90.9 | 200 | 34 | 844 | 0 |
-| Moradabad | Uttar Pradesh | 6 | 5 | 74,791 | 86.0 | 90.9 | 176 | 88 | 954 | 0 |
-| Navi Mumbai | Maharashtra | 6 | 5 | 72,096 | 81.7 | 90.9 | 264 | 26 | 269 | 1 |
-| Patna | Bihar | 6 | 5 | 71,490 | 80.5 | 91.0 | 204 | 32 | 331 | 1 |
-| Howrah | West Bengal | 5 | 4 | 64,198 | 90.0 | 90.9 | 150 | 17 | 267 | 87 |
-| Indore | Madhya Pradesh | 5 | 4 | 56,846 | 66.5 | 90.8 | 157 | 107 | 4967 | 0 |
-| Jodhpur | Rajasthan | 5 | 4 | 64,027 | 90.0 | 90.8 | 130 | 1 | 10 | 0 |
-| Asansol | West Bengal | 4 | 3 | 51,141 | 90.1 | 90.9 | 135 | 13 | 310 | 104 |
-| Ghaziabad | Uttar Pradesh | 4 | 3 | 48,930 | 89.1 | 90.8 | 160 | 3 | 117 | 0 |
-| Gurugram | Haryana | 4 | 3 | 34,753 | 55.9 | 86.3 | 176 | 54 | 1069 | 0 |
-| Guwahati | Assam | 4 | 3 | 46,250 | 78.7 | 90.8 | 323 | 122 | 3889 | 0 |
-| Jabalpur | Madhya Pradesh | 4 | 3 | 46,558 | 84.0 | 90.8 | 175 | 18 | 189 | 0 |
-| Nagpur | Maharashtra | 4 | 3 | 51,270 | 90.6 | 91.1 | 127 | 18 | 214 | 0 |
-| Nashik | Maharashtra | 4 | 3 | 45,395 | 85.2 | 90.8 | 445 | 1 | 21 | 0 |
-| Noida | Uttar Pradesh | 4 | 3 | 49,193 | 89.2 | 90.9 | 135 | 2 | 19 | 0 |
-| Pimpri Chinchwad | Maharashtra | 4 | 3 | 46,761 | 85.0 | 90.9 | 213 | 42 | 451 | 10 |
-| Raipur | Chhattisgarh | 4 | 3 | 47,336 | 85.4 | 90.5 | 178 | 5 | 71 | 0 |
-| Varanasi | Uttar Pradesh | 4 | 3 | 50,776 | 88.2 | 90.8 | 157 | 109 | 2597 | 0 |
-| Bhilai | Chhattisgarh | 3 | 3 | 35,971 | 68.5 | 90.6 | 285 | 9 | 260 | 27 |
-| Bhopal | Madhya Pradesh | 3 | 3 | 37,236 | 77.5 | 90.9 | 206 | 1 | 6 | 0 |
-| Chandigarh | Chandigarh | 3 | 3 | 34,284 | 59.1 | 90.6 | 136 | 2 | 39 | 1 |
-| Durgapur | West Bengal | 3 | 3 | 36,444 | 66.0 | 90.7 | 130 | 25 | 660 | 8 |
-| Gandhinagar | Gujarat | 3 | 3 | 36,476 | 71.6 | 90.7 | 310 | 15 | 345 | 0 |
-| Gaya | Bihar | 3 | 3 | 33,350 | 55.5 | 90.7 | 212 | 14 | 124 | 0 |
-| Gwalior | Madhya Pradesh | 3 | 3 | 37,325 | 78.7 | 90.8 | 304 | 0 | 0 | 0 |
-| Kanpur | Uttar Pradesh | 3 | 3 | 37,981 | 79.4 | 90.7 | 176 | 24 | 398 | 2 |
-| Kota | Rajasthan | 3 | 3 | 38,505 | 85.1 | 90.8 | 231 | 3 | 28 | 0 |
-| Meerut | Uttar Pradesh | 3 | 3 | 36,226 | 71.6 | 90.5 | 197 | 0 | 0 | 0 |
-| Prayagraj | Uttar Pradesh | 3 | 3 | 38,128 | 80.7 | 90.7 | 231 | 26 | 369 | 0 |
-| Rourkela | Odisha | 3 | 3 | 31,961 | 33.3 | 89.6 | 159 | 97 | 2924 | 0 |
-| Amaravati | Andhra Pradesh | 2 | 2 | 24,874 | 82.2 | 90.4 | 282 | 4 | 55 | 0 |
-| Bareilly | Uttar Pradesh | 2 | 2 | 24,542 | 77.5 | 88.5 | 233 | 70 | 645 | 0 |
-| Bhagalpur | Bihar | 2 | 2 | 22,974 | 71.1 | 87.4 | 351 | 31 | 273 | 0 |
-| Bhiwadi | Rajasthan | 2 | 2 | 25,339 | 85.0 | 90.5 | 180 | 1 | 7 | 0 |
-| Bhubaneswar | Odisha | 2 | 2 | 24,821 | 81.5 | 90.3 | 159 | 0 | 0 | 0 |
-| Chandrapur | Maharashtra | 2 | 2 | 23,595 | 72.4 | 89.9 | 239 | 15 | 226 | 0 |
-| Firozabad | Uttar Pradesh | 2 | 2 | 24,079 | 69.3 | 87.6 | 166 | 61 | 1379 | 3 |
-| Greater Noida | Uttar Pradesh | 2 | 2 | 25,219 | 83.9 | 90.5 | 179 | 1 | 13 | 0 |
-| Korba | Chhattisgarh | 2 | 2 | 23,280 | 65.0 | 88.2 | 191 | 68 | 1169 | 0 |
-| Muzaffarpur | Bihar | 2 | 2 | 23,724 | 51.9 | 89.2 | 281 | 363 | 3489 | 0 |
-| Solapur | Maharashtra | 2 | 2 | 24,990 | 83.3 | 90.0 | 247 | 3 | 24 | 0 |
-| Thiruvananthapuram | Kerala | 2 | 2 | 24,079 | 74.3 | 90.1 | 126 | 25 | 295 | 0 |
-| Tirupati | Andhra Pradesh | 2 | 2 | 23,937 | 72.5 | 90.3 | 164 | 37 | 411 | 2 |
+| Delhi | Delhi | 38 | 2 | 476,340 | 92.0 | 91.7 | 90 | 135 | 2155 | 10 |
+| Mumbai | Maharashtra | 23 | 2 | 255,623 | 91.6 | 91.1 | 100 | 205 | 5894 | 38 |
+| Hyderabad | Telangana | 14 | 2 | 158,895 | 91.4 | 90.9 | 98 | 130 | 1529 | 0 |
+| Ahmedabad | Gujarat | 9 | 2 | 112,529 | 91.4 | 90.9 | 106 | 67 | 1266 | 0 |
+| Chennai | Tamil Nadu | 7 | 2 | 81,918 | 90.6 | 90.9 | 106 | 181 | 4913 | 7 |
+| Kolkata | West Bengal | 7 | 2 | 85,961 | 91.5 | 90.9 | 113 | 39 | 1397 | 0 |
+| Agra | Uttar Pradesh | 6 | 2 | 75,358 | 91.4 | 90.9 | 111 | 124 | 1850 | 0 |
+| Jaipur | Rajasthan | 6 | 2 | 75,216 | 91.4 | 90.8 | 106 | 8 | 100 | 0 |
+| Lucknow | Uttar Pradesh | 6 | 2 | 76,289 | 91.4 | 90.9 | 98 | 34 | 844 | 0 |
+| Moradabad | Uttar Pradesh | 6 | 2 | 74,791 | 91.1 | 90.9 | 101 | 88 | 954 | 0 |
+| Navi Mumbai | Maharashtra | 6 | 2 | 72,096 | 91.5 | 90.9 | 108 | 26 | 269 | 1 |
+| Patna | Bihar | 6 | 2 | 71,490 | 91.1 | 90.9 | 119 | 32 | 331 | 1 |
+| Howrah | West Bengal | 5 | 2 | 64,198 | 91.5 | 90.8 | 107 | 17 | 267 | 87 |
+| Indore | Madhya Pradesh | 5 | 2 | 56,846 | 88.1 | 90.6 | 104 | 107 | 4967 | 0 |
+| Jodhpur | Rajasthan | 5 | 2 | 64,027 | 91.3 | 90.8 | 109 | 1 | 10 | 0 |
+| Asansol | West Bengal | 4 | 2 | 51,141 | 91.3 | 90.9 | 107 | 13 | 310 | 104 |
+| Ghaziabad | Uttar Pradesh | 4 | 2 | 48,930 | 91.1 | 90.8 | 112 | 3 | 117 | 0 |
+| Gurugram | Haryana | 4 | 2 | 34,753 | 58.2 | 86.2 | 142 | 54 | 1069 | 0 |
+| Guwahati | Assam | 4 | 2 | 46,250 | 54.5 | 80.5 | 140 | 122 | 3889 | 0 |
+| Jabalpur | Madhya Pradesh | 4 | 2 | 46,558 | 90.1 | 90.8 | 128 | 18 | 189 | 0 |
+| Nagpur | Maharashtra | 4 | 2 | 51,270 | 91.4 | 91.1 | 106 | 18 | 214 | 0 |
+| Nashik | Maharashtra | 4 | 2 | 45,395 | 90.4 | 90.8 | 188 | 1 | 21 | 0 |
+| Noida | Uttar Pradesh | 4 | 2 | 49,193 | 91.0 | 90.8 | 107 | 2 | 19 | 0 |
+| Pimpri Chinchwad | Maharashtra | 4 | 2 | 46,761 | 89.2 | 90.8 | 136 | 42 | 451 | 10 |
+| Raipur | Chhattisgarh | 4 | 2 | 47,336 | 86.0 | 89.8 | 168 | 5 | 71 | 0 |
+| Varanasi | Uttar Pradesh | 4 | 2 | 50,776 | 75.6 | 90.1 | 130 | 109 | 2597 | 0 |
+| Bhilai | Chhattisgarh | 3 | 2 | 35,971 | 74.8 | 89.6 | 156 | 9 | 260 | 27 |
+| Bhopal | Madhya Pradesh | 3 | 2 | 37,236 | 90.0 | 90.9 | 134 | 1 | 6 | 0 |
+| Chandigarh | Chandigarh | 3 | 2 | 34,284 | 86.2 | 90.5 | 153 | 2 | 39 | 1 |
+| Durgapur | West Bengal | 3 | 2 | 36,444 | 89.9 | 90.7 | 126 | 25 | 660 | 8 |
+| Gandhinagar | Gujarat | 3 | 2 | 36,476 | 72.4 | 88.7 | 132 | 15 | 345 | 0 |
+| Gaya | Bihar | 3 | 2 | 33,350 | 38.3 | 83.2 | 82 | 14 | 124 | 0 |
+| Gwalior | Madhya Pradesh | 3 | 2 | 37,325 | 77.9 | 89.8 | 180 | 0 | 0 | 0 |
+| Kanpur | Uttar Pradesh | 3 | 2 | 37,981 | 90.3 | 90.7 | 117 | 24 | 398 | 2 |
+| Kota | Rajasthan | 3 | 2 | 38,505 | 70.6 | 90.4 | 121 | 3 | 28 | 0 |
+| Meerut | Uttar Pradesh | 3 | 2 | 36,226 | 89.2 | 90.5 | 156 | 0 | 0 | 0 |
+| Prayagraj | Uttar Pradesh | 3 | 2 | 38,128 | 89.6 | 90.6 | 162 | 26 | 369 | 0 |
+| Rourkela | Odisha | 3 | 2 | 31,961 | 42.8 | 84.6 | 142 | 97 | 2924 | 0 |
+| Amaravati | Andhra Pradesh | 2 | 1 | 24,874 | 91.3 | 90.4 | 121 | 4 | 55 | 0 |
+| Bareilly | Uttar Pradesh | 2 | 1 | 24,542 | 89.4 | 88.5 | 130 | 70 | 645 | 0 |
+| Bhagalpur | Bihar | 2 | 1 | 22,974 | 88.7 | 87.4 | 188 | 31 | 273 | 0 |
+| Bhiwadi | Rajasthan | 2 | 1 | 25,339 | 91.2 | 90.5 | 106 | 1 | 7 | 0 |
+| Bhubaneswar | Odisha | 2 | 1 | 24,821 | 91.1 | 90.3 | 114 | 0 | 0 | 0 |
+| Chandrapur | Maharashtra | 2 | 1 | 23,595 | 90.7 | 89.9 | 119 | 15 | 226 | 0 |
+| Firozabad | Uttar Pradesh | 2 | 1 | 24,079 | 88.5 | 87.6 | 127 | 61 | 1379 | 3 |
+| Greater Noida | Uttar Pradesh | 2 | 1 | 25,219 | 91.3 | 90.5 | 111 | 1 | 13 | 0 |
+| Korba | Chhattisgarh | 2 | 1 | 23,280 | 89.0 | 88.2 | 113 | 68 | 1169 | 0 |
+| Muzaffarpur | Bihar | 2 | 1 | 23,724 | 90.1 | 89.2 | 141 | 363 | 3489 | 0 |
+| Solapur | Maharashtra | 2 | 1 | 24,990 | 90.8 | 90.0 | 126 | 3 | 24 | 0 |
+| Thiruvananthapuram | Kerala | 2 | 1 | 24,079 | 90.9 | 90.1 | 108 | 25 | 295 | 0 |
+| Tirupati | Andhra Pradesh | 2 | 1 | 23,937 | 91.1 | 90.3 | 117 | 37 | 411 | 2 |
 | Agartala | Tripura | 1 | 1 | 11,781 | 78.4 | 77.2 | 171 | 21 | 552 | 0 |
 | Ajmer | Rajasthan | 1 | 1 | 12,807 | 88.9 | 88.0 | 134 | 2 | 14 | 0 |
 | Akola | Maharashtra | 1 | 1 | 12,832 | 89.3 | 88.2 | 147 | 0 | 0 | 0 |
@@ -188,10 +188,122 @@ Each station against the median of Delhi's other stations, hour by hour, cleaned
 
 | Station | Hours | Median difference | Months > 30% | Longest run | Correlation | Flag |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Pusa, Delhi - IMD | 11,443 | -16.4% | 1 of 20 | 1 | 0.91 | ok |
-| Pusa, Delhi - DPCC | 12,834 | -8.1% | 0 of 20 | 0 | 0.93 | ok |
+| Pusa, Delhi - IMD | 11,443 | -16.2% | 1 of 20 | 1 | 0.91 | ok |
+| Pusa, Delhi - DPCC | 12,833 | -7.8% | 0 of 20 | 0 | 0.93 | ok |
 
-For context, 9 of 38 Delhi stations are flagged by the same test: IGI Airport (T3), Delhi - IMD, Jawaharlal Nehru Stadium, Delhi - DPCC, Mandir Marg, New Delhi - DPCC, NSIT Dwarka, Delhi - CPCB, Shadipur, Delhi - CPCB, Sirifort, Delhi - CPCB, Bawana, Delhi - DPCC, Anand Vihar, New Delhi - DPCC, Jahangirpuri, Delhi - DPCC.
+For context, 5 of 38 Delhi stations are flagged by the same test: Mandir Marg, New Delhi - DPCC, Jawaharlal Nehru Stadium, Delhi - DPCC, Sirifort, Delhi - CPCB, Anand Vihar, New Delhi - DPCC, Jahangirpuri, Delhi - DPCC.
+
+# Station-months excluded
+
+A station is flagged when it is > 30% off the median of its city's other stations for 3+ consecutive months. A flagged station's month is excluded when it is > 30% off that month AND the correlation of daily means with the others' median is < 0.7. Total: 503 station-months, 105 stations, 290,274 station-hours.
+
+| City | Station | Months excluded | Detail (month: difference, daily r) |
+| --- | --- | ---: | --- |
+| Agra | Dharmapuri, Agra - UPPCB | 4 | 2026-02: -36%, r 0.22, 2026-04: -42%, r 0.52, 2026-06: +43%, r 0.21, 2026-08: -33%, r 0.51 |
+| Agra | Manoharpur, Agra - UPPCB | 4 | 2025-02: +90%, r 0.56, 2026-06: -36%, r 0.26, 2026-08: +205%, r 0.50, 2026-09: +180%, r 0.26 |
+| Agra | Sanjay Palace, Agra - UPPCB | 9 | 2025-04: +33%, r 0.23, 2025-07: -45%, r 0.34, 2025-08: -49%, r -0.08, 2025-10: +31%, r 0.51, 2025-11: +77%, r 0.46, 2025-12: +74%, r 0.35, 2026-01: +71%, r 0.27, 2026-03: +51%, r 0.69, 2026-05: +48%, r 0.53 |
+| Agra | Sector-3B Avas Vikas Colony, Agra - UPPCB | 4 | 2025-06: +43%, r 0.51, 2025-07: +115%, r 0.29, 2025-08: +99%, r 0.57, 2026-03: +73%, r 0.26 |
+| Agra | Shastripuram, Agra - UPPCB | 1 | 2026-06: -37%, r 0.66 |
+| Ahmedabad | Gyaspur, Ahmedabad - IITM | 4 | 2025-02: +52%, r 0.68, 2025-04: +67%, r 0.32, 2025-07: +46%, r 0.06, 2026-07: -55%, r 0.39 |
+| Ahmedabad | Maninagar, Ahmedabad - GPCB | 5 | 2025-03: -52%, r 0.11, 2025-04: -38%, r 0.35, 2026-06: +47%, r 0.19, 2026-07: +63%, r 0.60, 2026-08: +47%, r 0.42 |
+| Ahmedabad | Phase-4 GIDC, Vatva - GPCB | 9 | 2025-05: -34%, r 0.61, 2025-08: +61%, r 0.10, 2026-03: +46%, r 0.54, 2026-04: +80%, r 0.26, 2026-05: +86%, r 0.50, 2026-06: +112%, r 0.64, 2026-07: +92%, r 0.03, 2026-08: +80%, r 0.57, 2026-09: +67%, r 0.64 |
+| Ahmedabad | Raikhad, Ahmedabad - IITM | 1 | 2026-08: -44%, r 0.50 |
+| Ahmedabad | SVPI Airport Hansol, Ahmedabad - IITM | 2 | 2025-07: -42%, r 0.70, 2026-08: -44%, r 0.62 |
+| Asansol | Asansol Court Area, Asansol - WBPCB | 1 | 2026-07: +60%, r 0.60 |
+| Bhilai | 32Bungalows, Bhilai - CECB | 3 | 2025-11: -35%, r 0.63, 2026-01: -41%, r 0.59, 2026-02: -43%, r 0.64 |
+| Bhilai | Civic Center, Bhilai - Bhilai Steel Plant | 2 | 2025-08: +76%, r 0.48, 2025-12: +56%, r 0.30 |
+| Bhilai | Hathkhoj, Bhilai - CECB | 5 | 2025-04: +30%, r 0.08, 2025-11: +43%, r 0.44, 2026-02: +35%, r 0.51, 2026-07: +68%, r 0.55, 2026-08: +77%, r 0.52 |
+| Chandigarh | Sector-25, Chandigarh - CPCC | 1 | 2025-05: +31%, r 0.41 |
+| Chandigarh | Sector-53, Chandigarh - CPCC | 2 | 2026-04: -39%, r 0.67, 2026-08: -52%, r 0.49 |
+| Chennai | Manali Village, Chennai - TNPCB | 3 | 2025-05: -33%, r 0.54, 2025-06: -42%, r 0.51, 2025-07: -43%, r 0.62 |
+| Chennai | Manali, Chennai - CPCB | 8 | 2025-04: +32%, r 0.34, 2025-05: +69%, r 0.64, 2025-06: -41%, r 0.18, 2025-07: -34%, r 0.27, 2025-08: -34%, r 0.10, 2025-12: -44%, r 0.58, 2026-01: +33%, r 0.45, 2026-02: +70%, r 0.66 |
+| Chennai | Velachery Res. Area, Chennai - CPCB | 7 | 2025-02: +30%, r 0.49, 2025-06: +94%, r 0.05, 2025-07: +52%, r 0.53, 2025-08: +47%, r 0.30, 2025-09: +33%, r 0.49, 2025-12: -59%, r 0.13, 2026-07: +58%, r 0.04 |
+| Delhi | Anand Vihar, New Delhi - DPCC | 2 | 2025-09: +64%, r 0.41, 2026-08: +137%, r 0.19 |
+| Delhi | Bawana, Delhi - DPCC | 2 | 2026-08: +88%, r 0.49, 2026-09: +32%, r 0.70 |
+| Delhi | IGI Airport (T3), Delhi - IMD | 1 | 2026-02: -30%, r 0.51 |
+| Delhi | Mandir Marg, New Delhi - DPCC | 3 | 2026-03: +48%, r 0.39, 2026-04: +63%, r 0.57, 2026-05: +45%, r 0.31 |
+| Delhi | NSIT Dwarka, Delhi - CPCB | 8 | 2025-09: -32%, r 0.11, 2025-11: -43%, r -0.15, 2025-12: -32%, r 0.54, 2026-01: -46%, r 0.56, 2026-06: +35%, r 0.22, 2026-07: +56%, r 0.60, 2026-08: -51%, r -0.01, 2026-09: -33%, r 0.22 |
+| Delhi | Shadipur, Delhi - CPCB | 6 | 2025-04: +40%, r 0.66, 2025-07: +58%, r 0.60, 2025-08: +51%, r 0.30, 2025-09: +87%, r 0.30, 2025-11: -33%, r -0.15, 2026-05: +34%, r 0.64 |
+| Durgapur | Sidhu Kanhu Indoor Stadium, Durgapur - WBPCB | 1 | 2025-02: +37%, r 0.50 |
+| Gandhinagar | GIFT City, Gandhinagar - IITM | 5 | 2025-03: +54%, r 0.54, 2025-04: +40%, r 0.41, 2025-05: +49%, r 0.11, 2026-01: -37%, r 0.43, 2026-05: -37%, r 0.69 |
+| Gandhinagar | Sector-10, Gandhinagar - GPCB | 7 | 2025-02: -56%, r 0.63, 2025-03: -53%, r 0.12, 2025-04: -61%, r 0.50, 2025-05: -56%, r 0.15, 2025-06: -35%, r 0.30, 2026-04: +47%, r 0.63, 2026-06: +30%, r 0.31 |
+| Gaya | Collectorate, Gaya - BSPCB | 11 | 2025-04: +41%, r 0.70, 2025-08: +66%, r 0.06, 2025-09: +74%, r 0.37, 2025-11: +89%, r 0.56, 2025-12: +41%, r 0.42, 2026-04: +41%, r 0.49, 2026-05: +30%, r 0.35, 2026-06: +49%, r -0.13, 2026-07: +95%, r 0.08, 2026-08: +116%, r 0.13, 2026-09: +78%, r 0.43 |
+| Gaya | SFTI Kusdihra, Gaya - BSPCB | 13 | 2025-02: -49%, r 0.63, 2025-04: -38%, r 0.67, 2025-06: -38%, r 0.34, 2025-07: -41%, r -0.09, 2025-08: -63%, r 0.15, 2025-09: -60%, r 0.40, 2025-11: -72%, r 0.09, 2025-12: -44%, r -0.11, 2026-03: -38%, r 0.29, 2026-04: -45%, r 0.29, 2026-07: -45%, r -0.05, 2026-08: -50%, r 0.25, 2026-09: -46%, r -0.49 |
+| Ghaziabad | Loni, Ghaziabad - UPPCB | 2 | 2025-04: +52%, r 0.64, 2025-07: +35%, r 0.59 |
+| Ghaziabad | Vasundhara, Ghaziabad - UPPCB | 1 | 2025-02: +38%, r 0.70 |
+| Gurugram | NISE Gwal Pahari, Gurugram - IMD | 5 | 2025-02: -35%, r 0.65, 2025-11: +31%, r 0.38, 2026-02: -39%, r -0.03, 2026-04: -45%, r 0.46, 2026-06: -61%, r -0.02 |
+| Gurugram | Sector-51, Gurugram - HSPCB | 2 | 2026-04: +68%, r 0.18, 2026-05: +49%, r 0.21 |
+| Gurugram | Teri Gram, Gurugram - HSPCB | 3 | 2025-11: -30%, r 0.17, 2026-08: +34%, r 0.44, 2026-09: +58%, r 0.49 |
+| Guwahati | IITG, Guwahati - PCBA | 5 | 2025-08: -34%, r 0.59, 2026-06: -40%, r -0.12, 2026-07: -61%, r -0.33, 2026-08: -70%, r 0.15, 2026-09: -64%, r 0.28 |
+| Guwahati | LGBI Airport, Guwahati - PCBA | 13 | 2025-05: +65%, r 0.55, 2025-06: +38%, r 0.52, 2025-07: +117%, r 0.20, 2025-08: +129%, r 0.02, 2025-09: +58%, r -0.05, 2025-10: +39%, r 0.25, 2026-01: -44%, r -0.23, 2026-02: -51%, r 0.03, 2026-03: +44%, r -0.00, 2026-05: +40%, r -0.41, 2026-07: +45%, r 0.11, 2026-08: +91%, r 0.07, 2026-09: +112%, r -0.28 |
+| Guwahati | Pan Bazaar, Guwahati - APCB | 10 | 2025-02: -31%, r 0.56, 2025-07: -45%, r 0.12, 2025-08: -56%, r 0.16, 2025-09: -39%, r 0.32, 2025-12: -49%, r 0.54, 2026-03: -35%, r 0.51, 2026-04: -33%, r 0.18, 2026-07: +187%, r -0.30, 2026-08: -86%, r 0.34, 2026-09: -96%, r -0.44 |
+| Guwahati | Railway Colony, Guwahati - APCB | 5 | 2025-02: +44%, r 0.67, 2026-02: +91%, r 0.04, 2026-03: +45%, r 0.33, 2026-06: +44%, r 0.13, 2026-09: +115%, r -0.32 |
+| Gwalior | City Center, Gwalior - MPPCB | 4 | 2025-03: -40%, r 0.60, 2025-04: -41%, r 0.69, 2026-04: -56%, r 0.69, 2026-08: +36%, r 0.16 |
+| Gwalior | Deen Dayal Nagar, Gwalior - MPPCB | 6 | 2025-03: +82%, r 0.40, 2025-06: +76%, r 0.68, 2025-09: +53%, r 0.66, 2026-03: +39%, r 0.69, 2026-04: +108%, r 0.60, 2026-05: +47%, r 0.67 |
+| Howrah | Belur Math, Howrah - WBPCB | 2 | 2025-07: -49%, r 0.68, 2025-12: +75%, r 0.64 |
+| Howrah | Ghusuri, Howrah - WBPCB | 2 | 2025-04: +47%, r 0.70, 2025-12: +43%, r 0.23 |
+| Howrah | Padmapukur, Howrah - WBPCB | 3 | 2025-07: +52%, r 0.65, 2026-06: -32%, r 0.62, 2026-08: -38%, r 0.66 |
+| Hyderabad | Bollaram Industrial Area, Hyderabad - TSPCB | 7 | 2025-05: -42%, r 0.61, 2025-06: -41%, r 0.65, 2025-07: -57%, r 0.48, 2025-08: -57%, r 0.40, 2025-09: -47%, r 0.49, 2025-12: +61%, r 0.43, 2026-08: -41%, r 0.54 |
+| Hyderabad | Central University, Hyderabad - TSPCB | 7 | 2025-07: -72%, r 0.65, 2025-08: -77%, r 0.37, 2025-09: -71%, r 0.38, 2026-04: -59%, r 0.54, 2026-06: -68%, r 0.59, 2026-07: -52%, r 0.63, 2026-08: -50%, r 0.17 |
+| Hyderabad | ICRISAT Patancheru, Hyderabad - TSPCB | 8 | 2025-07: -66%, r 0.50, 2025-09: +47%, r -0.00, 2025-12: +72%, r 0.20, 2026-01: +33%, r 0.43, 2026-05: -45%, r 0.58, 2026-06: -52%, r 0.18, 2026-07: -31%, r 0.40, 2026-08: -51%, r 0.28 |
+| Hyderabad | IDA Pashamylaram, Hyderabad - TSPCB | 6 | 2025-06: -40%, r 0.68, 2025-07: -58%, r 0.48, 2025-10: +70%, r 0.55, 2025-11: +44%, r 0.49, 2025-12: +31%, r 0.19, 2026-07: -39%, r 0.57 |
+| Hyderabad | Sanathnagar, Hyderabad - TSPCB | 8 | 2025-05: -37%, r -0.06, 2025-06: -40%, r 0.01, 2025-07: -40%, r 0.52, 2025-08: -42%, r 0.46, 2025-12: +42%, r 0.25, 2026-06: -33%, r 0.51, 2026-07: -37%, r 0.13, 2026-08: -34%, r 0.36 |
+| Hyderabad | Somajiguda, Hyderabad - TSPCB | 13 | 2025-04: +63%, r 0.19, 2025-05: +78%, r 0.13, 2025-06: +114%, r 0.68, 2025-07: +99%, r 0.24, 2025-08: +101%, r 0.28, 2025-09: +69%, r -0.04, 2025-10: +43%, r 0.61, 2025-11: +31%, r -0.07, 2026-05: +36%, r -0.08, 2026-06: +33%, r -0.32, 2026-07: +38%, r -0.04, 2026-08: +50%, r -0.58, 2026-09: +70%, r -0.44 |
+| Hyderabad | Zoo Park, Hyderabad - TSPCB | 12 | 2025-03: +118%, r 0.28, 2025-04: +71%, r 0.60, 2025-07: +78%, r 0.35, 2025-08: +40%, r 0.32, 2025-09: +62%, r 0.07, 2025-10: +47%, r 0.69, 2025-12: +60%, r 0.15, 2026-01: +50%, r 0.47, 2026-02: +51%, r 0.66, 2026-06: -37%, r 0.45, 2026-07: -44%, r 0.57, 2026-08: -38%, r 0.05 |
+| Indore | Airport Area, Indore - IMC | 3 | 2025-03: -36%, r 0.47, 2025-08: -41%, r 0.62, 2026-03: +77%, r 0.45 |
+| Indore | Chhoti Gwaltoli, Indore - MPPCB | 3 | 2025-09: +88%, r 0.53, 2025-12: +82%, r 0.67, 2026-07: +32%, r 0.63 |
+| Jabalpur | Gupteshwar, Jabalpur - JMC | 5 | 2025-05: +65%, r 0.48, 2025-06: +73%, r 0.02, 2025-10: -33%, r 0.65, 2026-04: +38%, r 0.44, 2026-07: +40%, r 0.13 |
+| Jaipur | Mansarovar Sector-12, Jaipur - RSPCB | 5 | 2025-04: -39%, r 0.56, 2025-05: -40%, r 0.65, 2025-09: -52%, r 0.61, 2026-04: -48%, r 0.60, 2026-08: -39%, r 0.65 |
+| Jaipur | Shastri Nagar, Jaipur - RSPCB | 2 | 2026-06: +34%, r 0.24, 2026-08: +44%, r 0.61 |
+| Jodhpur | Collectorate, Jodhpur - RSPCB | 11 | 2025-03: +62%, r 0.40, 2025-04: +60%, r 0.01, 2025-06: +122%, r 0.17, 2025-07: +110%, r 0.39, 2025-08: +110%, r 0.17, 2025-09: +89%, r 0.33, 2025-11: +39%, r 0.51, 2025-12: +49%, r 0.33, 2026-03: +37%, r 0.14, 2026-05: +84%, r 0.61, 2026-08: +62%, r 0.69 |
+| Jodhpur | Mandor, Jodhpur - RSPCB | 1 | 2025-04: -36%, r 0.69 |
+| Kolkata | Jadavpur, Kolkata - WBPCB | 1 | 2025-03: +47%, r 0.11 |
+| Kolkata | Rabindra Sarobar, Kolkata - WBPCB | 1 | 2025-07: -43%, r 0.27 |
+| Kolkata | Victoria, Kolkata - WBPCB | 7 | 2025-07: +32%, r 0.49, 2025-09: +63%, r 0.51, 2025-10: +67%, r 0.67, 2025-12: +63%, r 0.68, 2026-05: +65%, r 0.68, 2026-06: +77%, r 0.36, 2026-08: +132%, r 0.46 |
+| Kota | Dhanmandi, Kota - RSPCB | 3 | 2025-09: -34%, r 0.59, 2026-05: -38%, r 0.48, 2026-06: -36%, r 0.09 |
+| Kota | Nayapura, Kota - RSPCB | 1 | 2025-06: -35%, r 0.69 |
+| Kota | Shrinath Puram, Kota - RSPCB | 11 | 2025-03: +68%, r 0.57, 2025-04: +114%, r 0.33, 2025-06: +115%, r 0.58, 2025-07: +48%, r 0.24, 2025-08: +72%, r 0.49, 2025-09: +80%, r 0.37, 2026-03: +31%, r 0.50, 2026-04: +46%, r 0.28, 2026-05: +79%, r 0.27, 2026-06: +61%, r 0.65, 2026-07: +70%, r 0.61 |
+| Lucknow | B R Ambedkar University, Lucknow - UPPCB | 6 | 2025-04: -33%, r 0.58, 2025-07: +143%, r 0.01, 2025-08: +34%, r 0.02, 2025-09: +78%, r 0.30, 2026-03: -41%, r 0.36, 2026-09: -43%, r 0.64 |
+| Lucknow | Kukrail Picnic Spot-1, Lucknow - UPPCB | 3 | 2025-04: -55%, r 0.66, 2025-11: -43%, r 0.69, 2026-03: -41%, r 0.52 |
+| Lucknow | Talkatora District Industries Center, Lucknow - CPCB | 4 | 2025-11: +41%, r 0.55, 2025-12: +49%, r 0.59, 2026-02: +61%, r 0.54, 2026-03: +38%, r 0.64 |
+| Meerut | Ganga Nagar, Meerut - UPPCB | 1 | 2025-04: +117%, r 0.43 |
+| Moradabad | Eco Herbal Park, Moradabad - UPPCB | 1 | 2025-11: +32%, r 0.47 |
+| Moradabad | Employment Office, Moradabad - UPPCB | 2 | 2025-08: +93%, r 0.46, 2026-08: +48%, r 0.51 |
+| Mumbai | Bandra Kurla Complex, Mumbai - IITM | 2 | 2025-08: -37%, r 0.53, 2026-08: +35%, r 0.53 |
+| Mumbai | Bandra Kurla Complex, Mumbai - MPCB | 7 | 2025-03: +40%, r 0.62, 2025-04: +31%, r 0.10, 2025-05: +65%, r 0.57, 2025-07: +32%, r 0.47, 2026-04: +38%, r 0.22, 2026-05: +50%, r 0.28, 2026-08: +38%, r 0.26 |
+| Mumbai | Borivali East, Mumbai - IITM | 2 | 2025-02: +51%, r 0.70, 2026-08: +63%, r 0.60 |
+| Mumbai | Borivali East, Mumbai - MPCB | 2 | 2025-08: -31%, r -0.12, 2026-01: -48%, r 0.63 |
+| Mumbai | Chakala-Andheri East, Mumbai - IITM | 1 | 2026-09: -71%, r -0.09 |
+| Mumbai | Deonar, Mumbai - IITM | 3 | 2025-06: -46%, r 0.52, 2025-08: -46%, r 0.18, 2025-09: -33%, r 0.54 |
+| Mumbai | Ghatkopar, Mumbai - BMC | 3 | 2025-08: -49%, r 0.45, 2025-09: -40%, r 0.34, 2026-06: +68%, r -0.37 |
+| Mumbai | Kandivali West, Mumbai - BMC | 1 | 2025-06: -34%, r 0.62 |
+| Mumbai | Khindipada-Bhandup West, Mumbai - IITM | 2 | 2026-05: -56%, r 0.63, 2026-06: -70%, r -0.31 |
+| Mumbai | Kurla, Mumbai - MPCB | 11 | 2025-04: +80%, r -0.18, 2025-05: +94%, r -0.00, 2025-06: +126%, r 0.32, 2025-07: +124%, r 0.46, 2025-08: +131%, r 0.35, 2025-09: +108%, r 0.32, 2026-03: +33%, r 0.65, 2026-04: +59%, r 0.55, 2026-05: +165%, r 0.13, 2026-08: +104%, r 0.44, 2026-09: +46%, r 0.21 |
+| Mumbai | Malad West, Mumbai - IITM | 6 | 2025-06: -51%, r 0.56, 2025-07: -46%, r 0.36, 2025-08: -55%, r 0.41, 2025-09: -55%, r 0.23, 2026-06: -42%, r 0.39, 2026-07: -40%, r 0.70 |
+| Mumbai | Powai, Mumbai - MPCB | 5 | 2025-05: -31%, r 0.47, 2026-01: -59%, r 0.24, 2026-05: -41%, r 0.18, 2026-06: -40%, r -0.23, 2026-07: -66%, r 0.19 |
+| Mumbai | Sewri, Mumbai - BMC | 9 | 2025-06: -31%, r 0.47, 2025-07: -46%, r 0.26, 2025-09: -70%, r -0.01, 2025-10: -91%, r -0.09, 2025-11: -94%, r 0.42, 2025-12: -88%, r 0.17, 2026-04: -37%, r 0.67, 2026-06: +38%, r 0.46, 2026-07: +49%, r 0.43 |
+| Mumbai | Sion, Mumbai - MPCB | 7 | 2025-05: +108%, r 0.08, 2025-11: -44%, r -0.00, 2025-12: -51%, r 0.18, 2026-05: +65%, r 0.49, 2026-06: +99%, r -0.32, 2026-08: -49%, r 0.58, 2026-09: -53%, r 0.39 |
+| Mumbai | Worli, Mumbai - MPCB | 7 | 2025-04: +58%, r 0.01, 2025-05: +112%, r -0.06, 2025-06: +97%, r 0.03, 2025-07: +138%, r 0.26, 2025-08: +159%, r 0.48, 2025-09: +130%, r -0.37, 2026-08: +66%, r 0.63 |
+| Nashik | MIDC Ambad, Nashik - MPCB | 5 | 2025-06: +49%, r 0.40, 2025-07: +70%, r 0.70, 2025-09: +56%, r 0.42, 2026-06: +41%, r 0.42, 2026-07: +30%, r 0.64 |
+| Navi Mumbai | CBD Belapur, Belapur - MPCB | 2 | 2025-05: -37%, r 0.60, 2026-08: +37%, r 0.29 |
+| Navi Mumbai | Mahape, Navi Mumbai - MPCB | 4 | 2025-10: -76%, r 0.64, 2025-11: -81%, r 0.50, 2025-12: -59%, r -0.34, 2026-09: -36%, r 0.36 |
+| Navi Mumbai | Sector-2E Kalamboli, Navi Mumbai - MPCB | 2 | 2025-07: +65%, r 0.58, 2026-06: -35%, r 0.58 |
+| Noida | Sector-116, Noida - UPPCB | 1 | 2025-04: +45%, r 0.57 |
+| Patna | Govt. High School Shikarpur, Patna - BSPCB | 4 | 2025-09: -40%, r -0.04, 2025-10: -42%, r 0.70, 2025-11: -43%, r 0.26, 2025-12: -40%, r -0.39 |
+| Patna | IGSC Planetarium Complex, Patna - BSPCB | 3 | 2025-08: +53%, r 0.59, 2026-08: +34%, r 0.05, 2026-09: +78%, r 0.60 |
+| Patna | Muradpur, Patna - BSPCB | 6 | 2025-02: +52%, r 0.00, 2025-03: +53%, r 0.62, 2026-03: +41%, r 0.69, 2026-04: +44%, r 0.46, 2026-05: +33%, r -0.04, 2026-06: +35%, r 0.04 |
+| Patna | Rajbansi Nagar, Patna - BSPCB | 5 | 2025-03: -34%, r 0.56, 2025-07: -33%, r 0.63, 2026-07: -50%, r 0.29, 2026-08: -36%, r 0.46, 2026-09: -34%, r 0.64 |
+| Patna | Samanpura, Patna - BSPCB | 4 | 2025-08: +57%, r 0.64, 2026-07: +98%, r 0.02, 2026-08: +104%, r 0.64, 2026-09: +103%, r 0.33 |
+| Pimpri Chinchwad | Thergaon, Pimpri Chinchwad - MPCB | 3 | 2026-04: +43%, r 0.38, 2026-06: +86%, r 0.34, 2026-07: +57%, r 0.51 |
+| Prayagraj | Nagar Nigam, Prayagraj - UPPCB | 2 | 2025-07: +41%, r 0.66, 2026-08: -38%, r 0.44 |
+| Raipur | Bhatagaon New ISBT, Raipur - CECB | 6 | 2025-05: -46%, r -0.05, 2025-08: -36%, r 0.60, 2025-09: -58%, r 0.04, 2025-10: -56%, r 0.58, 2026-08: -49%, r 0.45, 2026-09: -44%, r 0.65 |
+| Raipur | Siltara Phase-II, Raipur - CECB | 13 | 2025-02: +66%, r 0.52, 2025-03: +157%, r 0.39, 2025-04: +117%, r 0.32, 2025-05: +77%, r 0.31, 2025-06: +50%, r 0.48, 2025-07: +60%, r -0.26, 2025-10: +52%, r 0.57, 2026-02: +45%, r 0.08, 2026-04: +34%, r 0.66, 2026-06: +78%, r 0.32, 2026-07: +135%, r 0.48, 2026-08: +88%, r -0.05, 2026-09: +30%, r 0.27 |
+| Rourkela | Raghunathpali, Rourkela - OSPCB | 13 | 2025-02: +39%, r 0.50, 2025-03: +77%, r 0.44, 2025-04: +41%, r 0.36, 2025-06: -38%, r 0.29, 2025-08: -41%, r -0.21, 2025-09: -49%, r 0.11, 2025-12: +43%, r 0.14, 2026-01: +83%, r 0.11, 2026-02: +50%, r 0.44, 2026-03: +61%, r 0.21, 2026-05: -33%, r -0.08, 2026-07: -57%, r 0.28, 2026-08: -34%, r 0.41 |
+| Rourkela | Sector-2, Rourkela - OSPCB | 8 | 2025-07: +48%, r -0.15, 2025-10: -30%, r 0.14, 2025-11: -37%, r 0.28, 2026-01: -61%, r 0.23, 2026-02: -52%, r 0.42, 2026-03: -49%, r 0.19, 2026-04: -40%, r 0.33, 2026-05: -33%, r 0.55 |
+| Varanasi | Ardhali Bazar, Varanasi - UPPCB | 8 | 2025-02: +241%, r 0.58, 2025-03: +61%, r 0.58, 2025-04: +71%, r 0.61, 2025-08: +43%, r 0.51, 2026-03: +52%, r 0.70, 2026-04: +84%, r 0.23, 2026-06: +91%, r 0.65, 2026-07: +68%, r 0.63 |
+| Varanasi | Bhelupur, Varanasi - UPPCB | 7 | 2025-04: -57%, r 0.37, 2025-06: -85%, r 0.30, 2025-07: +56%, r 0.44, 2025-09: +44%, r 0.56, 2026-02: +48%, r 0.54, 2026-08: +52%, r -0.08, 2026-09: +107%, r 0.28 |
+| Varanasi | IESD Banaras Hindu University, Varanasi - UPPCB | 4 | 2025-04: +70%, r 0.68, 2025-06: +46%, r 0.66, 2026-02: -49%, r 0.62, 2026-04: -50%, r 0.65 |
+| Varanasi | Maldahiya, Varanasi - UPPCB | 6 | 2025-05: -34%, r 0.63, 2025-06: -39%, r 0.64, 2025-07: -44%, r 0.36, 2025-09: -52%, r 0.19, 2025-10: -38%, r 0.67, 2026-07: +45%, r 0.44 |
 
 # Fire points by month (IST)
 

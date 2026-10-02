@@ -87,7 +87,13 @@ def clean() -> int:
     return py("-c", "from airgrove.ingest.cli import clean; clean()")
 
 
+def backtest() -> int:
+    """Rolling-origin backtest (12 monthly folds); writes reports/backtest.json."""
+    return py("-c", "from airgrove.ingest.cli import backtest; backtest()")
+
+
 COMMANDS = {
+    "backtest": backtest,
     "download": download,
     "clean": clean,
     "hourcheck": hourcheck,
