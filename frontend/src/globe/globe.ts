@@ -214,8 +214,10 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     }
     if (st.drag) {
       const dx = e.clientX - st.drag.x, dy = e.clientY - st.drag.y; st.drag.x = e.clientX; st.drag.y = e.clientY;
-      const k = (0.22 * (st.dist - 1)) / 1.4;
-      st.lon -= dx * k; st.lat = clamp(st.lat + dy * k, -75, 75); st.vLon = -dx * k * 60; st.vLat = dy * k * 60;
+      // degrees per pixel, scaled with zoom; momentum is gentle and capped so a small flick doesn't spin the Earth
+      const k = (0.11 * (st.dist - 1)) / 1.4, vmax = 40;
+      st.lon -= dx * k; st.lat = clamp(st.lat + dy * k, -75, 75);
+      st.vLon = clamp(-dx * k * 25, -vmax, vmax); st.vLat = clamp(dy * k * 25, -vmax, vmax);
       return;
     }
     hoverAt(e.clientX - r.left, e.clientY - r.top);
@@ -303,7 +305,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
         if (u >= 1) st.fly = null;
       } else if (!st.drag) {
         st.lon += st.vLon * dt; st.lat = clamp(st.lat + st.vLat * dt, -75, 75);
-        st.vLon *= Math.exp(-dt * 3.2); st.vLat *= Math.exp(-dt * 3.2);
+        st.vLon *= Math.exp(-dt * 6); st.vLat *= Math.exp(-dt * 6);
         st.dist += (st.tDist - st.dist) * (1 - Math.exp(-dt * 7));
       }
       G.rotation.set(st.lat * D2R, -st.lon * D2R, 0); cam.position.set(0, 0, st.dist); cam.lookAt(0, 0, 0); G.updateMatrixWorld();

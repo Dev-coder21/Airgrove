@@ -83,7 +83,13 @@ export function initHeadline(): Particles | null {
     },
   };
   window.addEventListener('pointermove', (e) => { const b = cv.getBoundingClientRect(); ptr.x = e.clientX - b.left; ptr.y = e.clientY - b.top; });
-  window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = window.setTimeout(PW.relayout, 150); });
+  // phones resize the viewport height while scrolling (address bar); only width changes need a new layout
+  let lastW = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    clearTimeout(resizeT); resizeT = window.setTimeout(PW.relayout, 150);
+  });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => PW.relayout());
   return PW;
 }

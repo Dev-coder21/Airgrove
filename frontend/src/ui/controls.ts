@@ -142,7 +142,7 @@ export function initControls(): void {
   cityList.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest('button');
     if (!b) return;
-    setCity(byId(b.dataset.id!));
+    goToCity(byId(b.dataset.id!));
     openList(false);
     cityBtn.focus();
   });
