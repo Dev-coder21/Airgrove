@@ -1,5 +1,7 @@
 # Airgrove
 
+**Live: https://dev-coder21.github.io/Airgrove/**
+
 **Air quality over every Indian city with a government sensor, shown as a living 3D forest — with a
 72-hour PM2.5 forecast that is tested honestly against simple baselines and the official CAMS
 forecast.**
@@ -29,7 +31,8 @@ python tasks.py clean         # data/airgrove.duckdb, reports/cleaning.md
 python tasks.py backtest      # 12 monthly folds (~65 min), reports/backtest.json
 python tasks.py final         # calibrate bands, train the final model, forecast 72 h
 python tasks.py export        # frontend/public/data/*.json
-python tasks.py dev           # http://localhost:5173   (?demo for the sample data)
+python tasks.py dev           # http://localhost:5173/Airgrove/   (?demo for the sample data)
+python tasks.py preview       # production build, http://localhost:4173/Airgrove/
 python tasks.py api           # http://localhost:8000/api/cities
 ```
 

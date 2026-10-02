@@ -5,7 +5,8 @@ import type { AirData } from './types';
 export type { AirData, CitySeries, Fire, ModelRow } from './types';
 
 /**
- * Pick the data source. Default: real data from the static export (data/bundle.json).
+ * Pick the data source. Default: real data from the static export (<base>/data/bundle.json,
+ * so it works at the site root locally and under /Airgrove/ on GitHub Pages).
  * `?demo` uses the reference's sample generator; `?api=<origin>` reads the live API.
  */
 export async function loadData(): Promise<AirData> {
@@ -13,7 +14,7 @@ export async function loadData(): Promise<AirData> {
   if (q.has('demo') || q.get('data') === 'demo') return demoData();
   const api = q.get('api');
   try {
-    return await staticData(api ? `${api.replace(/\/$/, '')}/api/bundle` : 'data/bundle.json');
+    return await staticData(api ? `${api.replace(/\/$/, '')}/api/bundle` : `${import.meta.env.BASE_URL}data/bundle.json`);
   } catch (e) {
     console.warn('real data unavailable, falling back to the demo:', e);
     return demoData();

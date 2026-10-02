@@ -108,8 +108,8 @@ def api() -> int:
 
 
 def preview() -> int:
-    """Production build (what GitHub Pages will serve) on http://localhost:4173, also reachable
-    from a phone on the same Wi-Fi at http://<this PC's IP>:4173."""
+    """Production build (what GitHub Pages will serve) on http://localhost:4173/Airgrove/, also reachable
+    from a phone on the same Wi-Fi at http://<this PC's IP>:4173/Airgrove/."""
     return npm("run", "build") or npm(
         "run", "preview", "--", "--port", "4173", "--strictPort", "--host"
     )
