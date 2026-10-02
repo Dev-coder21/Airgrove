@@ -4,7 +4,8 @@
  */
 import * as THREE from 'three';
 import { hIST } from '../core/time';
-import { $, clamp, reduce, pixelRatio } from '../core/util';
+import { glPixelRatio, onQualityChange } from '../core/quality';
+import { $, clamp, reduce } from '../core/util';
 import { app } from '../state';
 
 type Group = THREE.Group & { userData: Record<string, any> };
@@ -18,7 +19,7 @@ export function initForest(): { tick(dt: number): void } | null {
     return null;
   }
   const V3 = THREE.Vector3, SPEED = reduce ? 0.2 : 1;
-  renderer.setPixelRatio(pixelRatio());
+  renderer.setPixelRatio(glPixelRatio());
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -239,6 +240,7 @@ export function initForest(): { tick(dt: number): void } | null {
     camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize); resize();
+  onQualityChange(() => { renderer.setPixelRatio(glPixelRatio()); resize(); });
 
   const st = { qs: app.qTarget, night: 0, fogIntro: reduce ? 0 : 0.32, clock: 0 };
   function moveCloud(C: Cloud, dt: number, speedK: number, sink: number): void {

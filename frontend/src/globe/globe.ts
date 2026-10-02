@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import { feature } from 'topojson-client';
 import { CATS, catIdx, qOf } from '../core/aqi';
-import { $, clamp, lerp, reduce, rng, pixelRatio } from '../core/util';
+import { glPixelRatio, onQualityChange } from '../core/quality';
+import { $, clamp, lerp, reduce, rng } from '../core/util';
 import type { CitySeries } from '../data';
 import { app, pmAt, smokeAt } from '../state';
 import { setCity } from '../ui/controls';
@@ -29,7 +30,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
   }
   let renderer: THREE.WebGLRenderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); } catch (e) { return fail(); }
-  renderer.setPixelRatio(pixelRatio());
+  renderer.setPixelRatio(glPixelRatio());
   const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(30, 1, 0.05, 60);
   const G = new THREE.Group(); G.rotation.order = 'XYZ'; scene.add(G);
   const D2R = Math.PI / 180, Yax = new THREE.Vector3(0, 1, 0);
@@ -284,6 +285,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     cvW = cv.clientWidth; cvH = cv.clientHeight;
   }
   window.addEventListener('resize', size); size();
+  onQualityChange(() => { renderer.setPixelRatio(glPixelRatio()); size(); });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver((es) => { const was = st.vis; st.vis = es[0].isIntersecting; if (st.vis && !was) intro(); }, { threshold: 0.12 }).observe(wrap);
   } else { st.vis = true; intro(); }

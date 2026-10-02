@@ -4,6 +4,7 @@
  */
 import { initCard } from './card/card';
 import { qOf } from './core/aqi';
+import { tickQuality } from './core/quality';
 import { clamp, reduce } from './core/util';
 import { loadData } from './data';
 import { initGlobe } from './globe/globe';
@@ -58,6 +59,7 @@ async function boot(): Promise<void> {
   function loop(now: number): void {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     tickPlay(dt);
+    tickQuality(dt);
     const pmT = pmAt(app.city, app.T);
     app.pmShown += (pmT - app.pmShown) * (1 - Math.exp(-dt * (reduce ? 30 : 7)));
     elPm.textContent = String(Math.round(app.pmShown));
