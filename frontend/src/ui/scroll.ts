@@ -52,6 +52,7 @@ export function tickScrollFx(): void {
 /* ---------------- vine scroll bar ---------------- */
 interface Leaf { f: number; el: HTMLElement; name: string; }
 export function initVine(): { build(): void; tick(now: number, dt: number): void } {
+  let lastH = 0;
   const vine = $('vine'), grow = $('vineGrow'), thumb = $('vineThumb'), marks = $('vineMarks');
   const SECS = [['top', 'The grove'], ['india', 'India'], ['card', 'Air card'], ['forecast', 'Forecast'], ['model', 'Model']];
   let leaves: Leaf[] = [], railH = 0, thH = 0, lastY = window.scrollY, vel = 0, idleT = 0, sparkT = 0, resizeT = 0;
@@ -81,37 +82,57 @@ export function initVine(): { build(): void; tick(now: number, dt: number): void
     vine.appendChild(sp); setTimeout(() => sp.remove(), 950);
   }
   // Behaves like a native scrollbar: press anywhere on the rail to grab it (the thumb jumps under
-  // the pointer unless you pressed the thumb itself), then the page follows the pointer 1:1,
-  // instantly, with no easing, snapping or section jumps. The leaves are decoration only.
-  const jump = (top: number) => window.scrollTo({ top: clamp(top, 0, maxY()), behavior: 'instant' as ScrollBehavior });
+  // the pointer unless you pressed the thumb itself), then the page follows the pointer 1:1.
+  // While dragging: smooth scrolling is switched off (Safari treats behavior:'instant' as the
+  // page's CSS smooth scrolling, so every step started an animation and they fought), the rail
+  // size and scroll range are frozen (iOS toolbars change the viewport height mid-drag), and at
+  // most one scroll write happens per frame.
+  const root = document.documentElement;
+  let dragF = 0, pendingTop: number | null = null, frozen = { travel: 1, max: 1 };
+  function applyScroll(): void {
+    if (pendingTop === null) return;
+    root.scrollTop = pendingTop;
+    if (document.body) document.body.scrollTop = pendingTop; // older Safari scrolls the body
+    pendingTop = null;
+  }
   vine.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
     const r = vine.getBoundingClientRect(), ty = thumb.getBoundingClientRect();
     let grab = (e.clientY - ty.top) / Math.max(ty.height, 1); // where on the thumb we hold it
     if (grab < 0 || grab > 1) grab = 0.5;
+    frozen = { travel: Math.max(railH - thH, 1), max: maxY() };
     drag = { y0: r.top + grab * thH, s0: 0 };
+    root.style.scrollBehavior = 'auto';
     vine.classList.add('dragging'); vine.setPointerCapture(e.pointerId); e.preventDefault();
     follow(e.clientY);
   });
   function follow(clientY: number): void {
     if (!drag) return;
-    const f = (clientY - drag.y0) / Math.max(railH - thH, 1); // thumb top as a fraction of its travel
-    jump(clamp(f, 0, 1) * maxY());
+    dragF = clamp((clientY - drag.y0) / frozen.travel, 0, 1); // thumb top as a fraction of its travel
+    pendingTop = dragF * frozen.max;
   }
-  vine.addEventListener('pointermove', (e) => follow(e.clientY));
-  function endDrag(): void { drag = null; vine.classList.remove('dragging'); }
+  vine.addEventListener('pointermove', (e) => { if (drag) { e.preventDefault(); follow(e.clientY); } });
+  function endDrag(): void {
+    if (!drag) return;
+    applyScroll();
+    drag = null; vine.classList.remove('dragging');
+    root.style.scrollBehavior = '';
+    lastH = 0; // re-measure after the drag
+  }
   vine.addEventListener('pointerup', endDrag); vine.addEventListener('pointercancel', endDrag);
-  window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = window.setTimeout(build, 120); });
-  let lastH = 0;
+  vine.addEventListener('lostpointercapture', endDrag);
+  window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = window.setTimeout(() => { if (!drag) build(); }, 120); });
   return {
     build,
     tick(now, dt) {
-      // keep the thumb proportional when the page height changes (fonts, data, reveals)
+      if (drag) applyScroll();
+      // keep the thumb proportional when the page height changes (fonts, data, reveals);
+      // never re-measure mid-drag
       const h = document.documentElement.scrollHeight;
-      if (!railH || h !== lastH) { lastH = h; build(); }
+      if (!drag && (!railH || h !== lastH)) { lastH = h; build(); }
       const y = window.scrollY, p = clamp(y / maxY(), 0, 1);
       vel += ((y - lastY) / Math.max(dt, 1 / 120) - vel) * (1 - Math.exp(-dt * 10)); lastY = y;
-      const ty = p * (railH - thH);
+      const ty = drag ? dragF * frozen.travel : p * (railH - thH);
       thumb.style.transform = 'translate3d(0,' + ty.toFixed(1) + 'px,0)';
       grow.style.height = (ty + thH / 2).toFixed(1) + 'px';
       leaves.forEach((l) => l.el.classList.toggle('on', p >= l.f - 0.005));
