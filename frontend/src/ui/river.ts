@@ -24,12 +24,15 @@ export function drawRiver(): void {
   let s = '<defs><linearGradient id="rg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + RV.w + '" y2="0">';
   for (let i = 0; i < HRS; i += 3) s += '<stop offset="' + (i / (HRS - 1)).toFixed(4) + '" stop-color="' + CATS[catIdx(pmAt(city, i))].c + '"/>';
   s += '</linearGradient></defs>';
-  // day separators
+  // day separators (labels thin out on narrow screens so they never overlap)
+  const dayW = (RV.w * 24) / HRS, every = dayW < 30 ? 2 : 1;
+  let nDay = 0;
   for (let i = 0; i < HRS; i++) {
     if (Math.round(hIST(i)) % 24 === 0) {
+      if (nDay++ % every) continue;
       const x = rX(i).toFixed(1);
       s += '<line x1="' + x + '" x2="' + x + '" y1="0" y2="' + RV.h + '" stroke="rgba(220,235,210,.1)"/>';
-      s += '<text x="' + (+x + 5) + '" y="10" font-size="10.5" fill="rgba(238,242,232,.5)" font-family="Lexend,sans-serif">' + fWk.format(tms(i)) + ' ' + fDay.format(tms(i)).split(' ')[0] + '</text>';
+      s += '<text x="' + (+x + 5) + '" y="10" font-size="10.5" fill="rgba(238,242,232,.5)" font-family="Lexend,sans-serif">' + (dayW < 56 ? '' : fWk.format(tms(i)) + ' ') + fDay.format(tms(i)).split(' ')[0] + '</text>';
     }
   }
   let area = 'M0,' + RV.h, line = '';

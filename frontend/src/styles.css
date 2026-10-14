@@ -8,7 +8,7 @@
   --gutter:clamp(16px,5vw,64px);
   --ease:cubic-bezier(.2,.7,.2,1);
 }
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--loam);color:var(--ink);
   font-family:"Lexend",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:300;
@@ -109,7 +109,7 @@ h1.swap,.lede.swap{opacity:0;transform:translateY(6px)}
 .river-head .grow{flex:1}
 .tag{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--hair);color:var(--ink-faint)}
 .play{width:38px;height:38px;padding:0;justify-content:center}
-.river-track{position:relative;height:66px;cursor:pointer;touch-action:none;border-radius:12px}
+.river-track{position:relative;height:66px;cursor:pointer;touch-action:pan-y;border-radius:12px}
 .river-track svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .thumb{position:absolute;top:0;bottom:0;width:0;pointer-events:none}
 .thumb::before{content:"";position:absolute;top:-4px;bottom:0;left:-.5px;width:1px;background:rgba(255,255,255,.7)}
@@ -402,3 +402,5 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{width:0;height:0;display:none}
    labels, and the leaves are decoration only */
 .vine{touch-action:none}
 .vine-label,.leaf-btn{display:none}
+
+@media (hover:none){.card-hint .hov{display:none}}
