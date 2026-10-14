@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { CATS, catIdx } from '../core/aqi';
 import { fDay, fHr, fWk, fYr, tms } from '../core/time';
-import { $, clamp, hexA, reduce, pixelRatio } from '../core/util';
+import { $, clamp, hexA, onResizeSettled, reduce, pixelRatio } from '../core/util';
 import { app, pmAt, ready, type Card } from '../state';
 
 export function initCard(): Card | null {
@@ -235,7 +235,7 @@ export function initCard(): Card | null {
     cam.position.z = Math.max(fit, 1.12 / cam.aspect / (2 * Math.tan((cam.fov * Math.PI) / 360)));
     cam.updateProjectionMatrix();
   }
-  window.addEventListener('resize', size); size();
+  onResizeSettled(size); size();
   const CARD: Card = {
     mark() { R.dirty = true; },
     redraw() { drawFront(); drawBack(); R.dirty = false; },

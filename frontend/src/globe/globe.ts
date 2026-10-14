@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { feature } from 'topojson-client';
 import { CATS, catIdx, qOf } from '../core/aqi';
 import { glPixelRatio, onQualityChange } from '../core/quality';
-import { $, clamp, lerp, reduce, rng } from '../core/util';
+import { $, clamp, lerp, onResizeSettled, reduce, rng } from '../core/util';
 import type { CitySeries } from '../data';
 import { app, pmAt, smokeAt } from '../state';
 import { setCity } from '../ui/controls';
@@ -286,7 +286,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
     cvW = cv.clientWidth; cvH = cv.clientHeight;
   }
-  window.addEventListener('resize', size); size();
+  onResizeSettled(size); size();
   onQualityChange(() => { renderer.setPixelRatio(glPixelRatio()); size(); });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver((es) => { const was = st.vis; st.vis = es[0].isIntersecting; if (st.vis && !was) intro(); }, { threshold: 0.12 }).observe(wrap);

@@ -55,6 +55,7 @@ async function boot(): Promise<void> {
   window.addEventListener('resize', () => drawRiver());
 
   const elPm = document.getElementById('pmNum')!;
+  let pmLast = NaN;
   let last = performance.now();
   function loop(now: number): void {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -62,7 +63,8 @@ async function boot(): Promise<void> {
     tickQuality(dt);
     const pmT = pmAt(app.city, app.T);
     app.pmShown += (pmT - app.pmShown) * (1 - Math.exp(-dt * (reduce ? 30 : 7)));
-    elPm.textContent = String(Math.round(app.pmShown));
+    const pmR = Math.round(app.pmShown);
+    if (pmR !== pmLast) { pmLast = pmR; elPm.textContent = String(pmR); } // avoid a layout every frame
     app.SCROLLU = clamp(window.scrollY / window.innerHeight, 0, 1);
     tickScrollFx(); vine.tick(now, dt);
     if (forest) forest.tick(dt);

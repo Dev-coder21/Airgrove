@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { hIST } from '../core/time';
 import { glPixelRatio, onQualityChange } from '../core/quality';
-import { $, clamp, reduce } from '../core/util';
+import { $, clamp, onResizeSettled, reduce } from '../core/util';
 import { app } from '../state';
 
 type Group = THREE.Group & { userData: Record<string, any> };
@@ -239,7 +239,7 @@ export function initForest(): { tick(dt: number): void } | null {
     look.set(narrow ? 2.6 : 1.4, narrow ? 1.1 : 0.85, 0);
     camera.updateProjectionMatrix();
   }
-  window.addEventListener('resize', resize); resize();
+  onResizeSettled(resize); resize();
   onQualityChange(() => { renderer.setPixelRatio(glPixelRatio()); resize(); });
 
   const st = { qs: app.qTarget, night: 0, fogIntro: reduce ? 0 : 0.32, clock: 0 };

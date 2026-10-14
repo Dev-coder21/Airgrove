@@ -53,3 +53,12 @@ export function tween(el: HTMLElement | null, to: number, dur?: number): void {
     if (u < 1) t._raf = requestAnimationFrame(step);
   })(t0);
 }
+
+/**
+ * Resize listener that waits for resizing to settle. On phones the address bar slides in and out
+ * while scrolling, firing resize every frame; reallocating WebGL buffers that often stutters.
+ */
+export function onResizeSettled(cb: () => void, ms = 150): void {
+  let t = 0;
+  window.addEventListener('resize', () => { clearTimeout(t); t = window.setTimeout(cb, ms); });
+}
