@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { hIST } from '../core/time';
 import { glPixelRatio, onQualityChange } from '../core/quality';
-import { $, clamp, onResizeSettled, reduce } from '../core/util';
+import { $, clamp, onResizeSettled, precompile, reduce } from '../core/util';
 import { app } from '../state';
 
 type Group = THREE.Group & { userData: Record<string, any> };
@@ -256,6 +256,7 @@ export function initForest(): { tick(dt: number): void } | null {
     }
     (C.geo.attributes.position as THREE.BufferAttribute).needsUpdate = true;
   }
+  precompile(renderer, scene, camera, 'now');
   const smogEl = $('smog');
 
   return {

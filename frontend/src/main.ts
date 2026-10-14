@@ -23,13 +23,22 @@ import { drawRiver, initRiver } from './ui/river';
 import { initScrollFx, initVine, tickScrollFx } from './ui/scroll';
 
 async function boot(): Promise<void> {
-  // the opening wordmark needs no data: start it while the data file loads
-  const intro = initIntro();
+  // The opening waits for the setup below (WebGL scenes, shader compiles) so none of it lands
+  // mid-animation; on a slow connection it starts anyway after 1.5 s.
+  let setupDone!: () => void;
+  const setup = new Promise<void>((r) => { setupDone = r; });
+  let introStartedEarly = false;
+  const intro = initIntro(Promise.race([setup, new Promise((r) => setTimeout(() => { introStartedEarly = true; r(0); }, 1500))]));
+  // yield a frame between heavy setup steps so a running animation never stalls for long
+  const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
   let booted = false;
   const pre = (now: number) => { if (booted) return; if (intro) intro.tick(now); requestAnimationFrame(pre); };
   requestAnimationFrame(pre);
   const D = await loadData();
-  booted = true;
+  // slow connection: the intro is already playing, so let it finish before the heavy setup
+  if (introStartedEarly && intro) {
+    while (performance.now() < app.INTRO_END) await new Promise((r) => setTimeout(r, 100));
+  }
   app.D = D;
   app.city = D.cities[0];
   app.T = D.now;
@@ -39,12 +48,16 @@ async function boot(): Promise<void> {
   initRiver();
   initControls();
   initIndia();
+  await nextFrame();
   app.GLOBE = initGlobe();
   initModel();
+  await nextFrame();
   const forest = initForest();
+  await nextFrame();
   initChromeButtons();
   initHeadings();
   app.PW = initHeadline();
+  await nextFrame();
   app.CARD = initCard();
   const vine = initVine();
 
@@ -75,7 +88,10 @@ async function boot(): Promise<void> {
     tickChromeButtons(now, dt);
     requestAnimationFrame(loop);
   }
+  booted = true; // the main loop takes over ticking the intro
   requestAnimationFrame(loop);
+  // release the intro once the first full frame (and its GPU uploads) has rendered
+  requestAnimationFrame(() => requestAnimationFrame(() => setupDone()));
 }
 
 boot();

@@ -62,3 +62,19 @@ export function onResizeSettled(cb: () => void, ms = 150): void {
   let t = 0;
   window.addEventListener('resize', () => { clearTimeout(t); t = window.setTimeout(cb, ms); });
 }
+
+/**
+ * Compile a scene's shaders ahead of its first render. three r128 compiles shaders synchronously
+ * on first render, which froze whatever was animating at that moment (the intro, or a scroll).
+ * Scenes visible at load compile immediately (before any animation starts); others compile once
+ * the page is idle after the intro, so scrolling to them later doesn't stall.
+ */
+export function precompile(renderer: { compile(scene: any, camera: any): void }, scene: any, camera: any, when: 'now' | 'idle'): void {
+  const run = (): void => { try { renderer.compile(scene, camera); } catch { /* first render will compile instead */ } };
+  if (when === 'now') { run(); return; }
+  const idle = (cb: () => void): void => {
+    const ric = (window as any).requestIdleCallback as ((cb: () => void, o?: { timeout: number }) => number) | undefined;
+    if (ric) ric(cb, { timeout: 2000 }); else setTimeout(cb, 0);
+  };
+  setTimeout(() => idle(run), 4500); // after the ~3.5 s intro
+}

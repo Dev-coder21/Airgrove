@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { feature } from 'topojson-client';
 import { CATS, catIdx, qOf } from '../core/aqi';
 import { glPixelRatio, onQualityChange } from '../core/quality';
-import { $, clamp, lerp, onResizeSettled, reduce, rng } from '../core/util';
+import { $, clamp, lerp, onResizeSettled, precompile, reduce, rng } from '../core/util';
 import type { CitySeries } from '../data';
 import { app, pmAt, smokeAt } from '../state';
 import { setCity } from '../ui/controls';
@@ -292,6 +292,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     new IntersectionObserver((es) => { const was = st.vis; st.vis = es[0].isIntersecting; if (st.vis && !was) intro(); }, { threshold: 0.12 }).observe(wrap);
   } else { st.vis = true; intro(); }
   function easeIO(u: number): number { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
+  precompile(renderer, scene, cam, 'idle');
   const CLEAN = new THREE.Color('#cfe6b4'), GREY = new THREE.Color('#8a8577'), tmpC = new THREE.Color(), o = { x: 0, y: 0, face: 0 };
 
   return {

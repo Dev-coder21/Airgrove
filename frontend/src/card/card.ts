@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { CATS, catIdx } from '../core/aqi';
 import { fDay, fHr, fWk, fYr, tms } from '../core/time';
-import { $, clamp, hexA, onResizeSettled, reduce, pixelRatio } from '../core/util';
+import { $, clamp, hexA, onResizeSettled, precompile, reduce, pixelRatio } from '../core/util';
 import { app, pmAt, ready, type Card } from '../state';
 
 export function initCard(): Card | null {
@@ -236,6 +236,7 @@ export function initCard(): Card | null {
     cam.updateProjectionMatrix();
   }
   onResizeSettled(size); size();
+  precompile(renderer, scene, cam, 'idle');
   const CARD: Card = {
     mark() { R.dirty = true; },
     redraw() { drawFront(); drawBack(); R.dirty = false; },
