@@ -15,7 +15,7 @@ the next three days, and a model section that shows exactly where the forecast w
 
 | Step | What | Code |
 | --- | --- | --- |
-| Discover | 492 active CPCB PM2.5 stations on OpenAQ, grouped into 257 cities; 177 have >= 75% coverage and >= 12 months of history (forecast-ready) | `backend/airgrove/ingest/discover.py` |
+| Discover | 492 active CPCB PM2.5 stations on OpenAQ, grouped into 257 cities; 177 have >= 75% coverage and >= 12 months of history (forecast-ready). 243 appear on the site after cleaning; 140 have a live 72-hour forecast. | `backend/airgrove/ingest/discover.py` |
 | Download | Hourly PM2.5 from Feb 2025 (rate-limited, cached, resumable), Open-Meteo forecast-archive weather, CAMS PM2.5, NASA FIRMS VIIRS fires (NOAA-20, S-NPP on its gap days) | `ingest/` |
 | Clean | Range checks, stuck sensors (6+ h), station-month QC against the other stations, city-hour needs min(50% of stations, 2), station offsets removed | `clean.py` |
 | Features | Lags 1-168 h, rolling stats, hour/weekday, festivals, weather at the target hour, upwind fires (600 km, ±45°), city id/median, stations reporting | `features.py` |
