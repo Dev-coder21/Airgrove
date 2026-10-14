@@ -16,7 +16,7 @@ import worldTopo from './world-topo.json';
 interface CityMark {
   c: CitySeries; n: THREE.Vector3; pil: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>;
   cap: THREE.Sprite; halo: THREE.Sprite; grove: THREE.Sprite; lab: HTMLElement; dot: HTMLElement; val: HTMLElement;
-  grow: number; delay: number; lastPm: number; kick: number; sx: number; sy: number; face: number;
+  grow: number; delay: number; lastPm: number; valDirty: boolean; kick: number; sx: number; sy: number; face: number;
   pri: number; show: boolean; lx: number; ly: number;
   ci: number; shown: boolean | null; tf: string; sel: boolean | null;
 }
@@ -146,7 +146,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
     const grove = new THREE.Sprite(new THREE.SpriteMaterial({ map: groveTex, color: '#cfe6b4', transparent: true, depthWrite: false }));
     grove.position.copy(n.clone().multiplyScalar(1.008)); G.add(grove);
     const lab = document.createElement('div'); lab.className = 'glabel'; lab.innerHTML = '<i></i><span>' + c.name + '</span><b></b>'; $('glabels').appendChild(lab);
-    return { c, n, pil, cap, halo, grove, lab, dot: lab.querySelector('i')!, val: lab.querySelector('b')!, grow: 0, delay: i * 45, lastPm: -1, kick: 0, sx: 0, sy: 0, face: 0, pri: 0, show: false, lx: 0, ly: 0, ci: -1, shown: null, tf: '', sel: null };
+    return { c, n, pil, cap, halo, grove, lab, dot: lab.querySelector('i')!, val: lab.querySelector('b')!, grow: 0, delay: i * 45, lastPm: -1, valDirty: false, kick: 0, sx: 0, sy: 0, face: 0, pri: 0, show: false, lx: 0, ly: 0, ci: -1, shown: null, tf: '', sel: null };
   });
   // halos and grove sprites were sized for ~20 cities; with many more they merge into one glow,
   // so they shrink with the city count (unchanged for <= 25 cities, e.g. the demo)
@@ -324,7 +324,7 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
         tmpC.copy(CLEAN).lerp(GREY, qq); m.grove.material.color.copy(tmpC); m.grove.material.opacity = (qq < 0.5 ? 1 : 0.7) * m.grow; m.grove.scale.setScalar(0.028 * zoomK * (1 - qq * 0.35) * DENS);
         if (Math.round(pm) !== m.lastPm) {
           if (m.lastPm >= 0 && Math.abs(pm - m.lastPm) > 3) m.kick = 1;
-          m.lastPm = Math.round(pm); m.val.textContent = String(m.lastPm); m.dot.style.background = col;
+          m.lastPm = Math.round(pm); m.valDirty = true; // written below, only if the label is visible
         }
         m.kick *= Math.exp(-dt * 5);
         screenOf(m, o); m.sx = o.x; m.sy = o.y; m.face = o.face;
@@ -341,8 +341,9 @@ export function initGlobe(): { refresh(): void; tick(now: number, dt: number): v
       });
       CM.forEach((m) => {
         // touch the DOM only when something changed (hundreds of labels with real data)
-        if (m.show !== m.shown) { m.shown = m.show; m.lab.style.opacity = m.show ? '1' : '0'; }
+        if (m.show !== m.shown) { m.shown = m.show; m.lab.classList.toggle('on', m.show); }
         if (m.show) {
+          if (m.valDirty) { m.valDirty = false; m.val.textContent = String(m.lastPm); m.dot.style.background = CATS[m.ci].c; }
           const tf = 'translate(' + m.lx.toFixed(1) + 'px,' + m.ly.toFixed(1) + 'px)';
           if (tf !== m.tf) { m.tf = tf; m.lab.style.transform = tf; }
         }
